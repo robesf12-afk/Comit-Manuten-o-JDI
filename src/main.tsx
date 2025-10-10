@@ -1,9 +1,21 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'   // <- exatamente assim
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import App from "./App";
+import DDM from "./pages/DDM";
+import Treinamentos from "./pages/Treinamentos";
+import OnePager from "./pages/OnePager";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const router = createBrowserRouter([
+  { path: "/", element: <App /> },
+  { path: "/ddm", element: <DDM /> },
+  { path: "/treinamentos", element: <Treinamentos /> },
+  { path: "/onepager", element: <OnePager /> },
+]);
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+    <RouterProvider router={router} />
+  </React.StrictMode>
+);
