@@ -25,9 +25,27 @@
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js")
+   <script>
+// 1) Desregistrar TODOS os SW deste domínio
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations()
+    .then(rs => Promise.all(rs.map(r => r.unregister())))
+    .catch(()=>{});
+
+  // 2) Limpar caches do SW antigo
+  if (window.caches?.keys) {
+    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+  }
+}
+</script>
+
       .catch(err => console.log("SW registration failed:", err));
   });
 }
 </script>
+<link rel="manifest" href="/manifest.webmanifest?v=10">
+<link rel="icon" href="/logo-comite-192.png?v=10" type="image/png">
+<link rel="apple-touch-icon" href="/logo-comite-180.png?v=10">
+
+<!-- se tiver outros icones ou CSS/JS, coloque ?v=10 também -->
 
