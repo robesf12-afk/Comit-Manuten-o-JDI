@@ -1,51 +1,41 @@
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <link rel="manifest" href="/manifest.webmanifest?v=3">   <!-- cache-busting -->
-<link rel="icon" href="/logo-comite-192.png" type="image/png">
-<link rel="apple-touch-icon" href="/logo-comite-180.png">
-<meta name="theme-color" content="#E30613">
-    <!-- Nome do app no ícone do iPhone -->
-<meta name="apple-mobile-web-app-title" content="Comitê de Manutenção • JDI">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- Ícones para iOS (180 é obrigatório, os outros são recomendados) -->
-<link rel="apple-touch-icon" href="/logo-comite-180.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/logo-comite-120.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/logo-comite-152.png">
-<link rel="apple-touch-icon" sizes="167x167" href="/logo-comite-167.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/logo-comite-180.png">
+    <!-- Manifest + tema -->
+    <link rel="manifest" href="/manifest.webmanifest?v=4" />
+    <meta name="theme-color" content="#E30613" />
 
-<!-- Opcional, mas bom para iOS PWA em tela cheia -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Ícones -->
+    <link rel="icon" href="/logo-comite-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo-comite-180.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/logo-comite-120.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/logo-comite-152.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/logo-comite-167.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo-comite-180.png" />
 
+    <!-- Nome do app no iOS -->
+    <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção • JDI" />
 
+    <title>Comitê de Manutenção • JDI</title>
   </head>
   <body>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-   <script>
-// 1) Desregistrar TODOS os SW deste domínio
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations()
-    .then(rs => Promise.all(rs.map(r => r.unregister())))
-    .catch(()=>{});
+    <div id="root"></div>
 
-  // 2) Limpar caches do SW antigo
-  if (window.caches?.keys) {
-    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
-  }
-}
-</script>
+    <!-- carrega o app -->
+    <script type="module" src="/src/main.tsx"></script>
 
-      .catch(err => console.log("SW registration failed:", err));
-  });
-}
-</script>
-<link rel="manifest" href="/manifest.webmanifest?v=10">
-<link rel="icon" href="/logo-comite-192.png?v=10" type="image/png">
-<link rel="apple-touch-icon" href="/logo-comite-180.png?v=10">
-
-<!-- se tiver outros icones ou CSS/JS, coloque ?v=10 também -->
-
+    <!-- registra o service worker (DEVE estar dentro de <script> e antes de </body>) -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .catch(err => console.log("SW registration failed:", err));
+        });
+      }
+    </script>
+  </body>
+</html>
