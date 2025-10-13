@@ -1,58 +1,33 @@
 // public/sw.js
-const CACHE_NAME = "jdi-cache-v2";
+const CACHE_NAME = 'jdi-cache-v7';
 
-// Liste aqui os arquivos "fixos" que quer pré-cachear
-const CORE_ASSETS = [
-  "/",
-  "/index.html",
-  "/manifest.webmanifest",
-  "/logo-femsa.png",
-  "/logo-comite.png"
-];
-
-// Instala: pré-cache dos assets core
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
-  );
+// Instalação: assume controle imediatamente
+self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Ativa: limpa caches antigos
-self.addEventListener("activate", (event) => {
+// Ativação: limpa caches antigos e assume clientes
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
-    )
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Estratégia: Stale-While-Revalidate para requisições GET do mesmo domínio.
-// Para assets gerados pelo Vite (/assets/...), ele salva em cache na 1ª vez.
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  if (req.method !== "GET") return;
+// Fetch
+self.addEventListener('fetch', event => {
+  // Para navegações (HTML), usa network-first
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
 
-  const url = new URL(req.url);
-  // Só cacheia do mesmo host
-  if (url.origin !== self.location.origin) return;
-
+  // Para os demais (assets, imagens, etc.), cache-first
   event.respondWith(
-    caches.match(req).then((cached) => {
-      const fetchPromise = fetch(req)
-        .then((networkResp) => {
-          const respClone = networkResp.clone();
-          // Guarda em cache apenas respostas OK
-          if (networkResp.ok) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, respClone));
-          }
-          return networkResp;
-        })
-        .catch(() => cached); // offline: usa cache se existir
-
-      // Se já houver cache, devolve ele imediatamente e atualiza em background.
-      return cached || fetchPromise;
-    })
+    caches.match(event.request).then(resp => resp || fetch(event.request))
   );
 });
+
