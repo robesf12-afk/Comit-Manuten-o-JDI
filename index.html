@@ -16,20 +16,12 @@
     <link rel="apple-touch-icon" href="/logo-femsa.png">
   </head>
   <body>
-    <div id="root"></div>
-    <!-- Vite/React -->
-    <script type="module" src="/src/main.tsx"></script>
-
-    <!-- registra o service worker -->
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js")
-            .catch((err) => console.log("SW registration failed:", err));
-        });
-      }
-    </script>
-  </body>
-</html>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js")
+      .catch(err => console.log("SW registration failed:", err));
+  });
+}
+</script>
 
