@@ -1,39 +1,60 @@
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+/* Topbar (modo claro) */
+.topbar{
+  position: sticky;     /* fixa no topo ao rolar, se quiser */
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  margin: 0 0 16px;
+}
 
-    <!-- Manifest + tema -->
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#E30613" />
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
 
-    <!-- iOS como app -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção • JDI" />
-    <link rel="apple-touch-icon" href="/logo-comite-180.png" />
+.logo-inline{
+  height: 26px;         /* ajusta como preferir */
+  width: auto;
+}
 
-    <title>Comitê de Manutenção • JDI</title>
+.topbar h1{
+  margin: 0;
+  font-weight: 800;
+  font-size: 22px;      /* título maior no mobile */
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
 
-    <style>
-      /* reset/cores simples pro modo claro */
-      :root{--brand:#e30613;--text:#111;--muted:#6b7280;--bg:#fff;--card:#fff;--border:#eee}
-      *{box-sizing:border-box}
-      html,body,#root{height:100%}
-      body{margin:0;font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";color:var(--text);background:var(--bg)}
-      .container{max-width:1100px;margin:0 auto;padding:16px 20px 32px}
-      header{display:flex;align-items:center;gap:12px;padding:10px 0 18px;border-bottom:1px solid var(--border);margin-bottom:18px}
-      header img{height:22px}
-      header h1{font-size:20px;margin:0;font-weight:700}
-      .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-      .card{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
-      .title{font-weight:700}
-      .desc{color:var(--muted);font-size:14px}
-      .actions{margin-top:auto}
-      .btn{display:inline-block;background:var(--brand);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:600;text-decoration:none}
-      footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
-    </style>
+.logo-femsa{
+  height: 22px;
+  width: auto;
+}
+
+/* Escalonamento por breakpoint */
+@media (min-width: 480px){
+  .topbar h1{ font-size: 24px; }
+  .logo-inline{ height: 28px; }
+  .logo-femsa{ height: 24px; }
+}
+@media (min-width: 768px){
+  .topbar h1{ font-size: 28px; }
+  .logo-inline{ height: 32px; }
+  .logo-femsa{ height: 28px; }
+}
+
   </head>
   <body>
     <div id="root"></div>
