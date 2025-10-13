@@ -1,15 +1,30 @@
-<!-- Manifest e ícones -->
-<link rel="manifest" href="/manifest.webmanifest?v=3" />
-<link rel="icon" href="/logo-comite-192.png" type="image/png" />
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- iOS -->
-<link rel="apple-touch-icon" href="/logo-comite-180.png" />
-<meta name="apple-mobile-web-app-title" content="Comitê de Manutenção • JDI" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<!-- Barra do iPhone padronzinha (sem dark): -->
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <!-- Manifest + cache-busting -->
+    <link rel="manifest" href="/manifest.webmanifest?v=4" />
 
-<!-- Tema claro fixo -->
-<meta name="theme-color" content="#ffffff" />
-<meta name="color-scheme" content="light" />
+    <!-- Tema claro fixo -->
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light" />
+
+    <!-- Ícone padrão e iOS -->
+    <link rel="icon" href="/logo-comite-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/logo-comite-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção • JDI" />
+
+    <title>Comitê de Manutenção • JDI</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- IMPORTANTE: só este script carrega o app -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 
