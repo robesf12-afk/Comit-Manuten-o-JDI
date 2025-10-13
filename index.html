@@ -1,27 +1,26 @@
 <!doctype html>
 <html lang="pt-BR">
  <head>
-  <meta charset="UTF-8" />
-  <!-- MUITO IMPORTANTE -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+ <!-- head -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#E30613" />
 
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <meta name="theme-color" content="#E30613" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Comitê de Manutenção • JDI" />
+<link rel="apple-touch-icon" href="/logo-comite-180.png" />
 
-  <!-- iOS (nome e ícone já podem ficar) -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção • JDI" />
-  <link rel="apple-touch-icon" href="/logo-comite-180.png" />
 </head>
 
 >
 
   </head>
   <body>
-    <div id="root"></div>
+  <!-- body -->
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
 
-    <!-- IMPORTANTE: só este script carrega o app -->
-    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
 
