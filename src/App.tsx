@@ -14,10 +14,23 @@ export default function App() {
 
   return (
     <div className="container">
-      <header>
-        <img src="/logo-femsa.png" alt="FEMSA" />
-        <h1>Comitê de Manutenção • JDI</h1>
-      </header>
+     <header className="topbar">
+  <div className="brand">
+    <img
+      src="/logo-comite.png"   // use o seu arquivo do comitê (PNG com fundo transparente)
+      alt="Comitê"
+      className="logo-inline"
+    />
+    <h1>Comitê de Manutenção • JDI</h1>
+  </div>
+
+  <img
+    src="/logo-femsa.png"      // seu logo FEMSA
+    alt="FEMSA"
+    className="logo-femsa"
+  />
+</header>
+
 
       <main className="grid">
         {links.map((l) => (
