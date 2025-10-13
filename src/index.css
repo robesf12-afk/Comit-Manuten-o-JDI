@@ -1,16 +1,25 @@
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "jsx": "react-jsx",
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "strict": true
-  },
-  "include": ["src"]
+:root{
+  --femsa-red:#E30613;
+  --femsa-red-dark:#C10510;
+  --text:#111;
+  --muted:#6b6b6b;
+  --bg:#fafafa;
+  --card:#fff;
+  --border:#e9e9e9;
 }
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.header{background:var(--femsa-red);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--femsa-red-dark)}
+.header img{height:38px}
+.header .title{font-size:20px;font-weight:700;line-height:1.2}
+.header .spacer{flex:1}
+.container{max-width:1080px;margin:24px auto 56px;padding:0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;transition:transform .15s,box-shadow .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.06);border-color:#ddd}
+.card h3{margin:0 0 8px;font-size:18px}
+.card p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.btn{display:inline-block;padding:10px 14px;background:var(--femsa-red);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}
+.btn:hover{background:var(--femsa-red-dark)}
+.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:24px}
