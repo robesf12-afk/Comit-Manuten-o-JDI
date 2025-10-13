@@ -12,3 +12,83 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+:root{
+  --brand: #E30613;     /* Vermelho FEMSA */
+  --on-brand: #ffffff;  /* Texto sobre o vermelho */
+}
+
+/* Reset básico */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #111;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* ===== App Bar ===== */
+.appbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: var(--brand);
+  color: var(--on-brand);
+
+  padding: 8px 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.15);
+}
+
+/* laterais (logos) */
+.appbar-side {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* título central */
+.appbar-title {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-weight: 800;
+
+  /* cresce um pouco em telas maiores, mas limita no mobile */
+  font-size: clamp(18px, 2.4vw + 10px, 26px);
+  line-height: 1.2;
+}
+
+/* imagens */
+.logo-femsa,
+.logo-comite {
+  max-height: 32px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* um pouquinho de respiro em telas maiores */
+@media (min-width: 640px) {
+  .appbar {
+    padding: 10px 16px;
+  }
+  .appbar-side {
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
+  }
+  .logo-femsa,
+  .logo-comite {
+    max-height: 36px;
+  }
+  .appbar-title {
+    font-size: 28px;
+  }
+}
