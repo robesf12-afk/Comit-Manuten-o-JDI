@@ -1,0 +1,13 @@
+{
+  "name": "Comitê de Manutenção • JDI",
+  "short_name": "Comitê JDI",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#E30613",
+  "icons": [
+    { "src": "/logo-femsa.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/logo-femsa.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
