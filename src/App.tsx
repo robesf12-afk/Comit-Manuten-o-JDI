@@ -1,7 +1,7 @@
-// src/App.tsx  (JS/JSX puro — sem tipos)
+// src/App.tsx — logos menores e título maior, sem dark mode
 
 export default function App() {
-  // TROQUE os href pelos seus links reais
+  // coloque seus links reais aqui
   const links = [
     { t: "DDM’s", d: "Documentos do DDM", href: "#" },
     { t: "Fechamentos (OKR)", d: "Pasta de Fechamentos", href: "#" },
@@ -11,51 +11,70 @@ export default function App() {
     { t: "Treinamentos", d: "Materiais e trilhas", href: "#" },
   ];
 
+  // altura da barra e dos logos
+  const BAR_H = 56;
+  const LOGO_H = 22;     // altura FEMSA
+  const LOGO_R_H = 26;   // altura logo do Comitê (direita)
+
   return (
     <>
       {/* ===== APP BAR ===== */}
       <header
         style={{
           display: "grid",
-          gridTemplateColumns: "56px 1fr 56px",
+          gridTemplateColumns: "40px 1fr 40px", // colunas mais estreitas para os logos
           alignItems: "center",
-          gap: 12,
-          padding: "12px 16px",
+          gap: 8,
+          padding: "8px 12px",
           background: "#d71920",
           color: "#fff",
           position: "sticky",
           top: 0,
           zIndex: 10,
+          height: BAR_H,
+          boxSizing: "border-box",
         }}
       >
-        {/* Logo FEMSA (esquerda) */}
+        {/* Logo FEMSA (esquerda) — altura fixa pequena */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-          <img src="/logo-femsa.png" alt="FEMSA" style={{ width: 42, height: 28, objectFit: "contain" }} />
+          <img
+            src="/logo-femsa.png?v=2"        // ?v=2 ajuda a burlar cache do PWA
+            alt="FEMSA"
+            style={{ height: LOGO_H, width: "auto", objectFit: "contain", display: "block" }}
+          />
         </div>
 
-        {/* Título central */}
+        {/* Título central (um pouco maior) */}
         <h1
           style={{
             margin: 0,
             textAlign: "center",
-            fontWeight: 700,
-            fontSize: "20px",
-            lineHeight: 1.2,
+            fontWeight: 800,
+            fontSize: 18,          // se quiser maior, suba para 20
+            lineHeight: 1.1,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
+          title="Comitê de Manutenção • JDI"
         >
           Comitê de Manutenção • JDI
         </h1>
 
-        {/* Logo Comitê (direita) */}
+        {/* Logo do Comitê (direita) — altura fixa pequena */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-          <img src="/logo-comite-180.png" alt="Comitê" style={{ width: 36, height: 36, objectFit: "contain", borderRadius: "50%" }} />
+          <img
+            src="/logo-comite-180.png?v=2"
+            alt="Comitê"
+            style={{ height: LOGO_R_H, width: "auto", objectFit: "contain", display: "block" }}
+          />
         </div>
       </header>
 
       {/* ===== CONTEÚDO ===== */}
       <main
         style={{
-          padding: "16px",
+          padding: 16,
           display: "grid",
           gap: 16,
           gridTemplateColumns: "1fr",
@@ -76,27 +95,3 @@ export default function App() {
           >
             <h2 style={{ margin: "0 0 6px 0", fontSize: 18, fontWeight: 700, color: "#111" }}>{l.t}</h2>
             <p style={{ margin: "0 0 12px 0", color: "#555" }}>{l.d}</p>
-
-            <a
-              href={l.href}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: "inline-block",
-                background: "#d71920",
-                color: "#fff",
-                textDecoration: "none",
-                padding: "8px 16px",
-                borderRadius: 10,
-                fontWeight: 700,
-              }}
-            >
-              Abrir
-            </a>
-          </article>
-        ))}
-      </main>
-    </>
-  );
-}
-
