@@ -1,5 +1,5 @@
 // public/sw.js
-const CACHE_NAME = 'jdi-cache-v7';
+const CACHE_NAME = 'jdi-cache-v8';
 
 // Instalação: assume controle imediatamente
 self.addEventListener('install', event => {
