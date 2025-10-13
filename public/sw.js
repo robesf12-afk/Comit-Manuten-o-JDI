@@ -1,5 +1,5 @@
 // public/sw.js
-const CACHE_NAME = "jdi-cache-v1";
+const CACHE_NAME = "jdi-cache-v2";
 
 // Liste aqui os arquivos "fixos" que quer pré-cachear
 const CORE_ASSETS = [
