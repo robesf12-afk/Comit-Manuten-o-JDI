@@ -1,76 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#d70000" />
-  <title>Comitê de Manutenção JDI</title>
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" href="./icons/icon-192.png" />
-  <link rel="stylesheet" href="./style.css" />
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo">🛠️</span>
-      <h1>Comitê de Manutenção</h1>
-    </div>
-    <button id="installBtn" class="btn" hidden>Instalar</button>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#d70000" />
+    <title>Comitê de Manutenção JDI</title>
 
-  <main class="container">
-    <section class="grid">
-      <!-- 1) REGISTRO DE REUNIÕES DE ABERTURA E PRESTAÇÃO DE CONTAS -->
-      <a class="card" id="linkAbertura" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon">📝</div>
-        <div class="card-body">
-          <h2>Formulário de Abertura</h2>
-          <p>Abra o fluxo inicial do comitê.</p>
-        </div>
-        <div class="card-cta">Abrir</div>
-      </a>
-
-      <!-- 2) Checklist (renomeado para Pós-Partida) -->
-      <a class="card" id="linkChecklistPartida" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon">✅</div>
-        <div class="card-body">
-          <h2>CHECKLIST PÓS PARTIDA</h2>
-          <p>CIP / SETUP / PCM / Grandes Manutenções.</p>
-        </div>
-        <div class="card-cta">Abrir</div>
-      </a>
-
-      <!-- 3) Registro de Abertura & Prestação de Contas -->
-      <a class="card" id="linkRegistroPrestacao" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon">🗂️</div>
-        <div class="card-body">
-          <h2>REGISTRO DE REUNIÕES DE ABERTURA DE PCM E PRESTAÇÃO DE CONTAS</h2>
-          <p>Reuniões de abertura de PCM e prestação de contas.</p>
-        </div>
-        <div class="card-cta">Abrir</div>
-      </a>
-
-      <!-- 4) OKR DE MANUTENÇÃO -->
-      <a class="card" id="linkOKR" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon">📊</div>
-        <div class="card-body">
-          <h2>OKR DE MANUTENÇÃO</h2>
-          <p>Consolidado dos fechametos dos OKR´s de Manutenção.</p>
-        </div>
-        <div class="card-cta">Abrir</div>
-      </a>
-
-      <!-- 5) DDM – Diálogo de Manutenção -->
-      <a class="card" id="linkDDM" target="_blank" rel="noopener noreferrer">
-        <div class="card-icon">🗣️</div>
-        <div class="card-body">
-          <h2>DDM – Diálogo de Manutenção</h2>
-          <p>Diálogos de Manutenção para as aberturas de PCM.</p>
-        </div>
-        <div class="card-cta">Abrir</div>
-      </a>
-
-      <!-- 6) ONE PAGER -->
-      <a class="card" id="linkOnePager" target="_blank" rel="noopener noreferrer">
-        <div class=
+    <!-- PWA (se estiver usando) -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon-192.png" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 
