@@ -7,7 +7,7 @@ export default function App() {
     {
       t: "DDM’s",
       d: "Diálogos de Manutenção",
-      href: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=PLIm1q",
+      href: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=NRFzcZ",
     },
     {
       t: "FECHAMENTOS (OKR DE MANUTENÇÃO)",
@@ -44,6 +44,18 @@ export default function App() {
       d: "Áreas reconhecidas por atingimento de meta",
       href:
         "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=JJ88Y3",
+    },
+    {
+      t: "REGISTRO DE REUNIÕES DE ABERTURA E PRESTAÇÃO DE CONTAS",
+      d: "Registre aqui a reunião de rotina, Abertura de PCM e Prestação de Contas",
+      href:
+        "https://forms.office.com/Pages/DesignPageV2.aspx?prevorigin=NeoPortalPage...&origin=NeoPortalPage&subpage=design&id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UNlJNM01FRTFFQ0NVUUVKMjdYRVdWUDNUUC4u&topview=Prefill",
+    },
+     {
+      t: "CHECK LIST DE PÓS PARTIDA",
+      d: "CIP/SETUP/PCM/GRANDES MANUTENÇÕES",
+      href:
+        "https://forms.office.com/Pages/DesignPageV2.aspx?prevorigin=NeoPortalPage...&origin=NeoPortalPage&subpage=design&id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UNFNCSkE3RjZON1M3NlFQWTgyTkc0MUFSWC4u&topview=Prefill",
     },
   ];
 
