@@ -1,18 +1,49 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#d70000" />
-    <title>Comitê de Manutenção JDI</title>
+:root{
+  --brand:#d70000; --ink:#111827; --muted:#6b7280; --bg:#fafafa; --card:#ffffff; --ring:rgba(215,0,0,.2);
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif; color:var(--ink); background:var(--bg)}
 
-    <!-- PWA (se estiver usando) -->
-    <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="icon" href="/icons/icon-192.png" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+.topbar{
+  position:sticky; top:0; z-index:10;
+  display:flex; align-items:center; gap:16px;
+  padding:16px 20px; background:var(--card); border-bottom:1px solid #e5e7eb;
+}
+.brand{display:flex; align-items:center; gap:10px}
+.logo-emoji{font-size:22px}
+h1{font-size:22px; margin:0}
 
+/* Logos à direita e com tamanho controlado */
+.logos{margin-left:auto; display:flex; align-items:center; gap:12px}
+.logos img{height:28px; width:auto}
+@media (min-width: 992px){
+  .logos img{height:34px}
+}
+
+.container{max-width:1100px; margin:24px auto; padding:0 16px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px}
+
+.card{
+  display:grid; grid-template-columns:56px 1fr auto; align-items:center; gap:12px;
+  padding:16px; border-radius:16px; background:var(--card); border:1px solid #e5e7eb;
+  text-decoration:none; color:inherit; box-shadow:0 1px 2px rgba(0,0,0,.04);
+  transition:transform .08s, box-shadow .08s, border-color .08s;
+}
+.card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.08); border-color:var(--ring)}
+.card-icon{font-size:28px}
+
+/* Títulos em MAIÚSCULO */
+.card-body h2{
+  font-size:16px; margin:0 0 4px 0; text-transform:uppercase;
+}
+.card-body p{margin:0; color:var(--muted); font-size:13px}
+
+/* Botão “Abrir” normal */
+.card-cta{
+  font-weight:700; background:var(--brand); color:#fff; padding:10px 16px; border-radius:12px;
+  text-transform:none; letter-spacing:.2px;
+}
+
+.footer{padding:24px; text-align:center; color:var(--muted)}
+.btn{padding:8px 12px; border-radius:12px; border:1px solid #e5e7eb; background:#fff; cursor:pointer}
