@@ -10,10 +10,10 @@ export default function App() {
           <h1>Comitê de Manutenção • JDI</h1>
         </div>
 
-        {/* Logos no canto superior direito */}
+        {/* Logos à direita */}
         <div className="logos">
           <img src="/logo-comite.png" alt="Comitê de Manutenção" />
-          <img src="/logo-coca.png" alt="Coca-Cola FEMSA" />
+          <img src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
 
         <button id="installBtn" className="btn" hidden>
@@ -36,6 +36,18 @@ export default function App() {
               <h2>DDM’s</h2>
               <p>Diálogos de Manutenção</p>
             </div>
+            <div className="card-cta">Abrir</div>
+          </a>
 
-             
-             
+          {/* Fechamentos (OKR) — cole seu link quando tiver */}
+          <a
+            className="card"
+            id="linkOKR"
+            href={"COLAR_AQUI_LINK_OKR"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">📊</div>
+            <div className="card-body">
+              <h2>Fechamentos (OKR)</h2>
+
