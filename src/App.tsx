@@ -1,154 +1,200 @@
 // src/App.tsx
-
-type LinkItem = { t: string; d: string; href: string };
+import React from "react";
 
 export default function App() {
-  const links: LinkItem[] = [
-    {
-      t: "DDM’s",
-      d: "Diálogos de Manutenção",
-      href: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=NRFzcZ",
-    },
-    {
-      t: "FECHAMENTOS (OKR DE MANUTENÇÃO)",
-      d: "Pasta de Fechamentos",
-      href:
-        "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=8h6wvS",
-    },
-    {
-      t: "INFORMATIVOS",
-      d: "Informativos sobre as rotinas de manutenção",
-      href:
-        "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=asEOiD",
-    },
-    {
-      t: "ONE PAGER",
-      d: "Resumo dos principais indicadores de manutenção",
-      href:
-        "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=l95Zsy",
-    },
-    {
-      t: "PAPÉIS & RESPONSABILIDADES",
-      d: "Papéis e resoponsabilidades conforme MOM",
-      href:
-        "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=hsdeV2",
-    },
-    {
-      t: "TREINAMENTOS",
-      d: "Treinamentos diversos sobre as rotinas de manutenção",
-      href:
-        "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=oDC8zN",
-    }, // <- ESTA VÍRGULA É IMPORTANTE
-    {
-      t: "RECONHECIMENTOS",
-      d: "Áreas reconhecidas por atingimento de meta",
-      href:
-        "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=JJ88Y3",
-    },
-    {
-      t: "REGISTRO DE REUNIÕES DE ABERTURA E PRESTAÇÃO DE CONTAS",
-      d: "Registre aqui a reunião de rotina, Abertura de PCM e Prestação de Contas",
-      href:
-        "https://forms.office.com/Pages/DesignPageV2.aspx?prevorigin=NeoPortalPage...&origin=NeoPortalPage&subpage=design&id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UNlJNM01FRTFFQ0NVUUVKMjdYRVdWUDNUUC4u&topview=Prefill",
-    },
-     {
-      t: "CHECK LIST DE PÓS PARTIDA",
-      d: "CIP/SETUP/PCM/GRANDES MANUTENÇÕES",
-      href:
-        "https://forms.office.com/Pages/DesignPageV2.aspx?prevorigin=NeoPortalPage...&origin=NeoPortalPage&subpage=design&id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UNFNCSkE3RjZON1M3NlFQWTgyTkc0MUFSWC4u&topview=Prefill",
-    },
-  ];
-
-  const openExternal = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
-    try {
-      const w = window.open(url, "_blank");
-      // Se o navegador bloqueou popup ou estamos em PWA, faz fallback
-      if (!w || w.closed) {
-        e.preventDefault();
-        window.location.href = url;
-      }
-    } catch {
-      // Qualquer erro: garante a navegação
-      e.preventDefault();
-      window.location.href = url;
-    }
-  };
-
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
-        background: "#fff",
-        color: "#111",
-        minHeight: "100vh",
-      }}
-    >
-      <header
-        style={{
-          background: "#d71920",
-          color: "#fff",
-          padding: "20px 16px",
-          textAlign: "center",
-          fontWeight: 700,
-          fontSize: 20,
-        }}
-      >
-        Comitê de Manutenção • JDI
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <span className="logo">🛠️</span>
+          <h1>Comitê de Manutenção</h1>
+        </div>
+        <button id="installBtn" className="btn" hidden>
+          Instalar
+        </button>
       </header>
 
-      <main style={{ maxWidth: 980, margin: "0 auto", padding: "16px" }}>
-        <h2 style={{ margin: "16px 0", fontSize: 18, fontWeight: 700 }}>Acesso rápido</h2>
+      <main className="container">
+        <section className="grid">
+          {/* 1) Formulário de Abertura  — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          <a
+            className="card"
+            id="linkAbertura"
+            href={
+              "COLAR_AQUI_URL_DE_ABERTURA" // https://forms.office.com/r/mt0JTBJiK6?origin=lprLink
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">📝</div>
+            <div className="card-body">
+              <h2>Formulário de Abertura</h2>
+              <p>Abra o fluxo inicial do comitê.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-            gap: 16,
-          }}
-        >
-          {links.map((l) => (
-            <article
-              key={l.t}
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                boxShadow: "0 1px 3px rgba(0,0,0,.08)",
-                border: "1px solid #eee",
-                padding: 16,
-                display: "flex",
-                flexDirection: "column",
-                gap: 12,
-              }}
-            >
-              <div style={{ fontWeight: 700 }}>{l.t}</div>
-              <div style={{ color: "#555", fontSize: 14 }}>{l.d}</div>
+          {/* 2) Checklist — RENOMEADO e LINK ATUALIZADO (seu pedido) */}
+          <a
+            className="card"
+            id="linkChecklistPartida"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">✅</div>
+            <div className="card-body">
+              <h2>Checklist Pós-Partida</h2>
+              <p>CIP / SETUP / PCM / Grandes Manutenções.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
 
-              <a
-                href={l.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn"
-                onClick={(e) => openExternal(e, l.href)}
-                style={{
-                  alignSelf: "flex-start",
-                  background: "#d71920",
-                  color: "#fff",
-                  textDecoration: "none",
-                  padding: "8px 16px",
-                  borderRadius: 10,
-                  fontWeight: 700,
-                }}
-              >
-                Abrir
-              </a>
-            </article>
-          ))}
-        </div>
+          {/* 3) Registro de Abertura & Prestação — NOVO (seu pedido) */}
+          <a
+            className="card"
+            id="linkRegistroPrestacao"
+            href="https://forms.office.com/r/mt0JTBJiK6?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">🗂️</div>
+            <div className="card-body">
+              <h2>Registro de Abertura & Prestação</h2>
+              <p>Reuniões de abertura de PCM e prestação de contas.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
 
-        <p style={{ color: "#777", fontSize: 12, marginTop: 24 }}>
-          © 2025 Comitê de Manutenção — FEMSA
-        </p>
+          {/* 4) OKR de Manutenção — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          <a
+            className="card"
+            id="linkOKR"
+            href={
+              "COLAR_AQUI_LINK_OKR" // https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">📊</div>
+            <div className="card-body">
+              <h2>OKR de Manutenção</h2>
+              <p>Indicadores e metas.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* 5) DDM — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          <a
+            className="card"
+            id="linkDDM"
+            href={
+              "COLAR_AQUI_LINK_DDM" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">🗣️</div>
+            <div className="card-body">
+              <h2>DDM – Diálogo de Manutenção</h2>
+              <p>Guias e registros.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* 6) One-Pager — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          <a
+            className="card"
+            id="linkOnePager"
+            href={
+              "COLAR_AQUI_LINK_ONEPAGER" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">📄</div>
+            <div className="card-body">
+              <h2>One-Pager</h2>
+              <p>Resumo executivo.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* 7) Treinamentos — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          <a
+            className="card"
+            id="linkTreinamentos"
+            href={
+              "COLAR_AQUI_LINK_TREINAMENTOS" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">🎯</div>
+            <div className="card-body">
+              <h2>Treinamentos de Manutenção</h2>
+              <p>Calendário e conteúdos.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* 8) Papéis & Responsabilidades — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          <a
+            className="card"
+            id="linkPapeis"
+            href={
+              "COLAR_AQUI_LINK_PAPEIS" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">🧭</div>
+            <div className="card-body">
+              <h2>Papéis & Responsabilidades</h2>
+              <p>Quem faz o quê.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* 9) Informativos — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          <a
+            className="card"
+            id="linkInformativos"
+            href={
+              "COLAR_AQUI_LINK_INFORMATIVOS" //https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">ℹ️</div>
+            <div className="card-body">
+              <h2>Informativos</h2>
+              <p>Comunicados e avisos.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* 10) Reconhecimentos — NOVO e no FINAL (seu pedido) */}
+          <a
+            className="card"
+            id="linkReconhecimentos"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">🏅</div>
+            <div className="card-body">
+              <h2>Reconhecimentos</h2>
+              <p>Destaques, premiados e contribuições.</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+        </section>
       </main>
+
+      <footer className="footer">
+        <small>© 2025 Comitê de Manutenção JDI – PWA</small>
+      </footer>
     </div>
   );
 }
