@@ -11,13 +11,15 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   padding:16px 20px; background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 .brand{display:flex; align-items:center; gap:10px}
-.logo-emoji{font-size:22px}
+.logo-emoji{font-size:22px} /* não usada mais, pode ficar */
+.brand-mark{height:28px; width:auto; border-radius:50%}
 h1{font-size:22px; margin:0}
 
 /* Logos à direita e com tamanho controlado */
 .logos{margin-left:auto; display:flex; align-items:center; gap:12px}
 .logos img{height:28px; width:auto}
 @media (min-width: 992px){
+  .brand-mark{height:34px}
   .logos img{height:34px}
 }
 
@@ -33,7 +35,7 @@ h1{font-size:22px; margin:0}
 .card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.08); border-color:var(--ring)}
 .card-icon{font-size:28px}
 
-/* Títulos em MAIÚSCULO */
+/* TÍTULOS EM MAIÚSCULO */
 .card-body h2{
   font-size:16px; margin:0 0 4px 0; text-transform:uppercase;
 }
@@ -47,4 +49,3 @@ h1{font-size:22px; margin:0}
 
 .footer{padding:24px; text-align:center; color:var(--muted)}
 .btn{padding:8px 12px; border-radius:12px; border:1px solid #e5e7eb; background:#fff; cursor:pointer}
-
