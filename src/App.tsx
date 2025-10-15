@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from "react";
 
 export default function App() {
@@ -10,7 +9,6 @@ export default function App() {
           <h1>Comitê de Manutenção • JDI</h1>
         </div>
 
-        {/* Logos à direita */}
         <div className="logos">
           <img src="/logo-comite.png" alt="Comitê de Manutenção" />
           <img src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
@@ -23,7 +21,6 @@ export default function App() {
 
       <main className="container">
         <section className="grid">
-          {/* DDM’s */}
           <a
             className="card"
             id="linkDDM"
@@ -39,7 +36,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Fechamentos (OKR) — cole seu link quando tiver */}
           <a
             className="card"
             id="linkOKR"
@@ -55,7 +51,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Informativos */}
           <a
             className="card"
             id="linkInformativos"
@@ -71,7 +66,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* One Pager */}
           <a
             className="card"
             id="linkOnePager"
@@ -87,7 +81,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Papéis & Responsabilidades */}
           <a
             className="card"
             id="linkPapeis"
@@ -103,7 +96,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Treinamentos */}
           <a
             className="card"
             id="linkTreinamentos"
@@ -119,7 +111,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Checklist Pós-Partida — LINK CORRIGIDO */}
+          {/* Links dos forms corrigidos */}
           <a
             className="card"
             id="linkChecklistPartida"
@@ -135,7 +127,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Registro de Reuniões de Abertura de PCM e Prestação de Contas — LINK CORRIGIDO */}
           <a
             className="card"
             id="linkRegistroPrestacao"
@@ -145,15 +136,12 @@ export default function App() {
           >
             <div className="card-icon">🗂️</div>
             <div className="card-body">
-              <h2>
-                Registro de Reuniões de Abertura de PCM e Prestação de Contas
-              </h2>
+              <h2>Registro de Reuniões de Abertura de PCM e Prestação de Contas</h2>
               <p>Aberturas de PCM e Prestação de Contas</p>
             </div>
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Reconhecimentos */}
           <a
             className="card"
             id="linkReconhecimentos"
