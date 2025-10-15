@@ -1,13 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import "./index.css"; // <<< ESSENCIAL: importa o CSS da aplicação
 
-const root = document.getElementById("root");
-if (!root) {
-  throw new Error("Elemento #root não encontrado no index.html");
-}
-
-ReactDOM.createRoot(root).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
