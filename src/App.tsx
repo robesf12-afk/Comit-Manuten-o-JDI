@@ -16,13 +16,11 @@ export default function App() {
 
       <main className="container">
         <section className="grid">
-          {/* 1) Formulário de Abertura  — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          {/* 1) Formulário de Abertura — deixe o link correto que você usa */}
           <a
             className="card"
             id="linkAbertura"
-            href={
-              "COLAR_AQUI_URL_DE_ABERTURA" // https://forms.office.com/r/mt0JTBJiK6?origin=lprLink
-            }
+            href={"COLAR_AQUI_URL_DE_ABERTURA"}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -34,7 +32,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 2) Checklist — RENOMEADO e LINK ATUALIZADO (seu pedido) */}
+          {/* 2) Checklist — RENOMEADO e LINK ATUALIZADO */}
           <a
             className="card"
             id="linkChecklistPartida"
@@ -50,7 +48,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 3) Registro de Abertura & Prestação — NOVO (seu pedido) */}
+          {/* 3) Registro de Abertura & Prestação — NOVO */}
           <a
             className="card"
             id="linkRegistroPrestacao"
@@ -66,13 +64,11 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 4) OKR de Manutenção — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          {/* 4) OKR de Manutenção — mantém como estava até você confirmar o link */}
           <a
             className="card"
             id="linkOKR"
-            href={
-              "COLAR_AQUI_LINK_OKR" // https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink
-            }
+            href={"COLAR_AQUI_LINK_OKR"}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -84,12 +80,12 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 5) DDM — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          {/* 5) DDM — link preenchido conforme seu comentário */}
           <a
             className="card"
             id="linkDDM"
             href={
-              "COLAR_AQUI_LINK_DDM" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD
+              "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD"
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -102,12 +98,12 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 6) One-Pager — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          {/* 6) One-Pager — link preenchido conforme seu comentário */}
           <a
             className="card"
             id="linkOnePager"
             href={
-              "COLAR_AQUI_LINK_ONEPAGER" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1
+              "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1"
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -120,12 +116,12 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 7) Treinamentos — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          {/* 7) Treinamentos — link preenchido conforme seu comentário */}
           <a
             className="card"
             id="linkTreinamentos"
             href={
-              "COLAR_AQUI_LINK_TREINAMENTOS" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70
+              "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70"
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -138,12 +134,12 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 8) Papéis & Responsabilidades — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          {/* 8) Papéis & Responsabilidades — link preenchido conforme seu comentário */}
           <a
             className="card"
             id="linkPapeis"
             href={
-              "COLAR_AQUI_LINK_PAPEIS" // https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu
+              "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu"
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -156,12 +152,12 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 9) Informativos — MANTENHA O LINK QUE VOCÊ JÁ USAVA */}
+          {/* 9) Informativos — link preenchido conforme seu comentário */}
           <a
             className="card"
             id="linkInformativos"
             href={
-              "COLAR_AQUI_LINK_INFORMATIVOS" //https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y
+              "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y"
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -174,7 +170,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 10) Reconhecimentos — NOVO e no FINAL (seu pedido) */}
+          {/* 10) Reconhecimentos — NOVO e por último */}
           <a
             className="card"
             id="linkReconhecimentos"
