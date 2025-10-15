@@ -1,14 +1,22 @@
+
+       // src/App.tsx
 import React from "react";
 
 export default function App() {
   return (
     <div className="app">
       <header className="topbar">
+        {/* Marca à esquerda: LOGO DO COMITÊ + título */}
         <div className="brand">
-          <span className="logo-emoji">🛠️</span>
+          <img
+            className="brand-mark"
+            src="/logo-comite.png"
+            alt="Comitê de Manutenção"
+          />
           <h1>Comitê de Manutenção • JDI</h1>
         </div>
 
+        {/* Logos à direita (mantidas) */}
         <div className="logos">
           <img src="/logo-comite.png" alt="Comitê de Manutenção" />
           <img src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
@@ -111,7 +119,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Links dos forms corrigidos */}
           <a
             className="card"
             id="linkChecklistPartida"
@@ -165,3 +172,4 @@ export default function App() {
     </div>
   );
 }
+
