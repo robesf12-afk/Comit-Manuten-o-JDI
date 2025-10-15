@@ -1,76 +1,57 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-/* Topbar (modo claro) */
-.topbar{
-  position: sticky;     /* fixa no topo ao rolar, se quiser */
-  top: 0;
-  z-index: 10;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  margin: 0 0 16px;
-}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#d70000" />
+  <title>Comitê de Manutenção</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🛠️</span>
+      <h1>Comitê de Manutenção</h1>
+    </div>
+    <button id="installBtn" class="btn" hidden>Instalar</button>
+  </header>
 
-.brand{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
+  <main class="container">
+    <section class="grid">
+      <a class="card" id="linkAbertura" target="_blank" rel="noopener noreferrer">
+        <div class="card-icon">📝</div>
+        <div class="card-body">
+          <h2>Formulário de Abertura</h2>
+          <p>Abra o fluxo inicial do comitê.</p>
+        </div>
+        <div class="card-cta">Abrir</div>
+      </a>
 
-.logo-inline{
-  height: 26px;         /* ajusta como preferir */
-  width: auto;
-}
+      <a class="card" id="linkChecklistPartida" target="_blank" rel="noopener noreferrer">
+        <div class="card-icon">✅</div>
+        <div class="card-body">
+          <h2>Checklist de Partida</h2>
+          <p>Checklist rápido antes do início.</p>
+        </div>
+        <div class="card-cta">Abrir</div>
+      </a>
+    </section>
+  </main>
 
-.topbar h1{
-  margin: 0;
-  font-weight: 800;
-  font-size: 22px;      /* título maior no mobile */
-  line-height: 1.1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--text);
-}
+  <footer class="footer">
+    <small>© 2025 Comitê de Manutenção – PWA</small>
+  </footer>
 
-.logo-femsa{
-  height: 22px;
-  width: auto;
-}
-
-/* Escalonamento por breakpoint */
-@media (min-width: 480px){
-  .topbar h1{ font-size: 24px; }
-  .logo-inline{ height: 28px; }
-  .logo-femsa{ height: 24px; }
-}
-@media (min-width: 768px){
-  .topbar h1{ font-size: 28px; }
-  .logo-inline{ height: 32px; }
-  .logo-femsa{ height: 28px; }
-}
-
-  </head>
-  <body>
-    <div id="root"></div>
-
-    <script type="module" src="/src/main.tsx"></script>
-
-    <!-- service worker seguro -->
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js")
-            .catch((err) => console.log("SW registration failed:", err));
-        });
-      }
-    </script>
-  </body>
+  <script src="./app.js" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(console.error);
+      });
+    }
+  </script>
+</body>
 </html>
 
