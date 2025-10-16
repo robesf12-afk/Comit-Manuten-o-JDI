@@ -1,12 +1,11 @@
 // public/sw.js
-// Aumente a versão sempre que trocar ícone/manifest para forçar atualização
-const CACHE_VERSION = "v8";
+const CACHE_VERSION = 'v10';
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
