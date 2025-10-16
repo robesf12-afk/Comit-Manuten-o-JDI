@@ -8,23 +8,27 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 .topbar{
   position:sticky; top:0; z-index:10;
   display:flex; align-items:center; gap:16px;
-  padding:16px 20px; background:var(--card); border-bottom:1px solid #e5e7eb;
+  /* traz todo o conjunto mais para a ESQUERDA */
+  padding:12px 20px 16px 12px; 
+  background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 
-/* Esquerda: logo do comitê maior + tarja vermelha do título (estilo botão) */
-.brand{display:flex; align-items:center; gap:14px}
-.brand-mark{height:56px; width:auto; border-radius:50%}
+/* Esquerda: logo do comitê + tarja vermelha */
+.brand{display:flex; align-items:center; gap:10px}
+.brand-mark{height:64px; width:auto; border-radius:50%}
+/* tarja vermelha estilo botão, em MAIÚSCULO */
 .brand-title{
   margin:0;
   background:var(--brand);
   color:#fff;
   font-weight:800;
-  padding:10px 18px;          /* altura/estética próximas do botão Abrir */
-  border-radius:12px;         /* mesmo raio do botão */
+  padding:10px 18px;           /* mesma “altura” do botão Abrir */
+  border-radius:12px;
   line-height:1;
   display:inline-flex;
   align-items:center;
   white-space:nowrap;
+  text-transform:uppercase;     /* <-- MAIÚSCULO */
 }
 
 /* Direita: apenas FEMSA */
@@ -32,10 +36,11 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 .logos img{height:34px; width:auto}
 
 @media (min-width: 992px){
-  .brand-mark{height:64px}
+  .brand-mark{height:70px}
   .logos img{height:38px}
 }
 
+/* Conteúdo */
 .container{max-width:1100px; margin:24px auto; padding:0 16px}
 .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px}
 
@@ -58,6 +63,23 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 .card-cta{
   font-weight:700; background:var(--brand); color:#fff; padding:10px 16px; border-radius:12px;
   text-transform:none; letter-spacing:.2px;
+}
+
+/* ===== Melhorias de leitura no CELULAR ===== */
+@media (max-width: 480px){
+  /* deixa tudo um pouco maior */
+  .brand-mark{height:72px}
+  .brand-title{ padding:12px 20px; font-size:18px }   /* tarja mais legível */
+  .container{ padding:0 14px }
+
+  .card{
+    grid-template-columns:52px 1fr auto;
+    padding:18px;
+  }
+  .card-icon{ font-size:30px }
+  .card-body h2{ font-size:18px }
+  .card-body p{ font-size:14px }
+  .card-cta{ padding:12px 18px }                      /* botão maior */
 }
 
 .footer{padding:24px; text-align:center; color:var(--muted)}
