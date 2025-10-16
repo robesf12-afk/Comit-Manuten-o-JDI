@@ -18,29 +18,31 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 
-/* Esquerda: logo do comitê + tarja vermelha (ENCOSTADO) */
+/* Esquerda: logo do comitê + tarja (ENCOSTADO) */
 .brand{display:flex; align-items:center; gap:0}
-.brand-mark{height:var(--logo-size); width:auto; border-radius:50%}
+.brand-mark{
+  height:var(--logo-size); width:auto; border-radius:50%;
+  margin-right:-2px;                 /* “come” um pouquinho a tarja */
+}
 
-/* Tarja – estilo “Abrir”, responsiva, SEMPRE MAIÚSCULO + colada no logo */
+/* Tarja — estilo “Abrir”, responsiva, MAIÚSCULA */
 .brand-title{
   margin:0;
   background:var(--brand);
   color:#fff;
   font-weight:800;
   font-size:var(--title-font);
-  /* reduzimos o acolchoamento à esquerda e puxamos um pouquinho para “entrar” no logo */
   padding:var(--title-pad-y) var(--title-pad-x);
-  padding-left:12px;          /* ↓ cola mais no logo */
-  margin-left:-6px;           /* sobrepõe levemente a borda arredondada */
+  padding-left:8px;                  /* menos espaço à esquerda */
+  margin-left:-12px;                 /* puxa por cima do logo */
   border-radius:12px;
   line-height:1.05;
   display:inline-flex;
   align-items:center;
   white-space:normal;
+  text-transform:uppercase !important;
 }
-
-/* força MAIÚSCULO com alta especificidade */
+/* reforço de especificidade */
 .topbar .brand .brand-title{ text-transform:uppercase !important; }
 
 /* Direita: apenas FEMSA */
@@ -79,7 +81,7 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
     --title-pad-x: 16px;
   }
   .brand{ gap:0 }
-  .brand-title{ padding-left:10px; margin-left:-4px }  /* encostado no mobile */
+  .brand-title{ padding-left:8px; margin-left:-10px }  /* encostado no mobile */
   .container{ padding:0 14px }
 
   .card{
@@ -94,4 +96,3 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 
 .footer{padding:24px; text-align:center; color:var(--muted)}
 .btn{padding:8px 12px; border-radius:12px; border:1px solid #e5e7eb; background:#fff; cursor:pointer}
-
