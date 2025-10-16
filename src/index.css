@@ -11,15 +11,17 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   padding:16px 20px; background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 .brand{display:flex; align-items:center; gap:10px}
-.logo-emoji{font-size:22px} /* não usada mais, pode ficar */
-.brand-mark{height:28px; width:auto; border-radius:50%}
+
+/* LOGO à esquerda um pouquinho maior */
+.brand-mark{height:34px; width:auto; border-radius:50%}
 h1{font-size:22px; margin:0}
 
-/* Logos à direita e com tamanho controlado */
+/* À direita fica só a FEMSA */
 .logos{margin-left:auto; display:flex; align-items:center; gap:12px}
 .logos img{height:28px; width:auto}
+
 @media (min-width: 992px){
-  .brand-mark{height:34px}
+  .brand-mark{height:40px}
   .logos img{height:34px}
 }
 
