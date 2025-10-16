@@ -5,7 +5,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        {/* Esquerda: LOGO maior + título dentro de tarja vermelha */}
+        {/* Esquerda: LOGO do Comitê maior + título em tarja vermelha */}
         <div className="brand">
           <img
             className="brand-mark"
@@ -170,4 +170,5 @@ export default function App() {
     </div>
   );
 }
+
 
