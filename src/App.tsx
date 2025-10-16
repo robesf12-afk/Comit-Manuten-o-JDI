@@ -44,11 +44,11 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Fechamentos (OKR) */}
+          {/*  OKR DE MANUTENÇÃO (FECHAMENTOS) */}
           <a
             className="card"
             id="linkOKR"
-            href={"COLAR_AQUI_LINK_OKR"}
+            href={"https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=UO0tl1"}
             target="_blank"
             rel="noopener noreferrer"
           >
