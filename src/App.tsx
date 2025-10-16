@@ -1,22 +1,21 @@
-
-  // src/App.tsx
+// src/App.tsx
 import React from "react";
 
 export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        {/* Marca à esquerda: LOGO DO COMITÊ + título */}
+        {/* Esquerda: LOGO maior + título dentro de tarja vermelha */}
         <div className="brand">
           <img
             className="brand-mark"
             src="/logo-comite.png"
             alt="Comitê de Manutenção"
           />
-          <h1>Comitê de Manutenção • JDI</h1>
+          <h1 className="brand-title">Comitê de Manutenção • JDI</h1>
         </div>
 
-        {/* À direita: somente logo FEMSA */}
+        {/* Direita: somente FEMSA */}
         <div className="logos">
           <img src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
@@ -28,7 +27,6 @@ export default function App() {
 
       <main className="container">
         <section className="grid">
-          {/* DDM’s */}
           <a
             className="card"
             id="linkDDM"
@@ -44,7 +42,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Fechamentos (OKR) — substitua quando tiver o link final */}
           <a
             className="card"
             id="linkOKR"
@@ -60,7 +57,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Informativos */}
           <a
             className="card"
             id="linkInformativos"
@@ -76,7 +72,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* One Pager */}
           <a
             className="card"
             id="linkOnePager"
@@ -92,7 +87,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Papéis & Responsabilidades */}
           <a
             className="card"
             id="linkPapeis"
@@ -108,7 +102,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Treinamentos */}
           <a
             className="card"
             id="linkTreinamentos"
@@ -124,7 +117,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Checklist Pós-Partida — LINK OK */}
           <a
             className="card"
             id="linkChecklistPartida"
@@ -140,7 +132,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Registro de Reuniões de Abertura de PCM e Prestação de Contas — LINK OK */}
           <a
             className="card"
             id="linkRegistroPrestacao"
@@ -156,7 +147,6 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* Reconhecimentos */}
           <a
             className="card"
             id="linkReconhecimentos"
