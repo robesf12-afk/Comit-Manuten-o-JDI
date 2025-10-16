@@ -1,5 +1,11 @@
 :root{
   --brand:#d70000; --ink:#111827; --muted:#6b7280; --bg:#fafafa; --card:#ffffff; --ring:rgba(215,0,0,.2);
+
+  /* Tamanhos fluídos para topo */
+  --logo-size: clamp(64px, 8vw, 80px);                 /* ↑ maior no desktop */
+  --title-font: clamp(18px, 2.2vw + 6px, 28px);        /* tarja */
+  --title-pad-y: clamp(8px, 1.2vw, 12px);
+  --title-pad-x: clamp(14px, 2vw, 22px);
 }
 *{box-sizing:border-box}
 html,body,#root{height:100%}
@@ -8,37 +14,33 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 .topbar{
   position:sticky; top:0; z-index:10;
   display:flex; align-items:center; gap:16px;
-  /* traz todo o conjunto mais para a ESQUERDA */
-  padding:12px 20px 16px 12px; 
+  padding:12px 20px 16px 12px;   /* puxa um pouco para a esquerda */
   background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 
 /* Esquerda: logo do comitê + tarja vermelha */
 .brand{display:flex; align-items:center; gap:10px}
-.brand-mark{height:64px; width:auto; border-radius:50%}
-/* tarja vermelha estilo botão, em MAIÚSCULO */
+.brand-mark{height:var(--logo-size); width:auto; border-radius:50%}
+
+/* Tarja – estilo “Abrir”, responsiva */
 .brand-title{
   margin:0;
   background:var(--brand);
   color:#fff;
   font-weight:800;
-  padding:10px 18px;           /* mesma “altura” do botão Abrir */
+  font-size:var(--title-font);
+  padding:var(--title-pad-y) var(--title-pad-x);
   border-radius:12px;
-  line-height:1;
+  line-height:1.05;
   display:inline-flex;
   align-items:center;
-  white-space:nowrap;
-  text-transform:uppercase;     /* <-- MAIÚSCULO */
+  /* Permite quebrar no mobile para não ficar “espremido” */
+  white-space:normal;
 }
 
 /* Direita: apenas FEMSA */
 .logos{margin-left:auto; display:flex; align-items:center; gap:12px}
 .logos img{height:34px; width:auto}
-
-@media (min-width: 992px){
-  .brand-mark{height:70px}
-  .logos img{height:38px}
-}
 
 /* Conteúdo */
 .container{max-width:1100px; margin:24px auto; padding:0 16px}
@@ -53,23 +55,25 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 .card:hover{transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.08); border-color:var(--ring)}
 .card-icon{font-size:28px}
 
-/* TÍTULOS EM MAIÚSCULO */
-.card-body h2{
-  font-size:16px; margin:0 0 4px 0; text-transform:uppercase;
-}
-.card-body p{margin:0; color:var(--muted); font-size:13px}
+/* Títulos dos cards em MAIÚSCULO */
+.card-body h2{ font-size:16px; margin:0 0 4px; text-transform:uppercase; }
+.card-body p { margin:0; color:var(--muted); font-size:13px; }
 
 /* Botão “Abrir” */
 .card-cta{
-  font-weight:700; background:var(--brand); color:#fff; padding:10px 16px; border-radius:12px;
-  text-transform:none; letter-spacing:.2px;
+  font-weight:700; background:var(--brand); color:#fff;
+  padding:10px 16px; border-radius:12px; text-transform:none; letter-spacing:.2px;
 }
 
-/* ===== Melhorias de leitura no CELULAR ===== */
+/* ===== Celular: melhora de legibilidade e topo mais confortável ===== */
 @media (max-width: 480px){
-  /* deixa tudo um pouco maior */
-  .brand-mark{height:72px}
-  .brand-title{ padding:12px 20px; font-size:18px }   /* tarja mais legível */
+  :root{
+    --logo-size: clamp(68px, 16vw, 76px);     /* ↑ um pouco maior no mobile */
+    --title-font: clamp(17px, 4.5vw, 20px);
+    --title-pad-y: 10px;
+    --title-pad-x: 16px;
+  }
+  .brand{ gap:8px }
   .container{ padding:0 14px }
 
   .card{
@@ -78,8 +82,8 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   }
   .card-icon{ font-size:30px }
   .card-body h2{ font-size:18px }
-  .card-body p{ font-size:14px }
-  .card-cta{ padding:12px 18px }                      /* botão maior */
+  .card-body p { font-size:14px }
+  .card-cta   { padding:12px 18px }
 }
 
 .footer{padding:24px; text-align:center; color:var(--muted)}
