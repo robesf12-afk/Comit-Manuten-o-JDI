@@ -2,8 +2,8 @@
   --brand:#d70000; --ink:#111827; --muted:#6b7280; --bg:#fafafa; --card:#ffffff; --ring:rgba(215,0,0,.2);
 
   /* Tamanhos fluídos para topo */
-  --logo-size: clamp(64px, 8vw, 80px);                 /* ↑ maior no desktop */
-  --title-font: clamp(18px, 2.2vw + 6px, 28px);        /* tarja */
+  --logo-size: clamp(64px, 8vw, 80px);
+  --title-font: clamp(18px, 2.2vw + 6px, 28px);
   --title-pad-y: clamp(8px, 1.2vw, 12px);
   --title-pad-x: clamp(14px, 2vw, 22px);
 }
@@ -14,12 +14,12 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 .topbar{
   position:sticky; top:0; z-index:10;
   display:flex; align-items:center; gap:16px;
-  padding:12px 20px 16px 12px;   /* puxa um pouco para a esquerda */
+  padding:12px 20px 16px 12px;
   background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 
-/* Esquerda: logo do comitê + tarja vermelha */
-.brand{display:flex; align-items:center; gap:10px}
+/* Esquerda: logo do comitê + tarja vermelha (AGORA MAIS PERTO) */
+.brand{display:flex; align-items:center; gap:6px}
 .brand-mark{height:var(--logo-size); width:auto; border-radius:50%}
 
 /* Tarja – estilo “Abrir”, responsiva */
@@ -34,7 +34,6 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   line-height:1.05;
   display:inline-flex;
   align-items:center;
-  /* Permite quebrar no mobile para não ficar “espremido” */
   white-space:normal;
 }
 
@@ -65,15 +64,15 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   padding:10px 16px; border-radius:12px; text-transform:none; letter-spacing:.2px;
 }
 
-/* ===== Celular: melhora de legibilidade e topo mais confortável ===== */
+/* ===== Celular ===== */
 @media (max-width: 480px){
   :root{
-    --logo-size: clamp(68px, 16vw, 76px);     /* ↑ um pouco maior no mobile */
+    --logo-size: clamp(68px, 16vw, 76px);
     --title-font: clamp(17px, 4.5vw, 20px);
     --title-pad-y: 10px;
     --title-pad-x: 16px;
   }
-  .brand{ gap:8px }
+  .brand{ gap:4px }            /* <-- mais perto também no mobile */
   .container{ padding:0 14px }
 
   .card{
@@ -88,3 +87,4 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 
 .footer{padding:24px; text-align:center; color:var(--muted)}
 .btn{padding:8px 12px; border-radius:12px; border:1px solid #e5e7eb; background:#fff; cursor:pointer}
+
