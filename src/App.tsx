@@ -1,11 +1,12 @@
-// src/App.tsx
+
+      // src/App.tsx
 import React from "react";
 
 export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        {/* Esquerda: LOGO do Comitê + título em tarja vermelha (encostado) */}
+        {/* Esquerda: LOGO do Comitê + título em tarja vermelha */}
         <div className="brand">
           <img
             className="brand-mark"
@@ -27,6 +28,7 @@ export default function App() {
 
       <main className="container">
         <section className="grid">
+          {/* DDM’s */}
           <a
             className="card"
             id="linkDDM"
@@ -42,6 +44,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Fechamentos (OKR) */}
           <a
             className="card"
             id="linkOKR"
@@ -57,6 +60,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Informativos */}
           <a
             className="card"
             id="linkInformativos"
@@ -72,6 +76,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* One Pager */}
           <a
             className="card"
             id="linkOnePager"
@@ -87,6 +92,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Papéis & Responsabilidades */}
           <a
             className="card"
             id="linkPapeis"
@@ -102,6 +108,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Treinamentos */}
           <a
             className="card"
             id="linkTreinamentos"
@@ -117,6 +124,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Checklist Pós-Partida */}
           <a
             className="card"
             id="linkChecklistPartida"
@@ -132,6 +140,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Registro de Reuniões de Abertura de PCM e Prestação de Contas */}
           <a
             className="card"
             id="linkRegistroPrestacao"
@@ -149,10 +158,11 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Reconhecimentos — CORRIGIDO */}
           <a
             className="card"
             id="linkReconhecimentos"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=7eE37e"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -167,7 +177,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <small>© 2025 Comitê de Manutenção — FEMSA</small>
+        <small>© 2025 Comitê de Manutenção Jundiaí — FEMSA</small>
       </footer>
     </div>
   );
