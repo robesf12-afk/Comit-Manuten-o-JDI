@@ -54,7 +54,7 @@ export default function App() {
           >
             <div className="card-icon">📊</div>
             <div className="card-body">
-              <h2>Fechamentos (OKR)</h2>
+              <h2>OKR DE MANUTENÇÃO (FECHAMENTOS)</h2>
               <p>Pasta de Fechamentos</p>
             </div>
             <div className="card-cta">Abrir</div>
