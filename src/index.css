@@ -18,11 +18,11 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 
-/* Esquerda: logo do comitê + tarja (ENCOSTADO) */
+/* Esquerda: logo do comitê + tarja (BEM COLADINHO) */
 .brand{display:flex; align-items:center; gap:0}
 .brand-mark{
   height:var(--logo-size); width:auto; border-radius:50%;
-  margin-right:-2px;                 /* “come” um pouquinho a tarja */
+  margin-right:-4px;                 /* puxa o logo 4px para dentro da tarja */
 }
 
 /* Tarja — estilo “Abrir”, responsiva, MAIÚSCULA */
@@ -33,8 +33,8 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   font-weight:800;
   font-size:var(--title-font);
   padding:var(--title-pad-y) var(--title-pad-x);
-  padding-left:8px;                  /* menos espaço à esquerda */
-  margin-left:-12px;                 /* puxa por cima do logo */
+  padding-left:6px;                  /* mínimo espaço interno à esquerda */
+  margin-left:-16px;                 /* sobrepõe mais a tarja no logo */
   border-radius:12px;
   line-height:1.05;
   display:inline-flex;
@@ -81,7 +81,7 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
     --title-pad-x: 16px;
   }
   .brand{ gap:0 }
-  .brand-title{ padding-left:8px; margin-left:-10px }  /* encostado no mobile */
+  .brand-title{ padding-left:6px; margin-left:-14px }  /* colado no mobile */
   .container{ padding:0 14px }
 
   .card{
@@ -96,3 +96,4 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
 
 .footer{padding:24px; text-align:center; color:var(--muted)}
 .btn{padding:8px 12px; border-radius:12px; border:1px solid #e5e7eb; background:#fff; cursor:pointer}
+
