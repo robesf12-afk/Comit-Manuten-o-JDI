@@ -18,24 +18,30 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
   background:var(--card); border-bottom:1px solid #e5e7eb;
 }
 
-/* Esquerda: logo do comitê + tarja vermelha (AGORA MAIS PERTO) */
-.brand{display:flex; align-items:center; gap:6px}
+/* Esquerda: logo do comitê + tarja vermelha (ENCOSTADO) */
+.brand{display:flex; align-items:center; gap:0}
 .brand-mark{height:var(--logo-size); width:auto; border-radius:50%}
 
-/* Tarja – estilo “Abrir”, responsiva */
+/* Tarja – estilo “Abrir”, responsiva, SEMPRE MAIÚSCULO + colada no logo */
 .brand-title{
   margin:0;
   background:var(--brand);
   color:#fff;
   font-weight:800;
   font-size:var(--title-font);
+  /* reduzimos o acolchoamento à esquerda e puxamos um pouquinho para “entrar” no logo */
   padding:var(--title-pad-y) var(--title-pad-x);
+  padding-left:12px;          /* ↓ cola mais no logo */
+  margin-left:-6px;           /* sobrepõe levemente a borda arredondada */
   border-radius:12px;
   line-height:1.05;
   display:inline-flex;
   align-items:center;
   white-space:normal;
 }
+
+/* força MAIÚSCULO com alta especificidade */
+.topbar .brand .brand-title{ text-transform:uppercase !important; }
 
 /* Direita: apenas FEMSA */
 .logos{margin-left:auto; display:flex; align-items:center; gap:12px}
@@ -72,7 +78,8 @@ body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,
     --title-pad-y: 10px;
     --title-pad-x: 16px;
   }
-  .brand{ gap:4px }            /* <-- mais perto também no mobile */
+  .brand{ gap:0 }
+  .brand-title{ padding-left:10px; margin-left:-4px }  /* encostado no mobile */
   .container{ padding:0 14px }
 
   .card{
