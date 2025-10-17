@@ -1,6 +1,7 @@
 import React from "react";
+import { IconDoc, IconPartida, IconChecklist, IconOKR } from "./icons";
 
-/** Substitua pelos seus links reais do Forms */
+/** Substitua pelos seus links reais do Forms (mantenho como está) */
 const LINK_ABERTURA = "https://forms.office.com/...";
 const LINK_PARTIDA  = "https://forms.office.com/...";
 const LINK_POS      = "https://forms.office.com/...";
@@ -51,7 +52,7 @@ export default function App() {
 
           <div className="grid">
             <a className="card" href={LINK_ABERTURA} target="_blank" rel="noreferrer">
-              <div className="icon">📄</div>
+              <div className="icon"><IconDoc /></div>
               <div>
                 <h3>Abertura</h3>
                 <p>Formulário de abertura (PCM).</p>
@@ -59,7 +60,7 @@ export default function App() {
             </a>
 
             <a className="card" href={LINK_PARTIDA} target="_blank" rel="noreferrer">
-              <div className="icon">🚀</div>
+              <div className="icon"><IconPartida /></div>
               <div>
                 <h3>Check List de Partida</h3>
                 <p>Verificação antes da partida.</p>
@@ -67,7 +68,7 @@ export default function App() {
             </a>
 
             <a className="card" href={LINK_POS} target="_blank" rel="noreferrer">
-              <div className="icon">✅</div>
+              <div className="icon"><IconChecklist /></div>
               <div>
                 <h3>Check List Pós-Partida</h3>
                 <p>Registro pós-execução.</p>
@@ -75,7 +76,7 @@ export default function App() {
             </a>
 
             <a className="card" href={LINK_FECH} target="_blank" rel="noreferrer">
-              <div className="icon">📈</div>
+              <div className="icon"><IconOKR /></div>
               <div>
                 <h3>Fechamentos</h3>
                 <p>OKR DE MANUTENÇÃO (FECHAMENTOS)</p>
@@ -92,4 +93,3 @@ export default function App() {
     </div>
   );
 }
-
