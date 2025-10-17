@@ -46,5 +46,6 @@ export const InfoIcon = (p: Props) => (
 /** 4) One Pager */
 export const FileIcon = (p: Props) => (
   <Base {...p}>
-    <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7
+    <path d
+
 
