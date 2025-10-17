@@ -4,10 +4,10 @@ import {
   CompassIcon, TargetIcon, CheckBadgeIcon, FolderIcon, MedalIcon
 } from "./icons";
 
-/* Ajuste estes paths para os MESMOS arquivos de logo que você já usa */
+/* MANTENHA os caminhos dos logos que já funcionam no seu projeto */
 const ASSETS = {
   LOGO_COMITE: "/logo-comite.png",
-  LOGO_FEMSA: "/logo-femsa.png",
+  // FEMSA só no rodapé em texto, como estava (sem imagem no header)
 };
 
 /* Cole seus links reais (https://...) */
@@ -51,13 +51,12 @@ const CARDS: Card[] = [
 export default function App() {
   return (
     <main className="page">
-      {/* TOPO – mantém seu logo e título exatamente no lugar */}
+      {/* TOPO — exatamente como estava: logo do comitê + título */}
       <header className="header">
         <div className="badge">
           <img src={ASSETS.LOGO_COMITE} alt="Comitê de Manutenção" className="badge-img" />
         </div>
         <h1 className="title">COMITÊ DE MANUTENÇÃO • JDI</h1>
-        <img src={ASSETS.LOGO_FEMSA} alt="Coca-Cola FEMSA" className="header-femsa" />
       </header>
 
       {/* CARDS */}
@@ -65,10 +64,10 @@ export default function App() {
         {CARDS.map(({ title, desc, link, Icon, cssClass }) => (
           <article key={title} className="card">
             <div className="card-header">
-              {/* Ícone com badge profissional e cor por categoria */}
-              <div className={`icon-badge ${cssClass}`} aria-hidden="true">
+              {/* Ícone profissional, com cor — nada mais muda */}
+              <span className={`icon-pro ${cssClass}`} aria-hidden="true">
                 <Icon />
-              </div>
+              </span>
 
               <div>
                 <h2 className="card-title">{title}</h2>
@@ -83,10 +82,9 @@ export default function App() {
         ))}
       </section>
 
-      {/* RODAPÉ – mantém como você já usa */}
-      <footer className="footer">
-        <span>© 2025 Comitê de Manutenção Jundiaí — FEMSA</span>
-      </footer>
+      {/* RODAPÉ — texto simples, como no seu layout bom */}
+      <footer className="footer">© 2025 Comitê de Manutenção Jundiaí — FEMSA</footer>
     </main>
   );
 }
+
