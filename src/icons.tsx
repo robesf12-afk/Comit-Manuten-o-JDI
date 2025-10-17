@@ -1,38 +1,25 @@
-import React from "react";
+
+ import React from "react";
 
 /**
- * Paleta Coca (duotone leve no estilo Livelo, porém em vermelho):
- * - stroke principal: #B30000
- * - preenchimento suave: #FFE5E5 (bem clarinho)
- * - detalhes/acento:   #D00000 (um tom acima)
+ * Ícones no estilo Fluent/iOS, inspirados no app da Livelo,
+ * com paleta Coca (duotone discreto).
  */
-const STROKE = "#B30000";
-const FILL_SOFT = "#FFE5E5";
-const ACCENT = "#D00000";
+const STROKE = "#B30000";   // vermelho Coca
+const FILL_SOFT = "#FFE5E5"; // vermelho bem clarinho
+const ACCENT = "#D00000";    // acento
 
 type Props = React.SVGProps<SVGSVGElement> & { size?: number };
 
-function SvgBase({
-  size = 28,
-  children,
-  ...rest
-}: Props & { children: React.ReactNode }) {
+function SvgBase({ size = 28, children, ...rest }: Props & { children: React.ReactNode }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      role="img"
-      aria-hidden="true"
-      focusable="false"
-      {...rest}
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false" {...rest}>
       {children}
     </svg>
   );
 }
 
-/** 1) DDMs (diálogo / conversa) */
+/** 1) DDMs (diálogo) */
 export function IconDDM({ size, ...rest }: Props) {
   return (
     <SvgBase size={size} {...rest}>
@@ -44,7 +31,7 @@ export function IconDDM({ size, ...rest }: Props) {
   );
 }
 
-/** 2) OKR / Fechamentos (gráfico/target) */
+/** 2) OKR / Fechamentos */
 export function IconOKR({ size, ...rest }: Props) {
   return (
     <SvgBase size={size} {...rest}>
@@ -55,7 +42,7 @@ export function IconOKR({ size, ...rest }: Props) {
   );
 }
 
-/** 3) Informativos (ícone “i”) */
+/** 3) Informativos */
 export function IconInfo({ size, ...rest }: Props) {
   return (
     <SvgBase size={size} {...rest}>
@@ -102,39 +89,7 @@ export function IconTreinamentos({ size, ...rest }: Props) {
   );
 }
 
-/** 7) Checklist Pós-Partida (check) */
+/** 7) Checklist Pós-Partida */
 export function IconChecklist({ size, ...rest }: Props) {
   return (
     <SvgBase size={size} {...rest}>
-      <rect x="4" y="3.5" width="16" height="17" rx="2.5" fill={FILL_SOFT}/>
-      <rect x="4" y="3.5" width="16" height="17" rx="2.5" fill="none" stroke={STROKE} strokeWidth={1.8}/>
-      <path d="M8 12l2.3 2.3L16 8.5" fill="none" stroke={ACCENT} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M8 9h5" stroke={STROKE} strokeWidth={1.6} strokeLinecap="round" opacity={0.6}/>
-    </SvgBase>
-  );
-}
-
-/** 8) Registro de Reuniões / Aberturas / Prestação de Contas (pasta) */
-export function IconRegistroPCM({ size, ...rest }: Props) {
-  return (
-    <SvgBase size={size} {...rest}>
-      <path d="M4 8.5h6l1.8-1.8H20a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7.5a2 2 0 0 1 2-2Z" fill={FILL_SOFT}/>
-      <path d="M4 8.5h6l1.8-1.8H20a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7.5a2 2 0 0 1 2-2Z" fill="none" stroke={STROKE} strokeWidth={1.8} strokeLinejoin="round"/>
-      <path d="M7.5 14h9" stroke={ACCENT} strokeWidth={1.8} strokeLinecap="round"/>
-    </SvgBase>
-  );
-}
-
-/** 9) Reconhecimentos (medalha) */
-export function IconReconhecimentos({ size, ...rest }: Props) {
-  return (
-    <SvgBase size={size} {...rest}>
-      <path d="M8 3h8l-2 4H10L8 3Z" fill={ACCENT}/>
-      <circle cx="12" cy="13" r="5" fill={FILL_SOFT}/>
-      <circle cx="12" cy="13" r="5" fill="none" stroke={STROKE} strokeWidth={1.8}/>
-      <path d="M12 10.8v2.2l1.6.9" stroke={STROKE} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/>
-    </SvgBase>
-  );
-}
-
-
