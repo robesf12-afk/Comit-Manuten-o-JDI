@@ -1,90 +1,80 @@
 import React from "react";
-import {
-  ChatIcon, BarChartIcon, InfoIcon, FileIcon,
-  CompassIcon, TargetIcon, CheckBadgeIcon, FolderIcon, MedalIcon
-} from "./icons";
 
-/* MANTENHA os caminhos dos logos que já funcionam no seu projeto */
-const ASSETS = {
-  LOGO_COMITE: "/logo-comite.png",
-  // FEMSA só no rodapé em texto, como estava (sem imagem no header)
-};
+/** ================================================
+ *  LINKS REAIS DOS SEUS FORMULÁRIOS
+ *  (substitua os "https://forms.office.com/..." pelos seus)
+ *  ================================================ */
+const LINK_ABERTURA   = "https://forms.office.com/..."       // Abertura PCM
+const LINK_PARTIDA    = "https://forms.office.com/..."       // Check List de Partida
+const LINK_POS        = "https://forms.office.com/..."       // Check List Pós-Partida
+const LINK_FECH       = "https://forms.office.com/..."       // OKR de Manutenção (Fechamentos)
 
-/* Cole seus links reais (https://...) */
-const LINKS = {
-  DDMS: "https://COLE_AQUI",
-  FECHAMENTOS: "https://COLE_AQUI",
-  INFORMATIVOS: "https://COLE_AQUI",
-  ONE_PAGER: "https://COLE_AQUI",
-  PAPEIS_RESP: "https://COLE_AQUI",
-  TREINAMENTOS: "https://COLE_AQUI",
-  CHECKLIST_POS_PARTIDA: "https://COLE_AQUI",
-  REGISTRO_REUNIOES_PCM_PRESTACAO: "https://COLE_AQUI",
-  RECONHECIMENTOS: "https://COLE_AQUI",
-} as const;
-
-function safeOpen(url: string) {
-  if (!url || !url.startsWith("http")) { alert("Link inválido. Verifique se começa com https://"); return; }
-  window.open(url, "_blank", "noopener,noreferrer");
-}
-
-type Card = {
+/** Tipo auxiliar para os cards */
+type Item = {
   title: string;
-  desc: string;
-  link: string;
-  Icon: React.FC<{ size?: number }>;
-  cssClass: string; // classe de cor do ícone
+  description: string;
+  href: string;
+  icon: React.ReactNode;
 };
 
-const CARDS: Card[] = [
-  { title: "DDM’S", desc: "Diálogos de Manutenção", link: LINKS.DDMS, Icon: ChatIcon, cssClass: "icon--ddm" },
-  { title: "OKR DE MANUTENÇÃO (FECHAMENTOS)", desc: "Pasta de Fechamentos", link: LINKS.FECHAMENTOS, Icon: BarChartIcon, cssClass: "icon--okr" },
-  { title: "INFORMATIVOS", desc: "Informativos sobre as rotinas de manutenção", link: LINKS.INFORMATIVOS, Icon: InfoIcon, cssClass: "icon--info" },
-  { title: "ONE PAGER", desc: "Resumo dos principais indicadores de manutenção", link: LINKS.ONE_PAGER, Icon: FileIcon, cssClass: "icon--onepager" },
-  { title: "PAPÉIS & RESPONSABILIDADES", desc: "Papéis e responsabilidades conforme MOM", link: LINKS.PAPEIS_RESP, Icon: CompassIcon, cssClass: "icon--papeis" },
-  { title: "TREINAMENTOS", desc: "Materiais e trilhas", link: LINKS.TREINAMENTOS, Icon: TargetIcon, cssClass: "icon--treinamentos" },
-  { title: "CHECKLIST PÓS-PARTIDA", desc: "CIP/SETUP/PCM/Grandes Manutenções", link: LINKS.CHECKLIST_POS_PARTIDA, Icon: CheckBadgeIcon, cssClass: "icon--checklist" },
-  { title: "REGISTRO DE REUNIÕES DE ABERTURA DE PCM E PRESTAÇÃO DE CONTAS", desc: "Aberturas de PCM e Prestação de Contas", link: LINKS.REGISTRO_REUNIOES_PCM_PRESTACAO, Icon: FolderIcon, cssClass: "icon--registro" },
-  { title: "RECONHECIMENTOS", desc: "Áreas reconhecidas por atingimento de meta", link: LINKS.RECONHECIMENTOS, Icon: MedalIcon, cssClass: "icon--reconhec" },
+/** ÍCONES SVG PROFISSIONAIS (inline, sem bibliotecas) */
+const IconDoc = (
+  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+    <path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="currentColor" opacity=".12"/>
+    <path d="M14 3v5h5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+    <path d="M8 12h8M8 16h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+const IconStart = (
+  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" fill="currentColor" opacity=".12"/>
+    <path d="M8 12h6M14 12l3-3m-3 3l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+  </svg>
+);
+
+const IconChecklist = (
+  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+    <rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor" opacity=".12"/>
+    <path d="M8 9h8M8 13h6M8 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+    <path d="M6.5 9.5l1.5 1.5 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+  </svg>
+);
+
+const IconOkr = (
+  <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" fill="currentColor" opacity=".12"/>
+    <path d="M6.5 15.5l3.5-3.5 2.5 2.5 5-5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" fill="none"/>
+    <path d="M12 7v10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" opacity=".6"/>
+  </svg>
+);
+
+/** Listas de cards */
+const operacoes: Item[] = [
+  { title: "Abertura", description: "Formulário de abertura (PCM).", href: LINK_ABERTURA, icon: IconDoc },
+  { title: "Check List de Partida", description: "Verificação antes da partida.", href: LINK_PARTIDA, icon: IconStart },
+  { title: "Check List Pós-Partida", description: "Registro pós-execução.", href: LINK_POS, icon: IconChecklist },
+  { title: "Fechamentos", description: "OKR DE MANUTENÇÃO (FECHAMENTOS)", href: LINK_FECH, icon: IconOkr },
 ];
 
 export default function App() {
   return (
-    <main className="page">
-      {/* TOPO — exatamente como estava: logo do comitê + título */}
-      <header className="header">
-        <div className="badge">
-          <img src={ASSETS.LOGO_COMITE} alt="Comitê de Manutenção" className="badge-img" />
-        </div>
-        <h1 className="title">COMITÊ DE MANUTENÇÃO • JDI</h1>
-      </header>
+    <>
+      {/* BARRA SUPERIOR COM LOGO NO TOPO */}
+      <div className="appbar">
+        <div className="appbar-inner">
+          {/* ✅ usa o logo que você pediu, pequeno e elegante */}
+          <img
+            className="app-logo"
+            src="/logo-comite-512.png"
+            alt="Logo do Comitê"
+          />
+          <div>
+            <h1 className="app-title">Comitê de Manutenção JDI</h1>
+            <p className="app-sub">Hub oficial • PCM • Checklists • OKR</p>
+          </div>
+          <div style={{ marginLeft: "auto" }}>
+            <a
+              h
 
-      {/* CARDS */}
-      <section className="grid">
-        {CARDS.map(({ title, desc, link, Icon, cssClass }) => (
-          <article key={title} className="card">
-            <div className="card-header">
-              {/* Ícone profissional, com cor — nada mais muda */}
-              <span className={`icon-pro ${cssClass}`} aria-hidden="true">
-                <Icon />
-              </span>
-
-              <div>
-                <h2 className="card-title">{title}</h2>
-                <p className="card-desc">{desc}</p>
-              </div>
-
-              <button className="open-btn" onClick={() => safeOpen(link)} aria-label={`Abrir ${title}`}>
-                Abrir
-              </button>
-            </div>
-          </article>
-        ))}
-      </section>
-
-      {/* RODAPÉ — texto simples, como no seu layout bom */}
-      <footer className="footer">© 2025 Comitê de Manutenção Jundiaí — FEMSA</footer>
-    </main>
-  );
-}
 
