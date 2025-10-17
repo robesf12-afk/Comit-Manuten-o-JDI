@@ -1,45 +1,22 @@
-/* ===== Layout geral (mantém sua fonte atual) ===== */
-.page { min-height: 100dvh; background: #f6f7f9; padding: 24px 16px 56px; box-sizing: border-box; }
-
-/* Topo com logos (mantém seus elementos) */
-.header { display: flex; align-items: center; gap: 12px; margin: 4px auto 20px; max-width: 1200px; }
-.badge { width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 1px solid #e8eaee;
-         display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0,0,0,.04); overflow: hidden; }
-.badge-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.title { background: #d70000; color: #fff; font-weight: 900; padding: 8px 16px; border-radius: 12px; margin: 0; letter-spacing: .4px; }
-.header-femsa { height: 22px; margin-left: auto; }
-
-/* Grid de cards */
-.grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); max-width: 1200px; margin: 0 auto; }
-.card { background: #fff; border: 1px solid #e8eaee; border-radius: 18px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,.03); }
-.card-header { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 12px; }
-.card-title { margin: 0; font-weight: 900; font-size: 18px; line-height: 1.2; }
-.card-desc { margin: 6px 0 0; color: #4b5563; font-size: 14px; }
-
-/* Botão */
-.open-btn { background: #d70000; color: #fff; font-weight: 800; border: none; border-radius: 12px; padding: 10px 16px;
-            cursor: pointer; box-shadow: 0 2px 6px rgba(215,0,0,.25); }
-.open-btn:hover { filter: brightness(0.95); }
-
-/* Rodapé */
-.footer { max-width: 1200px; margin: 24px auto 0; color: #6b7280; font-size: 12px; text-align: center; }
-
-/* ===== ÍCONES – só aparência, sem tocar no resto ===== */
-.icon-pro {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: grid; place-items: center;
-  background: var(--icon-bg, #f3f4f6);
-  border: 1px solid var(--icon-border, #e5e7eb);
-  color: var(--icon-fg, #111827);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.04);
-  /* evita “explodir” imagens do header: só aplica aos ícones */
+:root {
+  --brand: #b30000;
+  --brand-ink: #7a0000;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #111827;
+  --muted: #6b7280;
+  --ring: rgba(179, 0, 0, .35);
+  --radius: 16px;
+  --shadow: 0 8px 30px rgba(0,0,0,.07);
 }
-.icon--ddm         { --icon-fg:#0ea5e9; --icon-bg:#eaf6fd; --icon-border:#cde9fb; }
-.icon--okr         { --icon-fg:#d70000; --icon-bg:#fdeaea; --icon-border:#f8c7c7; }
-.icon--info        { --icon-fg:#111827; --icon-bg:#eef0f3; --icon-border:#e1e5ea; }
-.icon--onepager    { --icon-fg:#d97706; --icon-bg:#fdf3e6; --icon-border:#f6dfbf; }
-.icon--papeis      { --icon-fg:#6366f1; --icon-bg:#eef2ff; --icon-border:#dfe3ff; }
-.icon--treinamentos{ --icon-fg:#16a34a; --icon-bg:#eaf7ef; --icon-border:#ccebd8; }
-.icon--checklist   { --icon-fg:#059669; --icon-bg:#e7faf5; --icon-border:#c3eee3; }
-.icon--registro    { --icon-fg:#6B7280; --icon-bg:#f3f4f6; --icon-border:#e5e7eb; }
-.icon--reconhec    { --icon-fg:#b45309; --icon-bg:#fff3e7; --icon-border:#ffdcb6; }
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+html, body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+a { color: inherit
+
