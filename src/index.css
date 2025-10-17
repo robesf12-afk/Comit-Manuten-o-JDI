@@ -1,4 +1,4 @@
-/* Base */
+/* ===== Tokens base ===== */
 :root {
   --coca: #b30000;
   --coca-dark: #8f0000;
@@ -12,45 +12,66 @@
 
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
-body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); background: var(--bg); }
-
-/* Top bar */
-.topbar {
-  position: sticky; top: 0; z-index: 10;
-  background: #fff; border-bottom: 1px solid #eee;
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
 }
-.topbar .brand, .topbar .logos {
-  display: flex; align-items: center; gap: 12px;
+
+/* ===== Header (layout anterior) ===== */
+.topbar { background: transparent; border: 0; }
+.topbar-inner {
+  max-width: 1200px;
+  margin: 16px auto 0;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.topbar .brand { padding: 12px 20px; }
-.brand-mark { width: 40px; height: 40px; border-radius: 10px; }
-.topbar h1 { margin: 0; font-size: 18px; font-weight: 700; }
 
-.topbar .logos { margin-left: auto; padding: 12px 20px; gap: 16px; }
-.topbar .logos img { height: 26px; }
+/* Pílula vermelha do título */
+.title-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--coca);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
+}
+.chip-logo {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: #fff; padding: 3px;
+  display: block;
+}
 
-/* Container */
+/* Logo FEMSA à direita */
+.logo-femsa { height: 18px; display: block; object-fit: contain; }
+
+/* ===== Container ===== */
 .container { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
 
-/* Grid de cards */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 18px;
-}
+/* ===== Grid de cards ===== */
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
 @media (max-width: 1200px) { .grid { grid-template-columns: repeat(12, 1fr); } }
 @media (max-width: 900px)  { .grid { grid-template-columns: repeat(8, 1fr); } }
 @media (max-width: 640px)  { .grid { grid-template-columns: repeat(4, 1fr); } }
 
-/* Card */
+/* ===== Card ===== */
 .card {
   grid-column: span 4;
   display: flex; align-items: center; gap: 14px;
   padding: 18px; border-radius: var(--radius);
   background: var(--card); box-shadow: var(--shadow);
-  text-decoration: none; color: inherit; transition: transform .12s ease;
+  text-decoration: none; color: inherit;
+  transition: transform .12s ease, box-shadow .12s ease;
 }
-.card:hover { transform: translateY(-2px); }
+.card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.12); }
 
 /* Ícone do card */
 .card-icon {
@@ -63,7 +84,7 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto
 
 /* Conteúdo */
 .card-body h2 { margin: 0 0 4px; font-size: 18px; }
-.card-body p { margin: 0; color: var(--muted); font-size: 14px; }
+.card-body p  { margin: 0; color: var(--muted); font-size: 14px; }
 
 /* CTA */
 .card-cta {
@@ -72,7 +93,17 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto
   padding: 8px 14px; border-radius: 999px; font-weight: 600;
   box-shadow: 0 6px 16px rgba(179,0,0,.25);
 }
+
+/* Acessibilidade */
 .card:focus-visible { outline: 3px solid #ffd1d1; }
 
 /* Footer */
 .footer { text-align: center; color: var(--muted); padding: 28px 0 40px; }
+
+/* ===== Responsivo do header ===== */
+@media (max-width: 640px) {
+  .topbar-inner { margin-top: 12px; }
+  .title-chip { padding: 8px 12px; font-size: 14px; }
+  .chip-logo { width: 24px; height: 24px; }
+  .logo-femsa { height: 16px; }
+}
