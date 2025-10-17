@@ -2,33 +2,30 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#d70000" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>Comitê de Manutenção JDI</title>
 
-    <!-- Manifest com versão para quebrar cache -->
-    <link rel="manifest" href="/manifest.webmanifest?v=10" />
+    <!-- Cor da barra do navegador / splash -->
+    <meta name="theme-color" content="#b30000" />
 
-    <!-- Ícone para iOS (usa o PNG direto) -->
-    <link rel="apple-touch-icon" href="/logo-comite-192.png?v=10" />
+    <!-- Manifest com ícone maskable (evita borda branca no Android) -->
+    <link rel="manifest" href="/manifest.json" />
 
-    <link rel="icon" type="image/png" href="/logo-comite-192.png" />
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Se tiver seu ícone antigo (fundo amarelo) em 180x180, aponte aqui -->
+    <link rel="apple-touch-icon" href="/icons/app-180.png" />
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
     <div id="root"></div>
-
     <script type="module" src="/src/main.tsx"></script>
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js?v=10').catch(console.error);
-        });
-      }
-    </script>
   </body>
 </html>
 
