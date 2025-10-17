@@ -15,20 +15,18 @@ import {
 export default function App() {
   return (
     <div className="app">
+      {/* CABEÇALHO – estilo anterior (pílula vermelha + logos) */}
       <header className="topbar">
-        <div className="brand">
-          <img className="brand-mark" src="/logo-comite.png" alt="Comitê de Manutenção" />
-          <h1>Comitê de Manutenção • JDI</h1>
+        <div className="topbar-inner">
+          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
+            <img className="chip-logo" src="/logo-comite.png" alt="Logo do Comitê" />
+            <span>COMITÊ DE MANUTENÇÃO • JDI</span>
+          </div>
+          <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
-
-        <div className="logos">
-          <img src="/logo-comite.png" alt="Comitê de Manutenção" />
-          <img src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
-        </div>
-
-        <button id="installBtn" className="btn" hidden>Instalar</button>
       </header>
 
+      {/* CONTEÚDO */}
       <main className="container">
         <section className="grid">
           {/* DDM’s */}
