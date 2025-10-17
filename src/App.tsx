@@ -127,6 +127,68 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div cl
+            <div className="card-icon"><IconTreinamentos /></div>
+            <div className="card-body">
+              <h2>Treinamentos</h2>
+              <p>Materiais e trilhas</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
 
+          {/* Checklist Pós-Partida */}
+          <a
+            className="card"
+            id="linkChecklistPartida"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconChecklist /></div>
+            <div className="card-body">
+              <h2>Checklist Pós-Partida</h2>
+              <p>CIP/SETUP/PCM/Grandes Manutenções</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* Registro de Reuniões / Prestação de Contas */}
+          <a
+            className="card"
+            id="linkRegistroPrestacao"
+            href="https://forms.office.com/r/mt0JTBJiK6?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconRegistroPCM /></div>
+            <div className="card-body">
+              <h2>Registro de Reuniões de Abertura de PCM e Prestação de Contas</h2>
+              <p>Aberturas de PCM e Prestação de Contas</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* Reconhecimentos */}
+          <a
+            className="card"
+            id="linkReconhecimentos"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconReconhecimentos /></div>
+            <div className="card-body">
+              <h2>Reconhecimentos</h2>
+              <p>Áreas reconhecidas por atingimento de meta</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+        </section>
+      </main>
+
+      <footer className="footer">
+        <small>© 2025 Comitê de Manutenção — FEMSA</small>
+      </footer>
+    </div>
+  );
+}
 
