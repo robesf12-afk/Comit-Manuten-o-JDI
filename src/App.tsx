@@ -16,25 +16,17 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        {/* Marca à esquerda: LOGO DO COMITÊ + título */}
         <div className="brand">
-          <img
-            className="brand-mark"
-            src="/logo-comite.png"
-            alt="Comitê de Manutenção"
-          />
+          <img className="brand-mark" src="/logo-comite.png" alt="Comitê de Manutenção" />
           <h1>Comitê de Manutenção • JDI</h1>
         </div>
 
-        {/* Logos à direita (mantidas) */}
         <div className="logos">
           <img src="/logo-comite.png" alt="Comitê de Manutenção" />
           <img src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
 
-        <button id="installBtn" className="btn" hidden>
-          Instalar
-        </button>
+        <button id="installBtn" className="btn" hidden>Instalar</button>
       </header>
 
       <main className="container">
@@ -113,7 +105,7 @@ export default function App() {
           >
             <div className="card-icon"><IconPapeis /></div>
             <div className="card-body">
-              <h2>Papéis & Responsabilidades</h2>
+              <h2>Papéis &amp; Responsabilidades</h2>
               <p>Papéis e responsabilidades conforme MOM</p>
             </div>
             <div className="card-cta">Abrir</div>
@@ -192,3 +184,4 @@ export default function App() {
   );
 }
 
+            
