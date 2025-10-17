@@ -23,7 +23,7 @@ export default function App() {
             src="/logo-comite.png"
             alt="Comitê de Manutenção"
           />
-        <h1>Comitê de Manutenção • JDI</h1>
+          <h1>Comitê de Manutenção • JDI</h1>
         </div>
 
         {/* Logos à direita (mantidas) */}
@@ -39,6 +39,7 @@ export default function App() {
 
       <main className="container">
         <section className="grid">
+          {/* DDM’s */}
           <a
             className="card"
             id="linkDDM"
@@ -54,6 +55,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Fechamentos (OKR) */}
           <a
             className="card"
             id="linkOKR"
@@ -69,6 +71,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Informativos */}
           <a
             className="card"
             id="linkInformativos"
@@ -84,6 +87,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* One Pager */}
           <a
             className="card"
             id="linkOnePager"
@@ -99,6 +103,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Papéis & Responsabilidades */}
           <a
             className="card"
             id="linkPapeis"
@@ -114,6 +119,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* Treinamentos */}
           <a
             className="card"
             id="linkTreinamentos"
@@ -121,25 +127,6 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconTreinamentos /></div>
-            <div className="card-body">
-              <h2>Treinamentos</h2>
-              <p>Materiais e trilhas</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
+            <div cl
 
-          <a
-            className="card"
-            id="linkChecklistPartida"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconChecklist /></div>
-            <div className="card-body">
-              <h2>Checklist Pós-Partida</h2>
-              <p>CIP/SETUP/PCM/Grandes Manutenções</p>
-            </div>
-            <div className="card-cta">Abrir</div>
 
