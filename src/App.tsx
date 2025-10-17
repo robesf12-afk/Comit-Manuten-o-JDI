@@ -1,95 +1,145 @@
+// src/App.tsx
 import React from "react";
-import { IconDoc, IconPartida, IconChecklist, IconOKR } from "./icons";
-
-/** Substitua pelos seus links reais do Forms (mantenho como está) */
-const LINK_ABERTURA = "https://forms.office.com/...";
-const LINK_PARTIDA  = "https://forms.office.com/...";
-const LINK_POS      = "https://forms.office.com/...";
-const LINK_FECH     = "https://forms.office.com/...";
+import {
+  IconDDM,
+  IconOKR,
+  IconInfo,
+  IconOnePager,
+  IconPapeis,
+  IconTreinamentos,
+  IconChecklist,
+  IconRegistroPCM,
+  IconReconhecimentos,
+} from "./icons";
 
 export default function App() {
   return (
-    <div>
-      {/* TOP BAR COM LOGO */}
-      <div className="appbar">
-        <div className="appbar-inner">
+    <div className="app">
+      <header className="topbar">
+        {/* Marca à esquerda: LOGO DO COMITÊ + título */}
+        <div className="brand">
           <img
-            className="app-logo"
-            src="/logo-comite-512.png"
-            alt="Logo do Comitê"
+            className="brand-mark"
+            src="/logo-comite.png"
+            alt="Comitê de Manutenção"
           />
-          <div>
-            <h1 className="app-title">Comitê de Manutenção JDI</h1>
-            <p className="app-sub">Hub oficial • PCM • Checklists • OKR</p>
-          </div>
-          <div style={{ marginLeft: "auto" }}>
-            <a
-              href={LINK_FECH}
-              target="_blank"
-              rel="noreferrer"
-              className="btn"
-              aria-label="Abrir OKR de Manutenção (Fechamentos)"
-            >
-              OKR
-            </a>
-          </div>
+        <h1>Comitê de Manutenção • JDI</h1>
         </div>
-      </div>
 
-      {/* CONTEÚDO */}
-      <div className="container">
-        {/* HERO */}
-        <section className="hero" role="region" aria-label="Resumo">
-          <h2>Bem-vinda, Roberta 👋</h2>
-          <p>Todos os formulários e registros em um só lugar — visual limpo, rápido e padronizado.</p>
-        </section>
-
-        {/* SEÇÃO: OPERAÇÕES */}
-        <section className="section" role="region" aria-label="Operações">
-          <h3 className="section-title">
-            Operações <span className="badge">PCM</span>
-          </h3>
-
-          <div className="grid">
-            <a className="card" href={LINK_ABERTURA} target="_blank" rel="noreferrer">
-              <div className="icon"><IconDoc /></div>
-              <div>
-                <h3>Abertura</h3>
-                <p>Formulário de abertura (PCM).</p>
-              </div>
-            </a>
-
-            <a className="card" href={LINK_PARTIDA} target="_blank" rel="noreferrer">
-              <div className="icon"><IconPartida /></div>
-              <div>
-                <h3>Check List de Partida</h3>
-                <p>Verificação antes da partida.</p>
-              </div>
-            </a>
-
-            <a className="card" href={LINK_POS} target="_blank" rel="noreferrer">
-              <div className="icon"><IconChecklist /></div>
-              <div>
-                <h3>Check List Pós-Partida</h3>
-                <p>Registro pós-execução.</p>
-              </div>
-            </a>
-
-            <a className="card" href={LINK_FECH} target="_blank" rel="noreferrer">
-              <div className="icon"><IconOKR /></div>
-              <div>
-                <h3>Fechamentos</h3>
-                <p>OKR DE MANUTENÇÃO (FECHAMENTOS)</p>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        {/* RODAPÉ */}
-        <div className="footer">
-          © {new Date().getFullYear()} Coca-Cola FEMSA • Fábrica Jundiaí — Comitê de Manutenção
+        {/* Logos à direita (mantidas) */}
+        <div className="logos">
+          <img src="/logo-comite.png" alt="Comitê de Manutenção" />
+          <img src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
-      </div>
-    </div>
-  );
-}
+
+        <button id="installBtn" className="btn" hidden>
+          Instalar
+        </button>
+      </header>
+
+      <main className="container">
+        <section className="grid">
+          <a
+            className="card"
+            id="linkDDM"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconDDM /></div>
+            <div className="card-body">
+              <h2>DDM’s</h2>
+              <p>Diálogos de Manutenção</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          <a
+            className="card"
+            id="linkOKR"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconOKR /></div>
+            <div className="card-body">
+              <h2>Fechamentos (OKR)</h2>
+              <p>Pasta de Fechamentos</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          <a
+            className="card"
+            id="linkInformativos"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconInfo /></div>
+            <div className="card-body">
+              <h2>Informativos</h2>
+              <p>Informativos sobre as rotinas de manutenção</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          <a
+            className="card"
+            id="linkOnePager"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconOnePager /></div>
+            <div className="card-body">
+              <h2>One Pager</h2>
+              <p>Resumo dos principais indicadores de manutenção</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          <a
+            className="card"
+            id="linkPapeis"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconPapeis /></div>
+            <div className="card-body">
+              <h2>Papéis & Responsabilidades</h2>
+              <p>Papéis e responsabilidades conforme MOM</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          <a
+            className="card"
+            id="linkTreinamentos"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconTreinamentos /></div>
+            <div className="card-body">
+              <h2>Treinamentos</h2>
+              <p>Materiais e trilhas</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          <a
+            className="card"
+            id="linkChecklistPartida"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon"><IconChecklist /></div>
+            <div className="card-body">
+              <h2>Checklist Pós-Partida</h2>
+              <p>CIP/SETUP/PCM/Grandes Manutenções</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+
