@@ -95,5 +95,5 @@ export const MedalIcon = (p: Props) => (
 );
 
 /** Evita warning em alguns setups TS (isolatedModules) */
-export default {};
+export {};
 
