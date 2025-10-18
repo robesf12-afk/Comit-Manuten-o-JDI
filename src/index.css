@@ -32,8 +32,8 @@ body {
 
 /* ✅ Logo grande do comitê — FORA da pílula */
 .logo-comite {
-  width: 210px;              /* AUMENTADO */
-  height:210px;             /* AUMENTADO */
+  width: 200px;              /* AUMENTADO */
+  height:200px;             /* AUMENTADO */
   object-fit: contain;      /* sem distorcer */
   border-radius: 50%;
   background: transparent;
@@ -46,7 +46,7 @@ body {
   align-items: center;
   background: var(--coca);
   color: #fff;
-  padding: 15px 38px;       /* estreita, como pediu */
+  padding: 22px 58px;       /* estreita, como pediu */
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: .2px;
@@ -55,7 +55,7 @@ body {
   box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
 }
 .title-chip span {
-  font-size: 25px;          /* maior */
+  font-size: 30px;          /* maior */
   white-space: nowrap;      /* 🚫 NUNCA QUEBRA (JDI sempre junto) */
 }
 
@@ -117,12 +117,12 @@ body {
 /* ===== Responsivo ===== */
 @media (max-width: 640px) {
   .topbar-inner { margin-top: 12px; }
-  .logo-comite { width: 56px; height: 56px; }  /* maior que antes, mas cabendo no mobile */
+  .logo-comite { width: 100px; height: 100px; }  /* maior que antes, mas cabendo no mobile */
   .title-chip { padding: 8px 12px; margin: 0 8px; }
   .title-chip span {
     font-size: 16px;        /* reduz só um pouco */
     white-space: nowrap;    /* mantém JDI junto no mobile também */
     letter-spacing: .1px;
   }
-  .logo-femsa { height: 26px; }
+  .logo-femsa { height: 46px; }
 }
