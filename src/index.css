@@ -34,24 +34,24 @@ body {
 .title-chip {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   background: var(--coca);
   color: #fff;
-  padding: 12px 20px;
+  padding: 14px 22px;           /* levemente maior para comportar o logo 52px */
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: .2px;
   box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
 }
 
-/* ✅ Logo do Comitê – 40px, sem fundo, sem distorção */
+/* ✅ Logo do Comitê – 52px, sem fundo e sem distorção */
 .chip-logo {
-  width: 40px;
-  height: 40px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  object-fit: contain;   /* impede distorção */
-  background: transparent; /* não adiciona fundo */
-  padding: 0;              /* sem aro branco */
+  object-fit: contain;      /* impede distorção */
+  background: transparent;  /* sem fundo */
+  padding: 0;               /* sem aro */
   display: block;
 }
 
@@ -112,7 +112,7 @@ body {
 /* ===== Responsivo do header ===== */
 @media (max-width: 640px) {
   .topbar-inner { margin-top: 12px; }
-  .title-chip { padding: 10px 14px; font-size: 14px; }
-  .chip-logo { width: 32px; height: 32px; }
+  .title-chip { padding: 10px 14px; font-size: 14px; gap: 10px; }
+  .chip-logo { width: 36px; height: 36px; }
   .logo-femsa { height: 26px; }
 }
