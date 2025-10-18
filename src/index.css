@@ -32,8 +32,8 @@ body {
 
 /* ✅ Logo grande do comitê — FORA da pílula */
 .logo-comite {
-  width: 88px;              /* AUMENTADO */
-  height: 88px;             /* AUMENTADO */
+  width: 188px;              /* AUMENTADO */
+  height: 188px;             /* AUMENTADO */
   object-fit: contain;      /* sem distorcer */
   border-radius: 50%;
   background: transparent;
