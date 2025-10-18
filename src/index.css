@@ -30,38 +30,38 @@ body {
   justify-content: space-between;
 }
 
-/* Pílula vermelha do título (mantida) */
+/* ✅ Logo grande do comitê — FORA da pílula */
+.logo-comite {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;      /* sem distorcer */
+  border-radius: 50%;       /* se quiser, pode tirar */
+  background: transparent;  /* sem fundo */
+  flex-shrink: 0;
+}
+
+/* ✅ Pílula vermelha SLIM (só texto) */
 .title-chip {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
   background: var(--coca);
   color: #fff;
-  padding: 16px 24px;     /* mesmo “visual” da anterior */
+  padding: 10px 18px;      /* fino/estreito */
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: .2px;
   line-height: 1;
+  margin: 0 12px;          /* espaço entre logo e pílula */
   box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
 }
-.title-chip span { font-size: 20px; } /* ✅ título maior */
-
-/* ✅ Logo do Comitê – 72px, sem fundo e sem distorção */
-.chip-logo {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  object-fit: contain;     /* impede distorção */
-  background: transparent; /* não adiciona fundo */
-  padding: 0;              /* sem aro */
-  display: block;
-}
+.title-chip span { font-size: 20px; } /* título maior */
 
 /* ✅ Logo FEMSA – 32px */
 .logo-femsa {
   height: 32px;
   object-fit: contain;
   display: block;
+  flex-shrink: 0;
 }
 
 /* ===== Container ===== */
@@ -114,8 +114,8 @@ body {
 /* ===== Responsivo do header ===== */
 @media (max-width: 640px) {
   .topbar-inner { margin-top: 12px; }
-  .title-chip { padding: 12px 16px; gap: 12px; }
+  .logo-comite { width: 44px; height: 44px; }
+  .title-chip { padding: 8px 12px; margin: 0 8px; }
   .title-chip span { font-size: 16px; }
-  .chip-logo { width: 40px; height: 40px; }
   .logo-femsa { height: 26px; }
 }
