@@ -15,22 +15,19 @@ import {
 export default function App() {
   return (
     <div className="app">
-      {/* CABEÇALHO – logo grande + pílula estreita */}
+      {/* CABEÇALHO – logo grande + pílula central + FEMSA */}
       <header className="topbar">
         <div className="topbar-inner">
-          {/* ✅ Logo do comitê FORA da pílula (grande) */}
           <img
             className="logo-comite"
             src="/logo-comite.png"
             alt="Logo do Comitê"
           />
 
-          {/* ✅ Pílula vermelha SLIM (apenas o texto) */}
           <div className="title-chip" aria-label="Comitê de Manutenção JDI">
             <span>COMITÊ DE MANUTENÇÃO • JDI</span>
           </div>
 
-          {/* ✅ Logo FEMSA fixo em 32px */}
           <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
