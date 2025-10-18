@@ -118,9 +118,9 @@ body {
 @media (max-width: 640px) {
   .topbar-inner { margin-top: 12px; }
   .logo-comite { width: 80px; height: 80px; }  /* maior que antes, mas cabendo no mobile */
-  .title-chip { padding: 8px 10px; margin: 0 8px; }
+  .title-chip { padding: 80px 10px; margin: 0 8px; }
   .title-chip span {
-    font-size: 16px;        /* reduz só um pouco */
+    font-size: 14px;        /* reduz só um pouco */
     white-space: nowrap;    /* mantém JDI junto no mobile também */
     letter-spacing: .1px;
   }
