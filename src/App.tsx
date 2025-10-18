@@ -161,7 +161,7 @@ export default function App() {
           <a
             className="card"
             id="linkReconhecimentos"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=Ta0Nro"
             target="_blank"
             rel="noopener noreferrer"
           >
