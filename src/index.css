@@ -61,7 +61,7 @@ body {
 
 /* ✅ Logo FEMSA – 100px */
 .logo-femsa {
-  height: 32px;
+  height: 132px;
   object-fit: contain;
   display: block;
   flex-shrink: 0;
