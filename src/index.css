@@ -19,7 +19,7 @@ body {
   background: var(--bg);
 }
 
-/* ===== Header (layout anterior) ===== */
+/* ===== Header ===== */
 .topbar { background: transparent; border: 0; }
 .topbar-inner {
   max-width: 1200px;
@@ -34,24 +34,33 @@ body {
 .title-chip {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   background: var(--coca);
   color: #fff;
-  padding: 10px 14px;
+  padding: 12px 20px;
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: .2px;
   box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
 }
+
+/* ✅ Logo do Comitê – 40px, sem fundo, sem distorção */
 .chip-logo {
-  width: 28px; height: 28px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: #fff; padding: 3px;
+  object-fit: contain;   /* impede distorção */
+  background: transparent; /* não adiciona fundo */
+  padding: 0;              /* sem aro branco */
   display: block;
 }
 
-/* Logo FEMSA à direita */
-.logo-femsa { height: 18px; display: block; object-fit: contain; }
+/* ✅ Logo FEMSA – 32px */
+.logo-femsa {
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
 
 /* ===== Container ===== */
 .container { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
@@ -103,7 +112,7 @@ body {
 /* ===== Responsivo do header ===== */
 @media (max-width: 640px) {
   .topbar-inner { margin-top: 12px; }
-  .title-chip { padding: 8px 12px; font-size: 14px; }
-  .chip-logo { width: 24px; height: 24px; }
-  .logo-femsa { height: 16px; }
+  .title-chip { padding: 10px 14px; font-size: 14px; }
+  .chip-logo { width: 32px; height: 32px; }
+  .logo-femsa { height: 26px; }
 }
