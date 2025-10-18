@@ -59,7 +59,7 @@ body {
   white-space: nowrap;      /* 🚫 NUNCA QUEBRA (JDI sempre junto) */
 }
 
-/* ✅ Logo FEMSA – 32px */
+/* ✅ Logo FEMSA – 100px */
 .logo-femsa {
   height: 32px;
   object-fit: contain;
