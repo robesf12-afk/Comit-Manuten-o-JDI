@@ -15,7 +15,7 @@ import {
 export default function App() {
   return (
     <div className="app">
-      {/* CABEÇALHO – estilo anterior (pílula vermelha + logos) */}
+      {/* CABEÇALHO – pílula vermelha + logos */}
       <header className="topbar">
         <div className="topbar-inner">
           <div className="title-chip" aria-label="Comitê de Manutenção JDI">
@@ -181,5 +181,3 @@ export default function App() {
     </div>
   );
 }
-
-            
