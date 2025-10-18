@@ -15,13 +15,22 @@ import {
 export default function App() {
   return (
     <div className="app">
-      {/* CABEÇALHO – pílula vermelha + logos */}
+      {/* CABEÇALHO – logo grande + pílula estreita */}
       <header className="topbar">
         <div className="topbar-inner">
+          {/* ✅ Logo do comitê FORA da pílula (grande) */}
+          <img
+            className="logo-comite"
+            src="/logo-comite.png"
+            alt="Logo do Comitê"
+          />
+
+          {/* ✅ Pílula vermelha SLIM (apenas o texto) */}
           <div className="title-chip" aria-label="Comitê de Manutenção JDI">
-            <img className="chip-logo" src="/logo-comite.png" alt="Logo do Comitê" />
             <span>COMITÊ DE MANUTENÇÃO • JDI</span>
           </div>
+
+          {/* ✅ Logo FEMSA fixo em 32px */}
           <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
@@ -161,7 +170,7 @@ export default function App() {
           <a
             className="card"
             id="linkReconhecimentos"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=Ta0Nro"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
             target="_blank"
             rel="noopener noreferrer"
           >
