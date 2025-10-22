@@ -1,5 +1,7 @@
-// src/App.tsx
 import { useEffect, useMemo, useState } from "react";
+
+/* ====== OPÇÃO: habilitar/ocultar diagnóstico visual ====== */
+const ENABLE_DEBUG_BUTTON = false; // deixe false para apresentação
 
 declare global {
   interface Window {
@@ -11,7 +13,7 @@ declare global {
   }
 }
 
-/* Utilitário para enfileirar chamadas no OneSignal v16 */
+/* Utilitário para usar a fila do OneSignal v16 */
 function runOS<T = void>(fn: (OneSignal:any)=>Promise<T>) {
   return new Promise<T>((resolve, reject) => {
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -22,9 +24,7 @@ function runOS<T = void>(fn: (OneSignal:any)=>Promise<T>) {
   });
 }
 
-/* =========================
-   Painel de Diagnóstico
-   ========================= */
+/* Painel de diagnóstico (apenas em /#debug) */
 function DebugPanel() {
   const [log, setLog] = useState<string>("Sem logs ainda...");
   const [diag, setDiag] = useState({
@@ -106,7 +106,7 @@ function DebugPanel() {
   return (
     <div style={{ padding: 16, fontFamily: "system-ui, sans-serif" }}>
       <h1>Comitê de Manutenção JDI</h1>
-      <p>Teste de Web Push com OneSignal.</p>
+      <p>Diagnóstico do Web Push</p>
 
       <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginTop:12 }}>
         <button onClick={checkStatus}>Checar status</button>
@@ -138,29 +138,71 @@ function DebugPanel() {
   );
 }
 
-/* =============
-   APP (padrão)
-   ============= */
+/* ======= APP de apresentação (alterar com seus cards reais) ======= */
 function MainApp() {
   return (
-    <div style={{ padding: 16, fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ padding: 16, fontFamily: "system-ui, sans-serif", maxWidth: 1080 }}>
       <h1>Comitê de Manutenção JDI</h1>
-      <p>Bem-vinda de volta ao app 👋</p>
 
-      {/* Aqui vão seus cards/links reais */}
-      <p style={{ marginTop: 8 }}>
-        Dica: para abrir o diagnóstico quando quiser, use o botão abaixo
-        ou acesse <code>#debug</code> na URL.
+      {/* ⬇️ TROQUE OS LINKS PELOS SEUS (SharePoint/Forms/PowerBI etc.) */}
+      <div style={{
+        marginTop: 16,
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+        gap: 12
+      }}>
+        <a className="card" href="#" target="_blank" rel="noreferrer"
+           style={cardStyle}>Abertura de Manutenção</a>
+
+        <a className="card" href="#"
+           target="_blank" rel="noreferrer"
+           style={cardStyle}>Checklist de Partida</a>
+
+        <a className="card" href="#"
+           target="_blank" rel="noreferrer"
+           style={cardStyle}>OKR de Manutenção (Fechamentos)</a>
+
+        <a className="card" href="#"
+           target="_blank" rel="noreferrer"
+           style={cardStyle}>Reconhecimento</a>
+
+        <a className="card" href="#"
+           target="_blank" rel="noreferrer"
+           style={cardStyle}>DDM</a>
+
+        <a className="card" href="#"
+           target="_blank" rel="noreferrer"
+           style={cardStyle}>One Pager</a>
+      </div>
+
+      {/* Rodapé simples */}
+      <p style={{ marginTop: 20, opacity: 0.7 }}>
+        Para suporte: abra <code>#debug</code> na URL (ex.: <em>/#debug</em>).
       </p>
 
-      <a href="#debug"><button>Abrir diagnóstico</button></a>
+      {/* Botão de debug visível SOMENTE se ENABLE_DEBUG_BUTTON = true */}
+      {ENABLE_DEBUG_BUTTON && (
+        <a href="#debug"><button style={{ marginTop: 8 }}>Abrir diagnóstico</button></a>
+      )}
     </div>
   );
 }
 
-/* =======================
-   ROOT: alterna os modos
-   ======================= */
+const cardStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: 90,
+  borderRadius: 14,
+  border: "1px solid #e5e7eb",
+  textDecoration: "none",
+  color: "#111827",
+  fontWeight: 600,
+  background: "#ffffff",
+  boxShadow: "0 1px 2px rgba(0,0,0,.06)",
+};
+
+/* ======= ROOT: alterna entre app e debug (debug só via #debug) ======= */
 export default function App() {
   const [mode, setMode] = useState<"app" | "debug">(
     location.hash === "#debug" ? "debug" : "app"
