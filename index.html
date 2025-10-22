@@ -4,10 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#cc0000" />
-   <link rel="manifest" href="/manifest.json?v=2" />
+
+    <!-- Manifest do PWA (Vite copia /public para /) -->
+    <link rel="manifest" href="/manifest.json?v=2" />
+
+    <!-- iOS usa este nome no atalho "Adicionar à Tela de Início" -->
+    <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção JDI" />
+
     <title>Comitê de Manutenção JDI</title>
 
-    <!-- OneSignal SDK v16 -->
+    <!-- OneSignal SDK v16 (mantido como você enviou) -->
     <script>
       window.__OS_SDK_TAG_APPENDED__ = false;
       window.__OS_SDK_LOADED__ = false;
@@ -23,13 +29,14 @@
       })();
     </script>
   </head>
+
   <body>
     <div id="root"></div>
 
     <!-- Vite/React bundle -->
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Service Worker do app -->
+    <!-- Service Worker do app (opcional; manter se você já usa /sw.js) -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -40,4 +47,5 @@
     </script>
   </body>
 </html>
+
 
