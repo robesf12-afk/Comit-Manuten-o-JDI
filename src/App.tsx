@@ -1,5 +1,6 @@
 // src/App.tsx
-import React from "react";
+import React, { useEffect } from "react";
+import { initPush } from "./push"; // <-- adicionamos isto
 import {
   IconDDM,
   IconOKR,
@@ -15,6 +16,11 @@ import {
 } from "./icons";
 
 export default function App() {
+  // Inicializa o OneSignal ao carregar o app
+  useEffect(() => {
+    initPush();
+  }, []);
+
   return (
     <div className="app">
       {/* CABEÇALHO */}
@@ -213,4 +219,3 @@ export default function App() {
     </div>
   );
 }
-
