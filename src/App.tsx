@@ -1,3 +1,4 @@
+// src/App.tsx
 import { useEffect, useMemo, useState } from "react";
 
 declare global {
@@ -10,6 +11,9 @@ declare global {
   }
 }
 
+/* =========================
+   DEBUG PANEL (diagnóstico)
+   ========================= */
 function runOS<T = void>(fn: (OneSignal:any)=>Promise<T>) {
   return new Promise<T>((resolve, reject) => {
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -20,7 +24,7 @@ function runOS<T = void>(fn: (OneSignal:any)=>Promise<T>) {
   });
 }
 
-export default function App() {
+function DebugPanel() {
   const [log, setLog] = useState<string>("Sem logs ainda...");
   const [diag, setDiag] = useState<any>({
     sdkTagAppended: false,
@@ -31,7 +35,6 @@ export default function App() {
     updaterOk: null as null | boolean,
   });
 
-  // Verifica se os workers estão acessíveis
   async function checkWorkers() {
     try {
       const r1 = await fetch("/OneSignalSDKWorker.js", { method: "GET", cache: "no-store" });
@@ -42,7 +45,6 @@ export default function App() {
     }
   }
 
-  // Atualiza flags do carregamento do SDK
   function refreshFlags() {
     setDiag((d:any) => ({
       ...d,
@@ -71,13 +73,12 @@ export default function App() {
       setLog(txt);
       console.log(txt);
     } catch (e:any) {
-      setLog("Erro ao checar status: " + e?.message || String(e));
+      setLog("Erro ao checar status: " + (e?.message || String(e)));
     }
   };
 
   const subscribe = async () => {
     try {
-      // Solicita permissão diretamente (v16)
       await runOS(async (OneSignal) => await OneSignal.Notifications.requestPermission());
       await checkStatus();
     } catch (e:any) {
@@ -112,6 +113,7 @@ export default function App() {
         <button onClick={checkStatus}>Checar status</button>
         <button onClick={subscribe}>Assinar notificações</button>
         <button onClick={unsubscribe}>Cancelar inscrição</button>
+        <a href="#app"><button>Voltar ao app</button></a>
       </div>
 
       <h3 style={{ marginTop:16 }}>Diagnóstico</h3>
@@ -136,3 +138,16 @@ export default function App() {
     </div>
   );
 }
+
+/* =============
+   APP (padrão)
+   ============= */
+function MainApp() {
+  return (
+    <div style={{ padding: 16, fontFamily: "system-ui, sans-serif" }}>
+      <h1>Comitê de Manutenção JDI</h1>
+      <p>Bem-vinda de volta ao app 👋</p>
+
+      {/* TODO: aqui você coloca seus cards, links, páginas etc. */}
+      <p style={{ marginTop: 8 }}>
+        Dica: para abrir o diagnóstico quando quiser
