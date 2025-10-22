@@ -1,31 +1,46 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Comitê de Manutenção JDI</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#cc0000" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Comitê de Manutenção JDI</title>
 
-  <!-- Cor da barra do navegador / splash -->
-  <meta name="theme-color" content="#b30000" />
+    <script>
+      // Flags de diagnóstico visíveis na App.tsx
+      window.__OS_SDK_TAG_APPENDED__ = false;
+      window.__OS_SDK_LOADED__ = false;
+      window.__OS_SDK_ERROR__ = null;
 
-  <!-- OneSignal Web SDK (necessário para push) -->
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer></script>
+      // Anexa o SDK v16 com onload/onerror explícitos
+      (function loadOS() {
+        var s = document.createElement('script');
+        s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+        s.defer = true;
+        s.onload = () => { window.__OS_SDK_LOADED__ = true; };
+        s.onerror = (e) => { window.__OS_SDK_ERROR__ = 'Falha ao carregar SDK v16'; };
+        document.head.appendChild(s);
+        window.__OS_SDK_TAG_APPENDED__ = true;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
 
-  <!-- Manifest com ícone maskable (evita borda branca no Android) -->
-  <link rel="manifest" href="/manifest.json" />
+    <!-- Bundle Vite/React -->
+    <script type="module" src="/src/main.tsx"></script>
 
-  <!-- iOS PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <!-- Ícone para iOS (180x180, PNG transparente) -->
-  <link rel="apple-touch-icon" href="/logo-comite-180.png" />
-
-  <!-- CSS global -->
-  <link rel="stylesheet" href="/src/index.css" />
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
+    <!-- Registro do seu SW (opcional, mas recomendado) -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js', { scope: '/' })
+            .catch(err => console.error('SW register error:', err));
+        });
+      }
+    </script>
+  </body>
 </html>
+
