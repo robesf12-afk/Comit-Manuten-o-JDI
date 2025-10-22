@@ -1,7 +1,7 @@
 self.addEventListener('install', (e) => e.waitUntil(self.skipWaiting()));
 self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
 
-const CACHE = 'app-cache-v1';
+const CACHE = 'app-cache-v3';
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
