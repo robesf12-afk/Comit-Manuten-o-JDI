@@ -1,8 +1,8 @@
 {
   "name": "Comitê de Manutenção JDI",
-  "short_name": "Comitê Manut. JDI",
-  "id": "/",
-  "start_url": "/?v=3",
+  "short_name": "Comitê Manut JDI",
+  "id": "/comite manut-jdi-v2",             // <-- mudei aqui
+  "start_url": "/?v=4",               // <-- subi a versão
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
