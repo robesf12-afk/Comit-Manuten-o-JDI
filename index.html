@@ -7,19 +7,17 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Comitê de Manutenção JDI</title>
 
+    <!-- OneSignal SDK v16 -->
     <script>
-      // Flags de diagnóstico visíveis na App.tsx
       window.__OS_SDK_TAG_APPENDED__ = false;
       window.__OS_SDK_LOADED__ = false;
       window.__OS_SDK_ERROR__ = null;
-
-      // Anexa o SDK v16 com onload/onerror explícitos
-      (function loadOS() {
+      (function () {
         var s = document.createElement('script');
         s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
         s.defer = true;
         s.onload = () => { window.__OS_SDK_LOADED__ = true; };
-        s.onerror = (e) => { window.__OS_SDK_ERROR__ = 'Falha ao carregar SDK v16'; };
+        s.onerror = () => { window.__OS_SDK_ERROR__ = 'Falha ao carregar SDK v16'; };
         document.head.appendChild(s);
         window.__OS_SDK_TAG_APPENDED__ = true;
       })();
@@ -28,15 +26,14 @@
   <body>
     <div id="root"></div>
 
-    <!-- Bundle Vite/React -->
+    <!-- Vite/React bundle -->
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Registro do seu SW (opcional, mas recomendado) -->
+    <!-- Service Worker do app -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker
-            .register('/sw.js', { scope: '/' })
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
             .catch(err => console.error('SW register error:', err));
         });
       }
