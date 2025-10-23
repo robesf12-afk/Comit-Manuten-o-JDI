@@ -1,8 +1,8 @@
 {
   "name": "Comitê de Manutenção JDI",
-  "short_name": "Comitê JDI",
-  "id": "/comitê-jdi-v9",
-  "start_url": "/?v=9",
+  "short_name": "Comitê",              // curto = o launcher não corta errado
+  "id": "/comite-jdi-final",
+  "start_url": "/?v=10",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
