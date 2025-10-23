@@ -39,7 +39,8 @@
     <!-- Vite/React bundle -->
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Service Worker do app (se você usa /sw.js, mantenha) -->
+    <!-- REMOVIDO para evitar duplo registro de SW (o registro está no main.tsx) -->
+    <!--
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -48,5 +49,6 @@
         });
       }
     </script>
+    -->
   </body>
 </html>
