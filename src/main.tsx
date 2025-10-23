@@ -1,3 +1,5 @@
+import { initPush } from "./push";  // <-- [1] única importação nova
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     const reg = await navigator.serviceWorker.register('/sw-v3.js');
@@ -12,3 +14,5 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+initPush(); // <-- [2] chamada única, após o registro do SW
