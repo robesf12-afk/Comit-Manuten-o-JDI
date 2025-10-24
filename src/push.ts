@@ -1,27 +1,42 @@
+// src/push.ts — versão protegida
 declare global {
   interface Window {
-    OneSignalDeferred?: any[];
-    __OS_READY__?: boolean;
+    OneSignal?: any;
   }
 }
 
-const APP_ID = "c9dee04e-1964-428a-90ec-f38dbe8c9be3"; // seu App ID
+const APP_ID = "c9dee04e-1964-428a-90ec-f38dbe8c9be3";
 
-export function initPush() {
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  window.OneSignalDeferred.push(async function (OneSignal: any) {
-    window.__OS_READY__ = true;
-    await OneSignal.init({
-      appId: APP_ID,
-      allowLocalhostAsSecureOrigin: true,
-      serviceWorkerPath: "/OneSignalSDKWorker.js",
-      serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js",
-      serviceWorkerParam: { scope: "/" },
-
-      // UI do OneSignal pode ficar oculta na apresentação
-      notifyButton: { enable: false },
-      promptOptions: { slidedown: { enabled: false, autoPrompt: false } }
+export async function initPush() {
+  try {
+    // Aguarda o SDK carregar no head
+    await new Promise<void>((resolve) => {
+      if (window.OneSignal) return resolve();
+      const t = setInterval(() => {
+        if (window.OneSignal) {
+          clearInterval(t);
+          resolve();
+        }
+      }, 100);
     });
-  });
+
+    const OneSignal = window.OneSignal || [];
+    OneSignal.push(function () {
+      try {
+        OneSignal.init({
+          appId: APP_ID,
+          allowLocalhostAsSecureOrigin: true,
+          notifyButton: { enable: false },
+          serviceWorkerPath: "/OneSignalSDKWorker.js",
+          serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js",
+          serviceWorkerParam: { scope: "/" },
+        });
+      } catch (e) {
+        console.warn("Erro ao inicializar OneSignal:", e);
+      }
+    });
+  } catch (err) {
+    console.warn("Erro no initPush:", err);
+  }
 }
 

@@ -4,10 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#cc0000" />
-   <link rel="manifest" href="/manifest.json?v=2" />
+
+    <!-- Manifest do PWA -->
+    <link rel="manifest" href="/manifest.json?v=10" />
+
+    <!-- Nomes/ícones usados no atalho -->
+    <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção JDI" />
+    <meta name="application-name" content="Comitê JDI" />
+    <link rel="apple-touch-icon" href="/logo-comite-180.png" />
+    <link rel="icon" href="/logo-comite-192.png" type="image/png" />
+
     <title>Comitê de Manutenção JDI</title>
 
-    <!-- OneSignal SDK v16 -->
+    <!-- OneSignal SDK v16 (mantido) -->
     <script>
       window.__OS_SDK_TAG_APPENDED__ = false;
       window.__OS_SDK_LOADED__ = false;
@@ -23,13 +32,15 @@
       })();
     </script>
   </head>
+
   <body>
     <div id="root"></div>
 
     <!-- Vite/React bundle -->
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Service Worker do app -->
+    <!-- REMOVIDO para evitar duplo registro de SW (o registro está no main.tsx) -->
+    <!--
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -38,6 +49,6 @@
         });
       }
     </script>
+    -->
   </body>
 </html>
-
