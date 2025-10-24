@@ -1,18 +1,36 @@
-import { initPush } from "./push";  // <-- [1] única importação nova
+// src/main.tsx — seguro contra erro de push (não altera layout)
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    const reg = await navigator.serviceWorker.register('/sw-v3.js');
-    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-    reg.addEventListener('updatefound', () => {
-      const nw = reg.installing;
-      nw?.addEventListener('statechange', () => {
-        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-          nw.postMessage({ type: 'SKIP_WAITING' });
-        }
-      });
-    });
-  });
+// ⚠️ mantém o import do push, mas se faltar o arquivo, não quebra
+let initPush: undefined | (() => Promise<void>);
+try {
+  // se existir ./push.ts, importamos; se não, segue sem push
+  // (isso evita tela branca)
+  // @ts-ignore
+  ({ initPush } = await import("./push"));
+} catch {
+  // sem push por enquanto
 }
 
-initPush(); // <-- [2] chamada única, após o registro do SW
+const rootEl = document.getElementById("root");
+if (rootEl) {
+  ReactDOM.createRoot(rootEl).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
+
+// Só tenta iniciar push DEPOIS que a página carrega, e nunca deixa erro estourar
+window.addEventListener("load", () => {
+  try {
+    if (typeof initPush === "function") {
+      initPush().catch((e) => console.warn("push falhou:", e));
+    }
+  } catch (e) {
+    console.warn("erro ao iniciar push:", e);
+  }
+});
