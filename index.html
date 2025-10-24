@@ -23,7 +23,7 @@
       window.__OS_SDK_ERROR__ = null;
       (function () {
         var s = document.createElement('script');
-        s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+        s.src = "https://cdn.onesignal.com/sdks/OneSignalSDK.page.js" async></script";
         s.defer = true;
         s.onload = () => { window.__OS_SDK_LOADED__ = true; };
         s.onerror = () => { window.__OS_SDK_ERROR__ = 'Falha ao carregar SDK v16'; };
