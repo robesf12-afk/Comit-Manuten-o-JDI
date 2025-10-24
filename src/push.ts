@@ -1,48 +1,42 @@
-// src/push.ts
+// src/push.ts — versão protegida
 declare global {
-  interface Window { OneSignalDeferred?: any[] }
+  interface Window {
+    OneSignal?: any;
+  }
 }
 
-export function initPush() {
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  window.OneSignalDeferred.push(async (OneSignal: any) => {
-    await OneSignal.init({
-      appId: "c9dee04e-1964-428a-90ec-f38dbe8c9be3",
-      serviceWorkerPath: "/sw-v3.js",
-      serviceWorkerParam: { scope: "/" },
+const APP_ID = "c9dee04e-1964-428a-90ec-f38dbe8c9be3";
 
-      // Sem “sininho” fixo (não muda o layout)
-      notifyButton: { enable: false },
-
-      // Prompt automático (banner do OneSignal)
-      promptOptions: {
-        slidedown: {
-          prompts: [
-            {
-              type: "push",
-              autoPrompt: true,   // mostra sozinho na primeira visita
-              timeDelay: 1,       // segundos após carregar
-              text: {
-                actionMessage: "Deseja receber avisos do Comitê de Manutenção JDI?",
-                acceptButton: "Permitir",
-                cancelButton: "Agora não"
-              }
-            }
-          ]
+export async function initPush() {
+  try {
+    // Aguarda o SDK carregar no head
+    await new Promise<void>((resolve) => {
+      if (window.OneSignal) return resolve();
+      const t = setInterval(() => {
+        if (window.OneSignal) {
+          clearInterval(t);
+          resolve();
         }
-      }
+      }, 100);
     });
 
-    // Fallback: se ainda estiver sem permissão, pede no 1º clique/toque
-    try {
-      const status = await OneSignal.Notifications.getPermissionStatus(); // "default" | "granted" | "denied"
-      if (status === "default") {
-        const onFirstInteraction = async () => {
-          try { await OneSignal.Notifications.requestPermission(); } catch {}
-        };
-        window.addEventListener("click", onFirstInteraction, { once: true, passive: true });
-        window.addEventListener("touchstart", onFirstInteraction, { once: true, passive: true });
+    const OneSignal = window.OneSignal || [];
+    OneSignal.push(function () {
+      try {
+        OneSignal.init({
+          appId: APP_ID,
+          allowLocalhostAsSecureOrigin: true,
+          notifyButton: { enable: false },
+          serviceWorkerPath: "/OneSignalSDKWorker.js",
+          serviceWorkerUpdaterPath: "/OneSignalSDKUpdaterWorker.js",
+          serviceWorkerParam: { scope: "/" },
+        });
+      } catch (e) {
+        console.warn("Erro ao inicializar OneSignal:", e);
       }
-    } catch {}
-  });
+    });
+  } catch (err) {
+    console.warn("Erro no initPush:", err);
+  }
 }
+
