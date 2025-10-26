@@ -12,190 +12,129 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
+/* ------------------------------------------------------------------ */
+/* Itens de menu (drawer) – com ícones e âncoras para rolar até a seção */
+const MENU = [
+  {
+    id: "registro",
+    title: "Registro de Reuniões / Prestação de Contas",
+    href: "#registro",
+    Icon: IconRegistroPCM,
+  },
+  {
+    id: "checklist",
+    title: "Checklist Pós-Partida",
+    href: "#checklist",
+    Icon: IconChecklist,
+  },
+  { id: "ddms", title: "DDM’s", href: "#ddms", Icon: IconDDM },
+  {
+    id: "programacao",
+    title: "Programação de PCM",
+    href: "#programacao",
+    Icon: IconChecklist,
+  },
+  {
+    id: "distribuicao",
+    title: "Painel de Distribuição de Horas",
+    href: "#distribuicao",
+    Icon: IconOKR,
+  },
+  { id: "okr", title: "OKR de Manutenção", href: "#okr", Icon: IconOKR },
+  { id: "informativos", title: "Informativos", href: "#informativos", Icon: IconInfo },
+  {
+    id: "papeis",
+    title: "Papéis & Responsabilidades",
+    href: "#papeis",
+    Icon: IconPapeis,
+  },
+  { id: "onepager", title: "One Pager", href: "#onepager", Icon: IconOnePager },
+  {
+    id: "treinamentos",
+    title: "Treinamentos",
+    href: "#treinamentos",
+    Icon: IconTreinamentos,
+  },
+  {
+    id: "reconhecimentos",
+    title: "Reconhecimentos",
+    href: "#reconhecimentos",
+    Icon: IconReconhecimentos,
+  },
+];
 
-  // Fecha o drawer ao clicar em um link
-  const closeAndGo = () => setMenuOpen(false);
+export default function App() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = (open: boolean) => () => setDrawerOpen(open);
 
   return (
     <div className="app">
-      {/* ===== Botão sanduíche (flutuante) ===== */}
+      {/* ===== BOTÃO SANDUÍCHE (flutuante no canto) ===== */}
       <button
         className="fab-menu"
-        aria-label="Abrir menu"
-        onClick={() => setMenuOpen(true)}
+        aria-label="Abrir menu de categorias"
+        onClick={toggleDrawer(true)}
       >
-        <span></span>
-        <span></span>
-        <span></span>
+        <span />
+        <span />
+        <span />
       </button>
 
-      {/* ===== Drawer (menu lateral) ===== */}
+      {/* ===== DRAWER (menu lateral) ===== */}
       <div
-        className={`drawer-scrim ${menuOpen ? "open" : ""}`}
-        onClick={() => setMenuOpen(false)}
+        className={`drawer-scrim ${drawerOpen ? "open" : ""}`}
+        onClick={toggleDrawer(false)}
       />
-      <aside className={`drawer ${menuOpen ? "open" : ""}`} aria-hidden={!menuOpen}>
+      <aside className={`drawer ${drawerOpen ? "open" : ""}`} role="dialog" aria-label="Categorias">
         <div className="drawer-header">
           <strong>Categorias</strong>
           <button
             className="drawer-close"
             aria-label="Fechar menu"
-            onClick={() => setMenuOpen(false)}
+            onClick={toggleDrawer(false)}
+            title="Fechar"
           >
             ×
           </button>
         </div>
 
         <nav className="drawer-nav">
-          <a
-            className="drawer-link"
-            href="https://forms.office.com/r/mt0JTBJiK6?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconRegistroPCM /></span>
-            REGISTRO DE REUNIÕES / PRESTAÇÃO DE CONTAS
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconChecklist /></span>
-            CHECKLIST PÓS-PARTIDA
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconDDM /></span>
-            DDM’S
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=Ye4Wad"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconChecklist /></span>
-            PROGRAMAÇÃO DE PCM
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=LYYchz"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconOKR /></span>
-            PAINEL DE DISTRIBUIÇÃO DE HORAS
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconOKR /></span>
-            OKR DE MANUTENÇÃO
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconInfo /></span>
-            INFORMATIVOS
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconPapeis /></span>
-            PAPÉIS &amp; RESPONSABILIDADES
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconOnePager /></span>
-            ONE PAGER
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconTreinamentos /></span>
-            TREINAMENTOS
-          </a>
-
-          <a
-            className="drawer-link"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeAndGo}
-          >
-            <span style={{ marginRight: 8 }}><IconReconhecimentos /></span>
-            RECONHECIMENTOS
-          </a>
+          {MENU.map(({ id, title, href, Icon }) => (
+            <a
+              key={id}
+              className="drawer-link"
+              href={href}
+              onClick={toggleDrawer(false)}
+            >
+              <span className="drawer-ico">
+                <Icon />
+              </span>
+              <span className="drawer-text">{title}</span>
+            </a>
+          ))}
         </nav>
       </aside>
 
-      {/* ===== Cabeçalho ===== */}
+      {/* ===== CABEÇALHO – COMITÊ (esq) • Título (centro) • FEMSA (dir) ===== */}
       <header className="topbar">
         <div className="topbar-inner">
-          {/* ESQUERDA: logo Comitê */}
-          <img
-            className="logo-comite"
-            src="/logo-comite.png"
-            alt="Logo do Comitê"
-          />
+          <img className="logo-comite" src="/logo-comite.png" alt="Logo do Comitê" />
 
-          {/* CENTRO: título */}
           <div className="title-chip" aria-label="Comitê de Manutenção JDI">
             <span>COMITÊ DE MANUTENÇÃO • JDI</span>
           </div>
 
-          {/* DIREITA: FEMSA */}
           <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
-      {/* ===== Conteúdo (cards) ===== */}
+      {/* ===== CONTEÚDO ===== */}
       <main className="container">
         <section className="grid">
-          {/* 1) REGISTRO DE REUNIÕES / PRESTAÇÃO DE CONTAS */}
+
+          {/* 1) REGISTRO */}
+          <div id="registro" />
           <a
             className="card"
             id="linkRegistroPrestacao"
@@ -211,7 +150,8 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 2) CHECKLIST PÓS-PARTIDA */}
+          {/* 2) CHECKLIST */}
+          <div id="checklist" />
           <a
             className="card"
             id="linkChecklistPartida"
@@ -227,7 +167,8 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 3) DDM’S */}
+          {/* 3) DDM’s */}
+          <div id="ddms" />
           <a
             className="card"
             id="linkDDM"
@@ -244,6 +185,7 @@ export default function App() {
           </a>
 
           {/* 4) PROGRAMAÇÃO DE PCM */}
+          <div id="programacao" />
           <a
             className="card"
             id="linkProgramacaoPCM"
@@ -260,6 +202,7 @@ export default function App() {
           </a>
 
           {/* 5) PAINEL DE DISTRIBUIÇÃO DE HORAS */}
+          <div id="distribuicao" />
           <a
             className="card"
             id="linkPainelHoras"
@@ -276,6 +219,7 @@ export default function App() {
           </a>
 
           {/* 6) OKR DE MANUTENÇÃO */}
+          <div id="okr" />
           <a
             className="card"
             id="linkOKR"
@@ -291,7 +235,8 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* ---- RESTANTE ---- */}
+          {/* INFORMATIVOS */}
+          <div id="informativos" />
           <a
             className="card"
             id="linkInformativos"
@@ -307,6 +252,8 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* PAPÉIS & RESPONSABILIDADES */}
+          <div id="papeis" />
           <a
             className="card"
             id="linkPapeis"
@@ -322,6 +269,8 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* ONE PAGER */}
+          <div id="onepager" />
           <a
             className="card"
             id="linkOnePager"
@@ -337,6 +286,8 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* TREINAMENTOS */}
+          <div id="treinamentos" />
           <a
             className="card"
             id="linkTreinamentos"
@@ -352,6 +303,8 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
+          {/* RECONHECIMENTOS */}
+          <div id="reconhecimentos" />
           <a
             className="card"
             id="linkReconhecimentos"
@@ -366,6 +319,7 @@ export default function App() {
             </div>
             <div className="card-cta">Abrir</div>
           </a>
+
         </section>
       </main>
 
