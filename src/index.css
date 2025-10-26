@@ -10,8 +10,8 @@
   --shadow: 0 6px 20px rgba(0,0,0,.08);
 
   /* Cabeçalho */
-  --logo-comite-size: 188px;
-  --logo-femsa-h: calc(188px * .48);
+  --logo-comite-size: 188px;                 /* logo grande */
+  --logo-femsa-h: calc(188px * .48);         /* FEMSA proporcional ao comitê */
   --title-font-size: 30px;
 }
 
@@ -30,6 +30,8 @@ body {
   max-width: 1800px;
   margin: 16px auto 0;
   padding: 0 60px;
+
+  /* COMITÊ | TÍTULO | FEMSA */
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -42,6 +44,7 @@ body {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+
   background: var(--coca);
   color: #fff;
   padding: 12px 18px;
@@ -50,10 +53,33 @@ body {
   letter-spacing: .2px;
   line-height: 1;
   box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
+
   width: max-content;
   max-width: min(90vw, 900px);
   white-space: nowrap;
 }
-.title-chip span { font-siz
+.title-chip span { font-size: var(--title-font-size); }
 
+/* COMITÊ à esquerda (grande) */
+.logo-comite {
+  width: var(--logo-comite-size);
+  height: var(--logo-comite-size);
+  object-fit: contain;
+  border-radius: 50%;
+  background: transparent;
+  justify-self: start;     /* ESQUERDA */
+}
+
+/* FEMSA à direita (proporcional) */
+.logo-femsa {
+  height: var(--logo-femsa-h);
+  object-fit: contain;
+  display: block;
+  justify-self: end;       /* DIREITA */
+}
+
+/* (opcional) grupo com hambúrguer + logo, caso use */
+.right-group { display: flex; align-items: center; gap: 10px; }
+
+/* ===== Container / Grid / Cards / Footer ===== */
 
