@@ -28,11 +28,7 @@ export default function App() {
             <span>COMITÊ DE MANUTENÇÃO • JDI</span>
           </div>
 
-          <img
-            className="logo-femsa"
-            src="/logo-femsa.png"
-            alt="Coca-Cola FEMSA"
-          />
+          <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
@@ -69,7 +65,7 @@ export default function App() {
               <IconOKR />
             </div>
             <div className="card-body">
-              <h2>OKR de Manutenção </h2>
+              <h2>OKR DE MANUTENÇÃO</h2>
               <p>Fechamentos</p>
             </div>
             <div className="card-cta">Abrir</div>
@@ -113,4 +109,138 @@ export default function App() {
 
           {/* Papéis & Responsabilidades */}
           <a
-            classNa
+            className="card"
+            id="linkPapeis"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">
+              <IconPapeis />
+            </div>
+            <div className="card-body">
+              <h2>Papéis &amp; Responsabilidades</h2>
+              <p>Papéis e responsabilidades conforme MOM</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* Treinamentos */}
+          <a
+            className="card"
+            id="linkTreinamentos"
+            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">
+              <IconTreinamentos />
+            </div>
+            <div className="card-body">
+              <h2>Treinamentos</h2>
+              <p>Materiais e trilhas</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* Checklist Pós-Partida */}
+          <a
+            className="card"
+            id="linkChecklistPartida"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">
+              <IconChecklist />
+            </div>
+            <div className="card-body">
+              <h2>Checklist Pós-Partida</h2>
+              <p>CIP/SETUP/PCM/Grandes Manutenções</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* Registro de Reuniões / Prestação de Contas */}
+          <a
+            className="card"
+            id="linkRegistroPrestacao"
+            href="https://forms.office.com/r/mt0JTBJiK6?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">
+              <IconRegistroPCM />
+            </div>
+            <div className="card-body">
+              <h2>Registro de Reuniões de Abertura de PCM e Prestação de Contas</h2>
+              <p>Aberturas de PCM e Prestação de Contas</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* Reconhecimentos */}
+          <a
+            className="card"
+            id="linkReconhecimentos"
+            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">
+              <IconReconhecimentos />
+            </div>
+            <div className="card-body">
+              <h2>Reconhecimentos</h2>
+              <p>Áreas reconhecidas por atingimento de meta</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* ===== NOVOS BOTÕES ===== */}
+
+          {/* PROGRAMAÇÃO DE PCM */}
+          <a
+            className="card"
+            id="linkProgramacaoPCM"
+            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=Hd0nYs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">
+              <IconChecklist />
+            </div>
+            <div className="card-body">
+              <h2>Programação de PCM</h2>
+              <p>Planejamento semanal das manutenções preventivas</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+
+          {/* PAINEL DE DISTRIBUIÇÃO DE HORAS */}
+          <a
+            className="card"
+            id="linkPainelHoras"
+            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=lbNpki"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="card-icon">
+              <IconOKR />
+            </div>
+            <div className="card-body">
+              <h2>Painel de Distribuição de Horas</h2>
+              <p>Acompanhamento da alocação de horas PCM</p>
+            </div>
+            <div className="card-cta">Abrir</div>
+          </a>
+        </section>
+      </main>
+
+      <footer className="footer">
+        <small>© 2025 Comitê de Manutenção — FEMSA</small>
+      </footer>
+    </div>
+  );
+}
+
