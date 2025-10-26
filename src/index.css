@@ -10,7 +10,7 @@
   --shadow: 0 6px 20px rgba(0,0,0,.08);
 
   /* Cabeçalho */
-  --logo-comite-size: 188px;                 /* grande (como você queria) */
+  --logo-comite-size: 188px;                 /* logo grande */
   --logo-femsa-h: calc(188px * .48);         /* FEMSA proporcional ao comitê */
   --title-font-size: 20px;
 }
@@ -31,14 +31,14 @@ body {
   margin: 16px auto 0;
   padding: 0 20px;
 
-  /* layout real: FEMSA | TÍTULO | COMITÊ */
+  /* COMITÊ | TÍTULO | FEMSA */
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   column-gap: 16px;
 }
 
-/* Título no centro — sem absolute */
+/* Título no centro */
 .title-chip {
   justify-self: center;
   display: inline-flex;
@@ -60,34 +60,32 @@ body {
 }
 .title-chip span { font-size: var(--title-font-size); }
 
-/* FEMSA à esquerda (proporcional) */
-.logo-femsa {
-  height: var(--logo-femsa-h);
-  object-fit: contain;
-  display: block;
-  justify-self: start;
-}
-
-/* Comitê à direita (grande) */
+/* COMITÊ à esquerda (grande) */
 .logo-comite {
   width: var(--logo-comite-size);
   height: var(--logo-comite-size);
   object-fit: contain;
   border-radius: 50%;
   background: transparent;
-  justify-self: end;
+  justify-self: start;     /* ESQUERDA */
 }
 
-/* ===== Container ===== */
+/* FEMSA à direita (proporcional) */
+.logo-femsa {
+  height: var(--logo-femsa-h);
+  object-fit: contain;
+  display: block;
+  justify-self: end;       /* DIREITA */
+}
+
+/* ===== Container / Grid / Cards / Footer (mesmo de antes) ===== */
 .container { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
 
-/* ===== Grid de cards ===== */
 .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
 @media (max-width: 1200px) { .grid { grid-template-columns: repeat(12, 1fr); } }
 @media (max-width: 900px)  { .grid { grid-template-columns: repeat(8, 1fr); } }
 @media (max-width: 640px)  { .grid { grid-template-columns: repeat(4, 1fr); } }
 
-/* ===== Card ===== */
 .card {
   grid-column: span 4;
   display: flex; align-items: center; gap: 14px;
@@ -98,7 +96,6 @@ body {
 }
 .card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.12); }
 
-/* Ícone do card */
 .card-icon {
   width: 48px; height: 48px; flex: 0 0 48px;
   display: grid; place-items: center;
@@ -107,11 +104,9 @@ body {
 }
 .card-icon svg { width: 28px; height: 28px; display: block; }
 
-/* Conteúdo */
 .card-body h2 { margin: 0 0 4px; font-size: 18px; }
 .card-body p  { margin: 0; color: var(--muted); font-size: 14px; }
 
-/* CTA */
 .card-cta {
   margin-left: auto;
   background: var(--coca); color: #fff;
@@ -119,10 +114,7 @@ body {
   box-shadow: 0 6px 16px rgba(179,0,0,.25);
 }
 
-/* Acessibilidade */
 .card:focus-visible { outline: 3px solid #ffd1d1; }
-
-/* Footer */
 .footer { text-align: center; color: var(--muted); padding: 28px 0 40px; }
 
 /* ===== Responsivo ===== */
@@ -145,9 +137,6 @@ body {
     --logo-femsa-h: calc(var(--logo-comite-size) * .7);
     --title-font-size: 16px;
   }
-  .title-chip {
-    padding: 10px 14px;
-    max-width: calc(100vw - 32px);
-  }
+  .title-chip { padding: 10px 14px; max-width: calc(100vw - 32px); }
   .title-chip span { letter-spacing: .1px; white-space: nowrap; }
 }
