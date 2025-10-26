@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   IconDDM,
   IconOKR,
@@ -12,109 +12,146 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* =======================
-   Carrossel de Banners
-   ======================= */
-
-type Banner = {
-  src: string;
-  alt: string;
-  href?: string; // opcional: link ao clicar
-};
-
-const banners: Banner[] = [
-  { src: "/banners/banner-01.png", alt: "Destaque 1", href: "https://example.com/1" },
-  { src: "/banners/banner-02.png", alt: "Destaque 2", href: "https://example.com/2" },
-  { src: "/banners/banner-03.png", alt: "Destaque 3" }, // sem link (apenas visual)
+/* ========= CONFIG fácil de editar =========
+   Para trocar os banners, só edite a lista abaixo.
+   - src: caminho do PNG/JPG (pasta public/banners/…)
+   - href: link de destino (opcional). Se vazio, o banner não tem clique.
+   - alt: texto descritivo do banner
+*/
+const BANNERS: Array<{ src: string; href?: string; alt: string }> = [
+  {
+    src: "/banners/banner-programacao.png",
+    href:
+      "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=Ye4Wad",
+    alt: "Programação de PCM da semana",
+  },
+  {
+    src: "/banners/banner-okr.png",
+    href:
+      "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
+    alt: "OKR de Manutenção - Fechamentos",
+  },
+  // Exemplo sem link:
+  // { src: "/banners/banner-sem-link.png", alt: "Aviso interno" },
 ];
 
-function BannerCarousel() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
-
-  // atualiza dot ativo conforme rolagem
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      const w = el.clientWidth;
-      const i = Math.round(el.scrollLeft / (w + 12)); // 12px = gap do CSS
-      setActive(Math.max(0, Math.min(i, banners.length - 1)));
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const goTo = (i: number) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const slide = el.querySelectorAll<HTMLElement>(".banner-slide")[i];
-    if (slide) slide.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  };
-
-  return (
-    <section className="banner-wrap" aria-label="Banners em destaque">
-      <div className="banner-track" ref={trackRef}>
-        {banners.map((b, i) => {
-          const img = <img className="banner-img" src={b.src} alt={b.alt} loading="lazy" />;
-        return b.href ? (
-            <a key={i} className="banner-slide" href={b.href} target="_blank" rel="noopener noreferrer" aria-label={b.alt}>
-              {img}
-            </a>
-          ) : (
-            <div key={i} className="banner-slide" aria-label={b.alt}>
-              {img}
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="banner-dots" role="tablist" aria-label="Navegação dos banners">
-        {banners.map((_, i) => (
-          <button
-            key={i}
-            className={`dot ${active === i ? "active" : ""}`}
-            aria-label={`Ir para o banner ${i + 1}`}
-            aria-selected={active === i}
-            onClick={() => goTo(i)}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* =======================
-   App principal
-   ======================= */
+/* ====== Links da navegação lateral (menu) ======
+   Mesmos “tópicos” dos cards, para abrir nos mesmos destinos.
+*/
+const NAV: Array<{ label: string; href: string }> = [
+  {
+    label:
+      "REGISTRO DE REUNIÕES DE ABERTURA DE PCM E PRESTAÇÃO DE CONTAS",
+    href: "https://forms.office.com/r/mt0JTBJiK6?origin=lprLink",
+  },
+  {
+    label: "CHECKLIST PÓS-PARTIDA",
+    href: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
+  },
+  {
+    label: "DDM’S",
+    href:
+      "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD",
+  },
+  {
+    label: "PROGRAMAÇÃO DE PCM",
+    href:
+      "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=Ye4Wad",
+  },
+  {
+    label: "PAINEL DE DISTRIBUIÇÃO DE HORAS",
+    href:
+      "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=LYYchz",
+  },
+  {
+    label: "OKR DE MANUTENÇÃO",
+    href:
+      "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
+  },
+  {
+    label: "INFORMATIVOS",
+    href:
+      "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y",
+  },
+  {
+    label: "PAPÉIS & RESPONSABILIDADES",
+    href:
+      "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu",
+  },
+  {
+    label: "ONE PAGER",
+    href:
+      "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1",
+  },
+  {
+    label: "TREINAMENTOS",
+    href:
+      "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70",
+  },
+  {
+    label: "RECONHECIMENTOS",
+    href: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
+  },
+];
 
 export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div className="app">
-      {/* CABEÇALHO – COMITÊ (esq) • Título (centro) • FEMSA (dir) */}
+      {/* ===== Botão flutuante do menu (3 risquinhos) ===== */}
+      <button
+        className="fab-menu"
+        aria-label="Abrir menu"
+        onClick={() => setMenuOpen(true)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      {/* ===== CABEÇALHO – COMITÊ (esq) • Título (centro) • FEMSA (dir) ===== */}
       <header className="topbar">
         <div className="topbar-inner">
-          {/* ESQUERDA: LOGO COMITÊ (grande) */}
-          <img className="logo-comite" src="/logo-comite.png" alt="Logo do Comitê" />
-
-          {/* CENTRO: TÍTULO */}
+          <img
+            className="logo-comite"
+            src="/logo-comite.png"
+            alt="Logo do Comitê"
+          />
           <div className="title-chip" aria-label="Comitê de Manutenção JDI">
             <span>COMITÊ DE MANUTENÇÃO • JDI</span>
           </div>
-
-          {/* DIREITA: FEMSA */}
           <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
-      {/* BANNERS EM DESTAQUE */}
-      <BannerCarousel />
+      {/* ===== BANNERS (facilmente editáveis via BANNERS[]) ===== */}
+      <section className="banner-wrap" aria-label="Banners de destaque">
+        <div className="banner-track">
+          {BANNERS.map((b, i) =>
+            b.href ? (
+              <a
+                key={i}
+                className="banner-item"
+                href={b.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={b.src} alt={b.alt} />
+              </a>
+            ) : (
+              <div key={i} className="banner-item">
+                <img src={b.src} alt={b.alt} />
+              </div>
+            )
+          )}
+        </div>
+      </section>
 
-      {/* CONTEÚDO */}
+      {/* ===== CONTEÚDO (cards) ===== */}
       <main className="container">
         <section className="grid">
-          {/* 1) REGISTRO DE REUNIÕES / PRESTAÇÃO DE CONTAS */}
+          {/* 1) REGISTRO */}
           <a
             className="card"
             id="linkRegistroPrestacao"
@@ -122,7 +159,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconRegistroPCM /></div>
+            <div className="card-icon">
+              <IconRegistroPCM />
+            </div>
             <div className="card-body">
               <h2>REGISTRO DE REUNIÕES DE ABERTURA DE PCM E PRESTAÇÃO DE CONTAS</h2>
               <p>Aberturas de PCM e Prestação de Contas</p>
@@ -138,7 +177,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconChecklist /></div>
+            <div className="card-icon">
+              <IconChecklist />
+            </div>
             <div className="card-body">
               <h2>CHECKLIST PÓS-PARTIDA</h2>
               <p>CIP/SETUP/PCM/Grandes Manutenções</p>
@@ -154,7 +195,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconDDM /></div>
+            <div className="card-icon">
+              <IconDDM />
+            </div>
             <div className="card-body">
               <h2>DDM’S</h2>
               <p>Diálogos de Manutenção</p>
@@ -170,7 +213,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconChecklist /></div>
+            <div className="card-icon">
+              <IconChecklist />
+            </div>
             <div className="card-body">
               <h2>PROGRAMAÇÃO DE PCM</h2>
               <p>Planejamento semanal das manutenções preventivas</p>
@@ -186,7 +231,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconOKR /></div>
+            <div className="card-icon">
+              <IconOKR />
+            </div>
             <div className="card-body">
               <h2>PAINEL DE DISTRIBUIÇÃO DE HORAS</h2>
               <p>Acompanhamento da alocação de horas PCM</p>
@@ -202,7 +249,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconOKR /></div>
+            <div className="card-icon">
+              <IconOKR />
+            </div>
             <div className="card-body">
               <h2>OKR DE MANUTENÇÃO</h2>
               <p>Fechamentos</p>
@@ -218,7 +267,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconInfo /></div>
+            <div className="card-icon">
+              <IconInfo />
+            </div>
             <div className="card-body">
               <h2>INFORMATIVOS</h2>
               <p>Informativos sobre as rotinas de manutenção</p>
@@ -234,7 +285,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconPapeis /></div>
+            <div className="card-icon">
+              <IconPapeis />
+            </div>
             <div className="card-body">
               <h2>PAPÉIS &amp; RESPONSABILIDADES</h2>
               <p>Papéis e responsabilidades conforme MOM</p>
@@ -250,7 +303,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconOnePager /></div>
+            <div className="card-icon">
+              <IconOnePager />
+            </div>
             <div className="card-body">
               <h2>ONE PAGER</h2>
               <p>Resumo dos principais indicadores de manutenção</p>
@@ -266,7 +321,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconTreinamentos /></div>
+            <div className="card-icon">
+              <IconTreinamentos />
+            </div>
             <div className="card-body">
               <h2>TREINAMENTOS</h2>
               <p>Sou novo na função de T2/téc. de Manutenção/T3 e agora?</p>
@@ -282,7 +339,9 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="card-icon"><IconReconhecimentos /></div>
+            <div className="card-icon">
+              <IconReconhecimentos />
+            </div>
             <div className="card-body">
               <h2>RECONHECIMENTOS</h2>
               <p>Áreas reconhecidas por atingimento de meta</p>
@@ -291,6 +350,43 @@ export default function App() {
           </a>
         </section>
       </main>
+
+      {/* ===== Drawer (menu lateral) ===== */}
+      <div
+        className={`drawer-scrim ${menuOpen ? "open" : ""}`}
+        onClick={() => setMenuOpen(false)}
+        aria-hidden={!menuOpen}
+      />
+      <aside
+        className={`drawer ${menuOpen ? "open" : ""}`}
+        aria-hidden={!menuOpen}
+      >
+        <div className="drawer-header">
+          <strong>Menu</strong>
+          <button
+            className="drawer-close"
+            aria-label="Fechar menu"
+            onClick={() => setMenuOpen(false)}
+          >
+            ×
+          </button>
+        </div>
+
+        <nav className="drawer-nav">
+          {NAV.map((item) => (
+            <a
+              key={item.label}
+              className="drawer-link"
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </aside>
 
       <footer className="footer">
         <small>© 2025 COMITÊ DE MANUTENÇÃO JDI — FEMSA</small>
