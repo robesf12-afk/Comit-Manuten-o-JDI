@@ -1,7 +1,5 @@
-
-        
 // src/App.tsx
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IconDDM,
   IconOKR,
@@ -14,6 +12,83 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
+/* =======================
+   Carrossel de Banners
+   ======================= */
+
+type Banner = {
+  src: string;
+  alt: string;
+  href?: string; // opcional: link ao clicar
+};
+
+const banners: Banner[] = [
+  { src: "/banners/banner-01.png", alt: "Destaque 1", href: "https://example.com/1" },
+  { src: "/banners/banner-02.png", alt: "Destaque 2", href: "https://example.com/2" },
+  { src: "/banners/banner-03.png", alt: "Destaque 3" }, // sem link (apenas visual)
+];
+
+function BannerCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  // atualiza dot ativo conforme rolagem
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const w = el.clientWidth;
+      const i = Math.round(el.scrollLeft / (w + 12)); // 12px = gap do CSS
+      setActive(Math.max(0, Math.min(i, banners.length - 1)));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const goTo = (i: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const slide = el.querySelectorAll<HTMLElement>(".banner-slide")[i];
+    if (slide) slide.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  };
+
+  return (
+    <section className="banner-wrap" aria-label="Banners em destaque">
+      <div className="banner-track" ref={trackRef}>
+        {banners.map((b, i) => {
+          const img = <img className="banner-img" src={b.src} alt={b.alt} loading="lazy" />;
+        return b.href ? (
+            <a key={i} className="banner-slide" href={b.href} target="_blank" rel="noopener noreferrer" aria-label={b.alt}>
+              {img}
+            </a>
+          ) : (
+            <div key={i} className="banner-slide" aria-label={b.alt}>
+              {img}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="banner-dots" role="tablist" aria-label="Navegação dos banners">
+        {banners.map((_, i) => (
+          <button
+            key={i}
+            className={`dot ${active === i ? "active" : ""}`}
+            aria-label={`Ir para o banner ${i + 1}`}
+            aria-selected={active === i}
+            onClick={() => goTo(i)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* =======================
+   App principal
+   ======================= */
+
 export default function App() {
   return (
     <div className="app">
@@ -21,11 +96,7 @@ export default function App() {
       <header className="topbar">
         <div className="topbar-inner">
           {/* ESQUERDA: LOGO COMITÊ (grande) */}
-          <img
-            className="logo-comite"
-            src="/logo-comite.png"
-            alt="Logo do Comitê"
-          />
+          <img className="logo-comite" src="/logo-comite.png" alt="Logo do Comitê" />
 
           {/* CENTRO: TÍTULO */}
           <div className="title-chip" aria-label="Comitê de Manutenção JDI">
@@ -33,13 +104,12 @@ export default function App() {
           </div>
 
           {/* DIREITA: FEMSA */}
-          <img
-            className="logo-femsa"
-            src="/logo-femsa.png"
-            alt="Coca-Cola FEMSA"
-          />
+          <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
+
+      {/* BANNERS EM DESTAQUE */}
+      <BannerCarousel />
 
       {/* CONTEÚDO */}
       <main className="container">
