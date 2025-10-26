@@ -1,3 +1,5 @@
+
+        
 // src/App.tsx
 import React from "react";
 import {
@@ -15,26 +17,26 @@ import {
 export default function App() {
   return (
     <div className="app">
-      {/* CABEÇALHO – FEMSA (esq) • Título (centro) • Comitê (dir) */}
+      {/* CABEÇALHO – COMITÊ (esq) • Título (centro) • FEMSA (dir) */}
       <header className="topbar">
         <div className="topbar-inner">
-          {/* ESQUERDA: FEMSA */}
-          <img
-            className="logo-femsa"
-            src="/logo-femsa.png"
-            alt="Coca-Cola FEMSA"
-          />
-
-          {/* CENTRO: TÍTULO (AGORA SEM POSITION ABSOLUTE) */}
-          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
-            <span>COMITÊ DE MANUTENÇÃO • JDI</span>
-          </div>
-
-          {/* DIREITA: LOGO COMITÊ (grande) */}
+          {/* ESQUERDA: LOGO COMITÊ (grande) */}
           <img
             className="logo-comite"
             src="/logo-comite.png"
             alt="Logo do Comitê"
+          />
+
+          {/* CENTRO: TÍTULO */}
+          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
+            <span>COMITÊ DE MANUTENÇÃO • JDI</span>
+          </div>
+
+          {/* DIREITA: FEMSA */}
+          <img
+            className="logo-femsa"
+            src="/logo-femsa.png"
+            alt="Coca-Cola FEMSA"
           />
         </div>
       </header>
