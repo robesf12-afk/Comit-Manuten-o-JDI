@@ -8,12 +8,9 @@
   --card: #ffffff;
   --radius: 16px;
   --shadow: 0 6px 20px rgba(0,0,0,.08);
-
-  /* Cabeçalho */
-  --logo-comite-size: 188px;   /* ajuste aqui se quiser */
-  --title-font-size: 20px;
 }
 
+/* layout geral */
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
 body {
@@ -24,16 +21,12 @@ body {
 }
 
 /* ===== Header ===== */
-
-/* barra superior */
 .topbar { background: transparent; }
 
-/* container do cabeçalho: centralizado, com wrap */
 .topbar-inner {
   max-width: 1200px;
   margin: clamp(8px, 2vw, 16px) auto 0;
   padding: 0 20px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,7 +34,6 @@ body {
   gap: clamp(12px, 2.2vw, 28px);
 }
 
-/* logo do comitê (grande e proporcional) */
 .logo-comite {
   width: clamp(76px, 8vw, 110px);
   height: auto;
@@ -49,14 +41,12 @@ body {
   border-radius: 50%;
 }
 
-/* grupo FEMSA + título */
 .brand {
   display: flex;
   align-items: center;
   gap: clamp(10px, 1.6vw, 18px);
 }
 
-/* logo FEMSA maior, proporcional */
 .logo-femsa {
   width: clamp(70px, 7.5vw, 100px);
   height: auto;
@@ -64,12 +54,10 @@ body {
   display: block;
 }
 
-/* pílula do título (sem position absolute) */
 .title-chip {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-
   background: var(--coca);
   color: #fff;
   padding: clamp(8px, 1.2vw, 14px) clamp(14px, 2vw, 24px);
@@ -87,7 +75,6 @@ body {
 
 /* ===== Grid de cards ===== */
 .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
-@media (max-width: 1200px) { .grid { grid-template-columns: repeat(12, 1fr); } }
 @media (max-width: 900px)  { .grid { grid-template-columns: repeat(8, 1fr); } }
 @media (max-width: 640px)  { .grid { grid-template-columns: repeat(4, 1fr); } }
 
@@ -95,14 +82,13 @@ body {
 .card {
   grid-column: span 4;
   display: flex; align-items: center; gap: 14px;
-  padding: 18px; border-radius: var(--radius);
+  padding: 18px; border-radius: 16px;
   background: var(--card); box-shadow: var(--shadow);
   text-decoration: none; color: inherit;
   transition: transform .12s ease, box-shadow .12s ease;
 }
 .card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.12); }
 
-/* Ícone do card */
 .card-icon {
   width: 48px; height: 48px; flex: 0 0 48px;
   display: grid; place-items: center;
@@ -111,11 +97,9 @@ body {
 }
 .card-icon svg { width: 28px; height: 28px; display: block; }
 
-/* Conteúdo */
 .card-body h2 { margin: 0 0 4px; font-size: 18px; }
 .card-body p  { margin: 0; color: var(--muted); font-size: 14px; }
 
-/* CTA */
 .card-cta {
   margin-left: auto;
   background: var(--coca); color: #fff;
@@ -123,19 +107,6 @@ body {
   box-shadow: 0 6px 16px rgba(179,0,0,.25);
 }
 
-/* Acessibilidade */
 .card:focus-visible { outline: 3px solid #ffd1d1; }
 
-/* Footer */
 .footer { text-align: center; color: var(--muted); padding: 28px 0 40px; }
-
-/* ===== Responsivo extra ===== */
-@media (max-width: 980px) {
-  :root { --logo-comite-size: 128px; }
-}
-@media (max-width: 760px) {
-  :root { --logo-comite-size: 88px; }
-}
-@media (max-width: 480px) {
-  :root { --logo-comite-size: 64px; }
-}
