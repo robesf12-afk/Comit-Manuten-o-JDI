@@ -15,7 +15,7 @@ import {
 export default function App() {
   return (
     <div className="app">
-      {/* CABEÇALHO – FEMSA (esq) • Título central • Comitê (dir) */}
+      {/* CABEÇALHO – FEMSA (esq) • Título (centro) • Comitê (dir) */}
       <header className="topbar">
         <div className="topbar-inner">
           {/* ESQUERDA: FEMSA */}
@@ -25,7 +25,7 @@ export default function App() {
             alt="Coca-Cola FEMSA"
           />
 
-          {/* CENTRO: TÍTULO */}
+          {/* CENTRO: TÍTULO (AGORA SEM POSITION ABSOLUTE) */}
           <div className="title-chip" aria-label="Comitê de Manutenção JDI">
             <span>COMITÊ DE MANUTENÇÃO • JDI</span>
           </div>
@@ -122,7 +122,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 6) OKR DE MANUTENÇÃO (FECHAMENTOS) */}
+          {/* 6) OKR DE MANUTENÇÃO */}
           <a
             className="card"
             id="linkOKR"
