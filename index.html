@@ -15,46 +15,13 @@
     <link rel="icon" href="/logo-comite-192.png" type="image/png" />
 
     <title>Comitê de Manutenção JDI</title>
-
-    <!-- OneSignal SDK v16 (corrigido) -->
-    <script>
-      window.__OS_SDK_TAG_APPENDED__ = false;
-      window.__OS_SDK_LOADED__ = false;
-      window.__OS_SDK_ERROR__ = null;
-
-      (function () {
-        try {
-          var s = document.createElement('script');
-          s.src = "https://cdn.onesignal.com/sdks/OneSignalSDK.page.js";
-          s.async = true;
-          s.defer = true;
-          s.onload = function () { window.__OS_SDK_LOADED__ = true; };
-          s.onerror = function () { window.__OS_SDK_ERROR__ = 'Falha ao carregar SDK v16'; };
-          document.head.appendChild(s);
-          window.__OS_SDK_TAG_APPENDED__ = true;
-        } catch (e) {
-          window.__OS_SDK_ERROR__ = 'Erro ao injetar SDK: ' + e;
-        }
-      })();
-    </script>
+    <!-- (sem bloco do OneSignal neste build) -->
   </head>
 
   <body>
     <div id="root"></div>
-
     <!-- Vite/React bundle -->
     <script type="module" src="/src/main.tsx"></script>
-
-    <!-- Registro manual de SW está desnecessário; deixe comentado
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js', { scope: '/' })
-            .catch(err => console.error('SW register error:', err));
-        });
-      }
-    </script>
-    -->
   </body>
 </html>
 
