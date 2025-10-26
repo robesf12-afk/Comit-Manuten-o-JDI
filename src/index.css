@@ -10,8 +10,7 @@
   --shadow: 0 6px 20px rgba(0,0,0,.08);
 
   /* Cabeçalho */
-  --logo-comite-size: 188px;  /* ajuste aqui se quiser */
-  --logo-femsa-h: 32px;
+  --logo-comite-size: 188px;   /* ajuste aqui se quiser */
   --title-font-size: 20px;
 }
 
@@ -25,62 +24,63 @@ body {
 }
 
 /* ===== Header ===== */
+
+/* barra superior */
 .topbar { background: transparent; }
+
+/* container do cabeçalho: centralizado, com wrap */
 .topbar-inner {
   max-width: 1200px;
-  margin: 16px auto 0;
+  margin: clamp(8px, 2vw, 16px) auto 0;
   padding: 0 20px;
 
-  /* grid: [logo][pílula][femsa] */
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  column-gap: 16px;
-
-  position: relative; /* necessário para centralização absoluta da pílula */
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(12px, 2.2vw, 28px);
 }
 
-/* logo do comitê (grande) */
+/* logo do comitê (grande e proporcional) */
 .logo-comite {
-  width: var(--logo-comite-size);
-  height: var(--logo-comite-size);
-  object-fit: contain;         /* sem distorcer */
+  width: clamp(76px, 8vw, 110px);
+  height: auto;
+  object-fit: contain;
   border-radius: 50%;
-  background: transparent;
 }
 
-/* pílula vermelha – CENTRAL ABSOLUTO no container */
-.title-chip {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
+/* grupo FEMSA + título */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.6vw, 18px);
+}
 
+/* logo FEMSA maior, proporcional */
+.logo-femsa {
+  width: clamp(70px, 7.5vw, 100px);
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* pílula do título (sem position absolute) */
+.title-chip {
   display: inline-flex;
   justify-content: center;
   align-items: center;
 
   background: var(--coca);
   color: #fff;
-  padding: 12px 18px;          /* slim */
+  padding: clamp(8px, 1.2vw, 14px) clamp(14px, 2vw, 24px);
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: .2px;
   line-height: 1;
   box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
-
-  width: max-content;          /* só o necessário */
-  max-width: min(90vw, 900px);
-  white-space: nowrap;         /* “JDI” sempre junto */
+  white-space: nowrap;
 }
-.title-chip span { font-size: var(--title-font-size); }
-
-/* logo femsa */
-.logo-femsa {
-  height: var(--logo-femsa-h);
-  object-fit: contain;
-  display: block;
-}
+.title-chip span { font-size: clamp(14px, 2.2vw, 22px); }
 
 /* ===== Container ===== */
 .container { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
@@ -129,21 +129,13 @@ body {
 /* Footer */
 .footer { text-align: center; color: var(--muted); padding: 28px 0 40px; }
 
-/* ===== Responsivo ===== */
+/* ===== Responsivo extra ===== */
 @media (max-width: 980px) {
   :root { --logo-comite-size: 128px; }
 }
 @media (max-width: 760px) {
-  :root { --logo-comite-size: 88px; --title-font-size: 18px; }
-  .topbar-inner { margin-top: 8px; }
+  :root { --logo-comite-size: 88px; }
 }
 @media (max-width: 480px) {
-  :root { --logo-comite-size: 64px; --title-font-size: 16px; --logo-femsa-h: 26px; }
-  .title-chip {
-    padding: 10px 14px;
-    max-width: calc(100vw - 32px);
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .title-chip span { letter-spacing: .1px; white-space: nowrap; }
+  :root { --logo-comite-size: 64px; }
 }
