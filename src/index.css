@@ -120,7 +120,7 @@ body {
 .card:focus-visible { outline: 3px solid #ffd1d1; }
 .footer { text-align: center; color: var(--muted); padding: 28px 0 40px; }
 
-/* ===== NOVO: Banners em destaque (carrossel leve) ===== */
+/* ===== Banners em destaque (compatível com App.tsx) ===== */
 .banner-wrap {
   max-width: 1200px;
   margin: 8px auto 18px;
@@ -137,88 +137,113 @@ body {
 }
 .banner-track::-webkit-scrollbar { display: none; }  /* Chrome/Safari */
 
-.banner-slide {
-  scroll-snap-align: center;
+.banner-item {
+  scroll-snap-align: start;
   min-width: min(100%, 1160px);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
-  cursor: pointer;
-  background: #fff; /* fallback */
+  background: var(--card);
 }
-
-.banner-img {
+.banner-item img {
   display: block;
   width: 100%;
   height: auto;
   object-fit: cover;
 }
 
-.banner-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-.banner-dots .dot {
-  width: 8px; height: 8px; border-radius: 999px;
-  background: #d9d9d9; border: 0; padding: 0;
-}
-.banner-dots .dot.active { background: var(--coca); }
-
-/* ===== NOVO: Menu lateral (hambúrguer) ===== */
-.hamb-btn {
-  all: unset;
-  display: grid; place-items: center;
-  width: 40px; height: 40px;
-  border-radius: 8px;
-  border: 1px solid #e7e7e7;
-  background: #fff;
+/* ===== Botão flutuante (menu hambúrguer) ===== */
+.fab-menu {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 60;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--coca);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(179,0,0,.25);
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  padding: 0;
   cursor: pointer;
 }
-.hamb-btn:focus-visible { outline: 3px solid #ffd1d1; }
-
-.backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.35);
-  opacity: 0; pointer-events: none;
-  transition: opacity .18s ease;
-  z-index: 90;
-}
-.backdrop.show { opacity: 1; pointer-events: all; }
-
-.sidemenu {
-  position: fixed; inset: 0 auto 0 0;
-  width: min(320px, 86vw);
-  background: #fff;
-  transform: translateX(-100%);
-  transition: transform .2s ease;
-  z-index: 99;
-  box-shadow: 6px 0 24px rgba(0,0,0,.18);
-  display: flex; flex-direction: column;
-}
-.sidemenu.open { transform: translateX(0); }
-
-.sidemenu-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 14px; border-bottom: 1px solid #eee;
-}
-.sidemenu-head .close {
-  all: unset; font-size: 28px; line-height: 1; cursor: pointer;
-  padding: 2px 8px; border-radius: 6px;
-}
-
-.sidemenu-list {
-  padding: 6px 10px 16px; overflow: auto;
-}
-.sidemenu-item {
+.fab-menu span {
   display: block;
-  padding: 12px 10px;
+  width: 20px;
+  height: 2px;
+  background: #fff;
+}
+
+/* ===== Drawer (menu lateral) ===== */
+.drawer-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.32);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  z-index: 70;
+}
+.drawer-scrim.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(86vw, 360px);
+  background: #fff;
+  box-shadow: 8px 0 24px rgba(0,0,0,.18);
+  transform: translateX(-102%);
+  transition: transform .2s ease;
+  z-index: 80;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px;
+  border-bottom: 1px solid #eee;
+}
+.drawer-header strong {
+  font-weight: 800;
+  color: var(--text);
+}
+.drawer-close {
+  border: 0;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.drawer-nav {
+  padding: 10px 8px 20px 8px;
+  overflow: auto;
+}
+.drawer-link {
+  display: block;
+  padding: 12px 12px;
+  margin: 2px 6px;
   border-radius: 10px;
   color: var(--text);
   text-decoration: none;
 }
-.sidemenu-item:hover { background: #fafafa; }
+.drawer-link:hover {
+  background: #f7f7f7;
+}
 
 /* ===== Responsivo ===== */
 @media (max-width: 980px) {
@@ -243,7 +268,6 @@ body {
   .title-chip { padding: 10px 14px; max-width: calc(100vw - 32px); }
   .title-chip span { letter-spacing: .1px; white-space: nowrap; }
 
-  /* banners: slides mais compactos em telas pequenas */
-  .banner-slide { min-width: calc(100vw - 32px); }
+  /* banners: slide ocupa a largura útil do mobile */
+  .banner-item { min-width: calc(100vw - 32px); }
 }
-
