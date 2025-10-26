@@ -1,227 +1,149 @@
-// src/App.tsx
-import React from "react";
-import {
-  IconDDM,
-  IconOKR,
-  IconInfo,
-  IconOnePager,
-  IconPapeis,
-  IconTreinamentos,
-  IconChecklist,
-  IconRegistroPCM,
-  IconReconhecimentos,
-} from "./icons";
+/* ===== Tokens base ===== */
+:root {
+  --coca: #b30000;
+  --coca-dark: #8f0000;
+  --bg: #f6f7f9;
+  --text: #121212;
+  --muted: #5c5f66;
+  --card: #ffffff;
+  --radius: 16px;
+  --shadow: 0 6px 20px rgba(0,0,0,.08);
 
-export default function App() {
-  return (
-    <div className="app">
-      {/* CABEÇALHO – logo grande + pílula central + FEMSA */}
-      <header className="topbar">
-        <div className="topbar-inner">
-          <img
-            className="logo-comite"
-            src="/logo-comite.png"
-            alt="Logo do Comitê"
-          />
-
-          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
-            <span>COMITÊ DE MANUTENÇÃO • JDI</span>
-          </div>
-
-          <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
-        </div>
-      </header>
-
-      {/* CONTEÚDO */}
-      <main className="container">
-        <section className="grid">
-
-          {/* 1) REGISTRO DE REUNIÕES / PRESTAÇÃO DE CONTAS */}
-          <a
-            className="card"
-            id="linkRegistroPrestacao"
-            href="https://forms.office.com/r/mt0JTBJiK6?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconRegistroPCM /></div>
-            <div className="card-body">
-              <h2>REGISTRO DE REUNIÕES DE ABERTURA DE PCM E PRESTAÇÃO DE CONTAS</h2>
-              <p>Aberturas de PCM e Prestação de Contas</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 2) CHECKLIST PÓS-PARTIDA */}
-          <a
-            className="card"
-            id="linkChecklistPartida"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconChecklist /></div>
-            <div className="card-body">
-              <h2>CHECKLIST PÓS-PARTIDA</h2>
-              <p>CIP/SETUP/PCM/Grandes Manutenções</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 3) DDM’S */}
-          <a
-            className="card"
-            id="linkDDM"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconDDM /></div>
-            <div className="card-body">
-              <h2>DDM’S</h2>
-              <p>Diálogos de Manutenção</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 4) PROGRAMAÇÃO DE PCM  (link enviado por você) */}
-          <a
-            className="card"
-            id="linkProgramacaoPCM"
-            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=Ye4Wad"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconChecklist /></div>
-            <div className="card-body">
-              <h2>PROGRAMAÇÃO DE PCM</h2>
-              <p>Planejamento semanal das manutenções preventivas</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 5) PAINEL DE DISTRIBUIÇÃO DE HORAS (link enviado por você) */}
-          <a
-            className="card"
-            id="linkPainelHoras"
-            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=LYYchz"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconOKR /></div>
-            <div className="card-body">
-              <h2>PAINEL DE DISTRIBUIÇÃO DE HORAS</h2>
-              <p>Acompanhamento da alocação de horas PCM</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 6) OKR DE MANUTENÇÃO (FECHAMENTOS) */}
-          <a
-            className="card"
-            id="linkOKR"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconOKR /></div>
-            <div className="card-body">
-              <h2>OKR DE MANUTENÇÃO</h2>
-              <p>Fechamentos</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* ---- RESTANTE (ordem livre e coerente) ---- */}
-
-          {/* INFORMATIVOS */}
-          <a
-            className="card"
-            id="linkInformativos"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconInfo /></div>
-            <div className="card-body">
-              <h2>INFORMATIVOS</h2>
-              <p>Informativos sobre as rotinas de manutenção</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* PAPÉIS & RESPONSABILIDADES */}
-          <a
-            className="card"
-            id="linkPapeis"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconPapeis /></div>
-            <div className="card-body">
-              <h2>PAPÉIS &amp; RESPONSABILIDADES</h2>
-              <p>Papéis e responsabilidades conforme MOM</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* ONE PAGER */}
-          <a
-            className="card"
-            id="linkOnePager"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconOnePager /></div>
-            <div className="card-body">
-              <h2>ONE PAGER</h2>
-              <p>Resumo dos principais indicadores de manutenção</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* TREINAMENTOS */}
-          <a
-            className="card"
-            id="linkTreinamentos"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconTreinamentos /></div>
-            <div className="card-body">
-              <h2>TREINAMENTOS</h2>
-              <p>Sou novo na função de T2/téc. de Manutenção/T3 e agora?</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* RECONHECIMENTOS */}
-          <a
-            className="card"
-            id="linkReconhecimentos"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconReconhecimentos /></div>
-            <div className="card-body">
-              <h2>RECONHECIMENTOS</h2>
-              <p>Áreas reconhecidas por atingimento de meta</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-        </section>
-      </main>
-
-      <footer className="footer">
-        <small>© 2025 COMITÊ DE MANUTENÇÃO JDI— FEMSA</small>
-      </footer>
-    </div>
-  );
+  /* Cabeçalho */
+  --logo-comite-size: 188px;  /* ajuste aqui se quiser */
+  --logo-femsa-h: 32px;
+  --title-font-size: 20px;
 }
 
-          
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ===== Header ===== */
+.topbar { background: transparent; }
+.topbar-inner {
+  max-width: 1200px;
+  margin: 16px auto 0;
+  padding: 0 20px;
+
+  /* grid: [logo][pílula][femsa] */
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 16px;
+
+  position: relative; /* necessário para centralização absoluta da pílula */
+}
+
+/* logo do comitê (grande) */
+.logo-comite {
+  width: var(--logo-comite-size);
+  height: var(--logo-comite-size);
+  object-fit: contain;         /* sem distorcer */
+  border-radius: 50%;
+  background: transparent;
+}
+
+/* pílula vermelha – CENTRAL ABSOLUTO no container */
+.title-chip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--coca);
+  color: #fff;
+  padding: 12px 18px;          /* slim */
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  line-height: 1;
+  box-shadow: 0 6px 16px rgba(179, 0, 0, .25);
+
+  width: max-content;          /* só o necessário */
+  max-width: min(90vw, 900px);
+  white-space: nowrap;         /* “JDI” sempre junto */
+}
+.title-chip span { font-size: var(--title-font-size); }
+
+/* logo femsa */
+.logo-femsa {
+  height: var(--logo-femsa-h);
+  object-fit: contain;
+  display: block;
+}
+
+/* ===== Container ===== */
+.container { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
+
+/* ===== Grid de cards ===== */
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+@media (max-width: 1200px) { .grid { grid-template-columns: repeat(12, 1fr); } }
+@media (max-width: 900px)  { .grid { grid-template-columns: repeat(8, 1fr); } }
+@media (max-width: 640px)  { .grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* ===== Card ===== */
+.card {
+  grid-column: span 4;
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px; border-radius: var(--radius);
+  background: var(--card); box-shadow: var(--shadow);
+  text-decoration: none; color: inherit;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,.12); }
+
+/* Ícone do card */
+.card-icon {
+  width: 48px; height: 48px; flex: 0 0 48px;
+  display: grid; place-items: center;
+  border-radius: 14px; background: #ffe5e5; color: var(--coca);
+  border: 1px solid #ffd1d1;
+}
+.card-icon svg { width: 28px; height: 28px; display: block; }
+
+/* Conteúdo */
+.card-body h2 { margin: 0 0 4px; font-size: 18px; }
+.card-body p  { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* CTA */
+.card-cta {
+  margin-left: auto;
+  background: var(--coca); color: #fff;
+  padding: 8px 14px; border-radius: 999px; font-weight: 600;
+  box-shadow: 0 6px 16px rgba(179,0,0,.25);
+}
+
+/* Acessibilidade */
+.card:focus-visible { outline: 3px solid #ffd1d1; }
+
+/* Footer */
+.footer { text-align: center; color: var(--muted); padding: 28px 0 40px; }
+
+/* ===== Responsivo ===== */
+@media (max-width: 980px) {
+  :root { --logo-comite-size: 128px; }
+}
+@media (max-width: 760px) {
+  :root { --logo-comite-size: 88px; --title-font-size: 18px; }
+  .topbar-inner { margin-top: 8px; }
+}
+@media (max-width: 480px) {
+  :root { --logo-comite-size: 64px; --title-font-size: 16px; --logo-femsa-h: 26px; }
+  .title-chip {
+    padding: 10px 14px;
+    max-width: calc(100vw - 32px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .title-chip span { letter-spacing: .1px; white-space: nowrap; }
+}
