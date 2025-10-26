@@ -10,45 +10,18 @@
 
     <!-- Nomes/ícones usados no atalho -->
     <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção JDI" />
-    <meta name="application-name" content="Comitê JDI" />
+    <meta name="application-name" content="Comitê de Manutenção JDI" />
     <link rel="apple-touch-icon" href="/logo-comite-180.png" />
     <link rel="icon" href="/logo-comite-192.png" type="image/png" />
 
     <title>Comitê de Manutenção JDI</title>
-
-    <!-- OneSignal SDK v16 (mantido) -->
-    <script>
-      window.__OS_SDK_TAG_APPENDED__ = false;
-      window.__OS_SDK_LOADED__ = false;
-      window.__OS_SDK_ERROR__ = null;
-      (function () {
-        var s = document.createElement('script');
-        s.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-        s.defer = true;
-        s.onload = () => { window.__OS_SDK_LOADED__ = true; };
-        s.onerror = () => { window.__OS_SDK_ERROR__ = 'Falha ao carregar SDK v16'; };
-        document.head.appendChild(s);
-        window.__OS_SDK_TAG_APPENDED__ = true;
-      })();
-    </script>
+    <!-- (sem bloco do OneSignal neste build) -->
   </head>
 
   <body>
     <div id="root"></div>
-
     <!-- Vite/React bundle -->
     <script type="module" src="/src/main.tsx"></script>
-
-    <!-- REMOVIDO para evitar duplo registro de SW (o registro está no main.tsx) -->
-    <!--
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js', { scope: '/' })
-            .catch(err => console.error('SW register error:', err));
-        });
-      }
-    </script>
-    -->
   </body>
 </html>
+

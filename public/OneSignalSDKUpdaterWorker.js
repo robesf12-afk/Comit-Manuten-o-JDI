@@ -1,3 +1,4 @@
-importScripts('https://cdn.onesignal.com/sdks/OneSignalSDKWorker.js');
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
 
 

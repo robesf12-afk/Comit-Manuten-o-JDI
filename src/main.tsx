@@ -1,4 +1,4 @@
-// src/main.tsx — versão segura (sem top-level await)
+// src/main.tsx — versão estável (sem push)
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
@@ -13,16 +13,5 @@ if (root) {
   );
 }
 
-// ✅ tenta carregar o push só depois da página pronta
-window.addEventListener("load", () => {
-  import("./push")
-    .then((mod) => {
-      if (mod && typeof mod.initPush === "function") {
-        mod.initPush().catch((err) =>
-          console.warn("Falha ao iniciar push:", err)
-        );
-      }
-    })
-    .catch((err) => console.warn("Push desativado:", err));
-});
+// (sem import/uso do OneSignal neste build)
 
