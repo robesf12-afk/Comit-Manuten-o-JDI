@@ -15,22 +15,27 @@ import {
 export default function App() {
   return (
     <div className="app">
-      {/* CABEÇALHO – logo COMITÊ + (FEMSA + título) em grupo */}
+      {/* CABEÇALHO – FEMSA (esq) • Título central • Comitê (dir) */}
       <header className="topbar">
         <div className="topbar-inner">
+          {/* ESQUERDA: FEMSA */}
+          <img
+            className="logo-femsa"
+            src="/logo-femsa.png"
+            alt="Coca-Cola FEMSA"
+          />
+
+          {/* CENTRO: TÍTULO */}
+          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
+            <span>COMITÊ DE MANUTENÇÃO • JDI</span>
+          </div>
+
+          {/* DIREITA: LOGO COMITÊ (grande) */}
           <img
             className="logo-comite"
             src="/logo-comite.png"
             alt="Logo do Comitê"
           />
-
-          {/* FEMSA à esquerda do título */}
-          <div className="brand">
-            <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
-            <div className="title-chip" aria-label="Comitê de Manutenção JDI">
-              <span>COMITÊ DE MANUTENÇÃO • JDI</span>
-            </div>
-          </div>
         </div>
       </header>
 
@@ -117,7 +122,7 @@ export default function App() {
             <div className="card-cta">Abrir</div>
           </a>
 
-          {/* 6) OKR DE MANUTENÇÃO */}
+          {/* 6) OKR DE MANUTENÇÃO (FECHAMENTOS) */}
           <a
             className="card"
             id="linkOKR"
@@ -216,9 +221,8 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <small>© 2025 COMITÊ DE MANUTENÇÃO JDI— FEMSA</small>
+        <small>© 2025 COMITÊ DE MANUTENÇÃO JDI — FEMSA</small>
       </footer>
     </div>
   );
 }
-
