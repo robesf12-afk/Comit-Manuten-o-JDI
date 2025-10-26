@@ -12,7 +12,7 @@
   /* Cabeçalho */
   --logo-comite-size: 188px;                 /* logo grande */
   --logo-femsa-h: calc(188px * .48);         /* FEMSA proporcional ao comitê */
-  --title-font-size: 20px;
+  --title-font-size: 30px;
 }
 
 * { box-sizing: border-box; }
@@ -27,9 +27,9 @@ body {
 /* ===== Header ===== */
 .topbar { background: transparent; }
 .topbar-inner {
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 16px auto 0;
-  padding: 0 20px;
+  padding: 0 60px;
 
   /* COMITÊ | TÍTULO | FEMSA */
   display: grid;
