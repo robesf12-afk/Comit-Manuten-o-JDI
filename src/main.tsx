@@ -1,3 +1,4 @@
+// src/main.tsx — versão estável (sem push)
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
@@ -13,3 +14,4 @@ if (root) {
 }
 
 // (sem import/uso do OneSignal neste build)
+
