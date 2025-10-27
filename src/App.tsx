@@ -117,13 +117,12 @@ export default function App() {
           box-shadow:0 6px 18px rgba(0,0,0,.15);
         }
         .topbar-inner{
-          position:relative;                /* permite posicionar o menu flutuante no mobile */
+          position:relative;
           max-width:1200px; margin:0 auto;
           padding:6px 6px;
           display:grid; align-items:center; gap:6px;
-          grid-template-columns:auto 58px 1fr 92px; /* [menu] [logo comitê] [título] [femsa] */
+          grid-template-columns:auto 58px 1fr 92px;
         }
-
         .menu-btn{
           width:44px; height:44px; border:none; border-radius:999px;
           background:#b80000; color:#fff;
@@ -132,10 +131,8 @@ export default function App() {
           justify-self:start; margin-left:0;
         }
         .menu-btn .bar{ width:22px; height:2px; background:#fff; margin:2.5px 0; border-radius:2px; display:block; }
-
         .logo-comite{ height:46px; object-fit:contain; }
         .logo-femsa{ height:44px; object-fit:contain; justify-self:end; }
-
         .title-chip{
           color:#fff; font-weight:900; text-align:center;
           padding:8px 12px; border-radius:999px;
@@ -146,34 +143,30 @@ export default function App() {
 
         /* ===== Somente celular (≤ 430px) ===== */
         @media (max-width:430px){
-          /* 1) Reorganiza: logo à esquerda, título central e femsa à direita */
           .topbar-inner{
-            grid-template-columns:40px 1fr auto;    /* [logo] [título] [femsa] */
+            grid-template-columns:40px 1fr auto;
             grid-template-areas:"logo title femsa";
-            padding:6px 8px 14px;                   /* um pouco mais de padding embaixo p/ o menu flutuante */
+            padding:6px 8px 18px;     /* +4px de respiro inferior */
             gap:8px;
           }
           .ga-logo  { grid-area: logo; }
-          .ga-title { grid-area: title; align-self:start; } /* 2) título mais alto */
+          .ga-title { grid-area: title; align-self:start; }
           .ga-femsa { grid-area: femsa; }
 
-          /* 1) Botão do menu flutua entre a faixa vermelha e o conteúdo (esquerda) */
+          /* MENU MAIS BAIXO */
           .menu-btn{
             position:absolute;
             left:8px;
-            bottom:-18px;      /* desce para ficar na divisória vermelho/branco */
+            bottom:-30px;           /* antes -18px; desce para não cobrir o logo */
             width:40px; height:40px;
-            border-radius:12px;               /* fica com carinha de “card” */
+            border-radius:12px;
             background:#cc0000;
-            box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85); /* aro branco p/ destacar */
-            z-index: 101;     /* acima do conteúdo */
+            box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85);
+            z-index: 101;
           }
           .menu-btn .bar{ width:18px; height:2px; }
 
-          /* 3) Logo do comitê no lugar do menu (esquerda do topo) */
           .logo-comite{ height:32px; }
-
-          /* 4) Harmonização geral */
           .logo-femsa{ height:28px; }
           .title-chip{
             font-size:clamp(13px, 3.8vw, 16px);
@@ -184,10 +177,10 @@ export default function App() {
             background:rgba(255,255,255,.16);
           }
 
-          /* Respiro para o conteúdo, já que o menu “invade” 18px */
-          .banners-container{ padding:24px 10px 24px; }
+          /* BANNER MAIS PARA BAIXO */
+          .banners-container{ padding:42px 10px 24px; } /* antes 24px no topo */
           .banner{
-            max-width:92vw;               /* banner menos “grandão” no celular */
+            max-width:92vw;
             border-radius:12px;
             box-shadow:0 3px 10px rgba(0,0,0,.12);
           }
@@ -212,18 +205,12 @@ export default function App() {
       {/* ===== Topbar ===== */}
       <header className="topbar">
         <div className="topbar-inner">
-          {/* Botão menu (flutuante no mobile) */}
           <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
             <span className="bar" /><span className="bar" /><span className="bar" />
           </button>
 
-          {/* 3) Logo na esquerda */}
           <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
-
-          {/* 2) Título “mais alto” e central */}
           <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">COMITÊ DE MANUTENÇÃO • JDI</div>
-
-          {/* FEMSA à direita */}
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
