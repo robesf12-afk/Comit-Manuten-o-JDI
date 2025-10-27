@@ -117,6 +117,7 @@ export default function App() {
           box-shadow:0 6px 18px rgba(0,0,0,.15);
         }
         .topbar-inner{
+          position:relative;                /* permite posicionar o menu flutuante no mobile */
           max-width:1200px; margin:0 auto;
           padding:6px 6px;
           display:grid; align-items:center; gap:6px;
@@ -145,30 +146,35 @@ export default function App() {
 
         /* ===== Somente celular (≤ 430px) ===== */
         @media (max-width:430px){
+          /* 1) Reorganiza: logo à esquerda, título central e femsa à direita */
           .topbar-inner{
-            grid-template-areas:
-              "menu logo femsa"
-              "title title title";
-            grid-template-columns:auto 1fr auto;
-            row-gap:4px;
-            padding:4px 8px 8px;   /* menos altura e mais respiro lateral */
-            align-items:center;
+            grid-template-columns:40px 1fr auto;    /* [logo] [título] [femsa] */
+            grid-template-areas:"logo title femsa";
+            padding:6px 8px 14px;                   /* um pouco mais de padding embaixo p/ o menu flutuante */
             gap:8px;
           }
-          .ga-menu{ grid-area:menu; }
-          .ga-logo{ grid-area:logo; }
-          .ga-title{ grid-area:title; }
-          .ga-femsa{ grid-area:femsa; }
+          .ga-logo  { grid-area: logo; }
+          .ga-title { grid-area: title; align-self:start; } /* 2) título mais alto */
+          .ga-femsa { grid-area: femsa; }
 
-          /* Botão sanduíche menor */
-          .menu-btn{ width:36px; height:36px; box-shadow:0 3px 8px rgba(0,0,0,.22); }
+          /* 1) Botão do menu flutua entre a faixa vermelha e o conteúdo (esquerda) */
+          .menu-btn{
+            position:absolute;
+            left:8px;
+            bottom:-18px;      /* desce para ficar na divisória vermelho/branco */
+            width:40px; height:40px;
+            border-radius:12px;               /* fica com carinha de “card” */
+            background:#cc0000;
+            box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85); /* aro branco p/ destacar */
+            z-index: 101;     /* acima do conteúdo */
+          }
           .menu-btn .bar{ width:18px; height:2px; }
 
-          /* Logos menores e equilibrados */
+          /* 3) Logo do comitê no lugar do menu (esquerda do topo) */
           .logo-comite{ height:32px; }
-          .logo-femsa{  height:28px; }
 
-          /* Título mais leve e baixo */
+          /* 4) Harmonização geral */
+          .logo-femsa{ height:28px; }
           .title-chip{
             font-size:clamp(13px, 3.8vw, 16px);
             padding:4px 8px;
@@ -176,13 +182,12 @@ export default function App() {
             line-height:1.05;
             letter-spacing:.2px;
             background:rgba(255,255,255,.16);
-            white-space:nowrap;
           }
 
-          /* Banner menos “grandão” e com respiro do topo */
-          .banners-container{ padding:10px 10px 24px; }
+          /* Respiro para o conteúdo, já que o menu “invade” 18px */
+          .banners-container{ padding:24px 10px 24px; }
           .banner{
-            max-width:92vw;
+            max-width:92vw;               /* banner menos “grandão” no celular */
             border-radius:12px;
             box-shadow:0 3px 10px rgba(0,0,0,.12);
           }
@@ -207,26 +212,56 @@ export default function App() {
       {/* ===== Topbar ===== */}
       <header className="topbar">
         <div className="topbar-inner">
-          <button className="menu-btn ga-menu" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+          {/* Botão menu (flutuante no mobile) */}
+          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
             <span className="bar" /><span className="bar" /><span className="bar" />
           </button>
 
+          {/* 3) Logo na esquerda */}
           <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
+
+          {/* 2) Título “mais alto” e central */}
           <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">COMITÊ DE MANUTENÇÃO • JDI</div>
+
+          {/* FEMSA à direita */}
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
       {/* ===== Drawer ===== */}
-      <div className="drawer-overlay" style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }} onClick={() => setOpen(false)} />
-      <aside className="drawer" role="dialog" aria-modal="true" aria-label="Categorias" style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}>
+      <div
+        className="drawer-overlay"
+        style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
+        onClick={() => setOpen(false)}
+      />
+      <aside
+        className="drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Categorias"
+        style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}
+      >
         <div className="drawer-header">
           <strong style={{ fontSize: 18 }}>Categorias</strong>
-          <button onClick={() => setOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }} aria-label="Fechar menu" title="Fechar">×</button>
+          <button
+            onClick={() => setOpen(false)}
+            style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }}
+            aria-label="Fechar menu"
+            title="Fechar"
+          >
+            ×
+          </button>
         </div>
         <nav style={{ padding: "8px 6px 16px 6px", overflow: "auto" }}>
           {MENU.map(({ id, title, url, Icon }) => (
-            <a key={id} href={url} target="_blank" rel="noopener noreferrer" className="drawer-link" onClick={() => setOpen(false)}>
+            <a
+              key={id}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="drawer-link"
+              onClick={() => setOpen(false)}
+            >
               <span className="drawer-ico"><Icon /></span>
               <span>{title}</span>
             </a>
