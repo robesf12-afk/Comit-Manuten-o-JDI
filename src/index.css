@@ -359,3 +359,28 @@ html {
   transform: scale(1.02);
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
+/* Banners */
+.banners-container{
+  display:flex; flex-direction:column; align-items:center;
+  gap:22px; padding:80px 16px 40px;
+}
+.banner{
+  width:100%; max-width:1200px; border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.banner:hover{ transform:scale(1.02); box-shadow:0 6px 16px rgba(0,0,0,.2); }
+
+/* FAB + Drawer (se já tiver, pode manter o seu; aqui é o mínimo) */
+.fab-left{ position:fixed; left:16px; bottom:16px; z-index:1001; width:52px; height:52px; border:none; border-radius:9999px; background:#222; color:#fff; display:grid; place-items:center; box-shadow:0 6px 18px rgba(0,0,0,.25); cursor:pointer; }
+.fab-left .bar{ width:22px; height:2px; background:#fff; border-radius:2px; margin:2px 0; display:block; }
+.drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:1000; }
+.drawer-overlay.show{ opacity:1; pointer-events:auto; }
+.drawer{ position:fixed; top:0; left:0; height:100dvh; width:300px; max-width:85vw; background:#fff; box-shadow:4px 0 24px rgba(0,0,0,.18); transform:translateX(-102%); transition:transform .22s ease-out; z-index:1002; display:flex; flex-direction:column; }
+.drawer.open{ transform:translateX(0); }
+.drawer-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px 16px; border-bottom:1px solid #eee; gap:10px; }
+.drawer-close{ background:transparent; border:none; font-size:20px; padding:6px; cursor:pointer; }
+.drawer-nav{ padding:8px 6px 16px 6px; overflow:auto; }
+.drawer-link{ display:flex; align-items:center; gap:10px; padding:12px 10px; border-radius:10px; color:#222; text-decoration:none; }
+.drawer-link:hover{ background:#f7f7f7; }
+.drawer-ico{ width:20px; height:20px; display:grid; place-items:center; color:#cc0000; }
