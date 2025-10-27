@@ -6,11 +6,31 @@ import {
   IconOnePager,
   IconTreinamentos,
   IconPapeis,
-  IconInfo,
+  IconInfo,            // Informativos mantém este ícone
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
 } from "./icons";
+
+/* ===== Ícone local só para "Dúvidas e Sugestões" (um "?") ===== */
+const IconHelp: React.FC = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+    <path
+      d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle cx="12" cy="18" r="1.25" fill="currentColor" />
+  </svg>
+);
 
 /* ===== Links ===== */
 const LINKS = {
@@ -35,7 +55,7 @@ const LINKS = {
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
 } as const;
 
-/* ===== Menu (ordem com “Dúvidas…” por último) ===== */
+/* ===== Menu (com "Dúvidas…" por último e ícone diferente) ===== */
 const MENU = [
   {
     id: "registro",
@@ -60,12 +80,12 @@ const MENU = [
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
   { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconInfo },
 
-  // por último
+  // por último, com ícone diferente (IconHelp)
   {
     id: "duvidas",
     title: "Dúvidas e Sugestões sobre os processos de Manutenção",
     url: LINKS.duvidas,
-    Icon: IconInfo,
+    Icon: IconHelp,
   },
 ];
 
@@ -197,4 +217,3 @@ export default function App() {
     </div>
   );
 }
-
