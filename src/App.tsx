@@ -83,7 +83,7 @@ const LINKS = {
     "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
 } as const;
 
-/* ===== Menu (com Custo após OKR e “Dúvidas…” por último) ===== */
+/* ===== Menu ===== */
 const MENU = [
   {
     id: "registro",
@@ -102,8 +102,6 @@ const MENU = [
 
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
-
-  // >>> NOVO: CUSTO DE MANUTENÇÃO
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
 
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
@@ -111,16 +109,8 @@ const MENU = [
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
 
-  // Informativos -> ícone documento
   { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconDoc },
-
-  // por último, Dúvidas -> ícone "?"
-  {
-    id: "duvidas",
-    title: "Dúvidas e Sugestões sobre os processos de Manutenção",
-    url: LINKS.duvidas,
-    Icon: IconHelp,
-  },
+  { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
 /* ===== Banner ===== */
@@ -142,31 +132,45 @@ export default function App() {
   return (
     <div className="app">
       <style>{`
-        .topbar { position: sticky; top: 0; z-index: 100; background: #cc0000; padding: 8px 10px; box-shadow: 0 6px 18px rgba(0,0,0,.15); }
+        .topbar { position: sticky; top: 0; z-index: 100; background: #cc0000; padding: 6px 8px; box-shadow: 0 6px 18px rgba(0,0,0,.15); }
         .topbar-inner {
           max-width: 1200px; margin: 0 auto; display: grid; align-items: center; gap: 8px;
           grid-template-columns: auto 64px 1fr 92px; /* [menu] [logo comitê] [título] [femsa] */
         }
-        .menu-btn {
-          width: 44px; height: 44px; border: none; border-radius: 999px; background: #b80000; color: #fff;
-          box-shadow: 0 4px 12px rgba(0,0,0,.25); display: grid; place-items: center; cursor: pointer;
-        }
+        .menu-btn { width: 44px; height: 44px; border: none; border-radius: 999px; background: #b80000; color: #fff;
+          box-shadow: 0 4px 12px rgba(0,0,0,.25); display: grid; place-items: center; cursor: pointer; }
         .menu-btn .bar { width: 22px; height: 2px; background: #fff; margin: 2.5px 0; border-radius: 2px; display: block; }
+
         .logo-comite { height: 48px; object-fit: contain; }
         .logo-femsa { height: 44px; object-fit: contain; justify-self: end; }
         .title-chip {
           color: #fff; font-weight: 900; text-align: center; padding: 8px 12px; border-radius: 999px;
-          background: rgba(255,255,255,.12); letter-spacing: .4px; white-space: nowrap;
-          font-size: clamp(16px, 2.9vw, 28px);
-        }
-        @media (max-width: 480px) {
-          .topbar-inner { grid-template-columns: auto 44px 1fr 64px; gap: 6px; }
-          .logo-comite { height: 40px; }
-          .logo-femsa { height: 36px; }
-          .title-chip { font-size: clamp(14px, 4.2vw, 19px); padding: 6px 10px; }
+          background: rgba(255,255,255,.12); letter-spacing: .35px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+          font-size: clamp(16px, 2.7vw, 28px);
         }
 
-        .banners-container { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 18px 12px 32px; }
+        /* ===== Layout especial para telas estreitas: duas linhas ===== */
+        @media (max-width: 430px) {
+          .topbar-inner {
+            grid-template-areas:
+              "menu logo femsa"
+              "title title title";
+            grid-template-columns: auto 1fr auto;
+            row-gap: 4px;
+          }
+          .ga-menu  { grid-area: menu; }
+          .ga-logo  { grid-area: logo; }
+          .ga-title { grid-area: title; }
+          .ga-femsa { grid-area: femsa; }
+
+          .logo-comite { height: 36px; }
+          .logo-femsa { height: 32px; }
+          .title-chip { font-size: clamp(14px, 4.2vw, 18px); padding: 6px 10px; white-space: normal; }
+          .menu-btn { width: 40px; height: 40px; }
+          .menu-btn .bar { width: 20px; }
+        }
+
+        .banners-container { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 14px 12px 28px; }
         .banner { width: 100%; height: auto; max-width: 980px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.12); display:block; }
         @media (max-width: 1024px) { .banner { max-width: 900px; } }
         @media (max-width: 768px)  { .banner { max-width: 100%; border-radius: 14px; } }
@@ -184,17 +188,17 @@ export default function App() {
       {/* ===== Topbar ===== */}
       <header className="topbar">
         <div className="topbar-inner">
-          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+          <button className="menu-btn ga-menu" aria-label="Abrir menu" onClick={() => setOpen(true)}>
             <span className="bar" /><span className="bar" /><span className="bar" />
           </button>
 
-          <img className="logo-comite" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
+          <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
 
-          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
+          <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">
             COMITÊ DE MANUTENÇÃO • JDI
           </div>
 
-          <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
+          <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
@@ -251,3 +255,4 @@ export default function App() {
     </div>
   );
 }
+
