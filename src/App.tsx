@@ -6,21 +6,15 @@ import {
   IconOnePager,
   IconTreinamentos,
   IconPapeis,
-  IconInfo,            // Informativos mantém este ícone
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
 } from "./icons";
 
-/* ===== Ícone local só para "Dúvidas e Sugestões" (um "?") ===== */
+/* ===== Ícones locais ===== */
+/* "?" para Dúvidas e Sugestões */
 const IconHelp: React.FC = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    aria-hidden="true"
-  >
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
     <path
       d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9"
@@ -29,6 +23,38 @@ const IconHelp: React.FC = () => (
       strokeLinecap="round"
     />
     <circle cx="12" cy="18" r="1.25" fill="currentColor" />
+  </svg>
+);
+
+/* Documento/folheto para Informativos */
+const IconDoc: React.FC = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="2" />
+    <path d="M14 3v5h5" stroke="currentColor" strokeWidth="2" />
+    <path d="M9.5 12h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M9.5 15.5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
+/* Moeda + engrenagem para Custo de Manutenção */
+const IconCost: React.FC = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    {/* Moeda */}
+    <circle cx="8" cy="14" r="4.5" stroke="currentColor" strokeWidth="2" />
+    <line x1="6.2" y1="13.2" x2="9.8" y2="13.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <line x1="6.2" y1="15.6" x2="9.8" y2="15.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    {/* Engrenagem (mini) */}
+    <circle cx="17" cy="7" r="2" stroke="currentColor" strokeWidth="2" />
+    <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="17" y1="2.6" x2="17" y2="1.6" />
+      <line x1="17" y1="12.4" x2="17" y2="13.4" />
+      <line x1="12.6" y1="7" x2="11.6" y2="7" />
+      <line x1="21.4" y1="7" x2="22.4" y2="7" />
+      <line x1="13.9" y1="3.9" x2="13.2" y2="3.2" />
+      <line x1="20.8" y1="10.8" x2="21.5" y2="11.5" />
+      <line x1="20.8" y1="3.2" x2="21.5" y2="2.5" />
+      <line x1="13.9" y1="10.1" x2="13.2" y2="10.8" />
+    </g>
   </svg>
 );
 
@@ -53,9 +79,11 @@ const LINKS = {
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
   duvidas:
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
+  custo:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
 } as const;
 
-/* ===== Menu (com "Dúvidas…" por último e ícone diferente) ===== */
+/* ===== Menu (com Custo após OKR e “Dúvidas…” por último) ===== */
 const MENU = [
   {
     id: "registro",
@@ -74,13 +102,19 @@ const MENU = [
 
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
+
+  // >>> NOVO: CUSTO DE MANUTENÇÃO
+  { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
+
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
-  { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconInfo },
 
-  // por último, com ícone diferente (IconHelp)
+  // Informativos -> ícone documento
+  { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconDoc },
+
+  // por último, Dúvidas -> ícone "?"
   {
     id: "duvidas",
     title: "Dúvidas e Sugestões sobre os processos de Manutenção",
