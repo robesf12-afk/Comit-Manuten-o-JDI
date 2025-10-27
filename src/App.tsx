@@ -29,23 +29,37 @@ const LINKS = {
   reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
 } as const;
 
-/* ===== Itens do menu lateral (com ícones) ===== */
+/* ===== Itens do menu lateral (com ícones) =====
+   Ordem e nomes conforme solicitado */
 const MENU = [
-  { id: "okr", title: "OKR de Manutenção", url: LINKS.okr, Icon: IconOKR },
-  { id: "ddm", title: "DDM’s", url: LINKS.ddm, Icon: IconDDM },
+  {
+    id: "registro",
+    title: "Registro de reuniões Abertura de PCM e Prestação de Contas",
+    url: LINKS.registro,
+    Icon: IconRegistroPCM,
+  },
+  {
+    id: "checklist",
+    title: "Registro Check List Pós Partida de PCM",
+    url: LINKS.checklist,
+    Icon: IconChecklist,
+  },
+  { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
+  {
+    id: "okr",
+    title: "OKR de Manutenção (Fechamentos)",
+    url: LINKS.okr,
+    Icon: IconOKR,
+  },
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
-  { id: "papeis", title: "Papéis & Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
-  { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconInfo },
-  { id: "checklist", title: "Checklist Pós-Partida", url: LINKS.checklist, Icon: IconChecklist },
-  { id: "registro", title: "Registro de Reuniões / PCM", url: LINKS.registro, Icon: IconRegistroPCM },
+  { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
+  { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconInfo },
 ];
 
 /* ===== Banners (por enquanto só 1) ===== */
-const BANNERS = [
-  { id: "okr", img: "/banner-reconhecimentos.png", url: LINKS.okr },
-];
+const BANNERS = [{ id: "okr", img: "/banner-reconhecimentos.png", url: LINKS.okr }];
 
 export default function App() {
   const [open, setOpen] = useState(false);
@@ -117,7 +131,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* ===== Botão sanduíche (topo, vermelho) ===== */}
+      {/* ===== Botão sanduíche (topo, vermelho – lado esquerdo) ===== */}
       <button
         className="fab-top"
         aria-label="Abrir menu"
@@ -125,7 +139,7 @@ export default function App() {
         style={{
           position: "fixed",
           top: 14,
-          left: 14,
+          left: 14, // <- lado esquerdo
           zIndex: 101,
           width: 52,
           height: 52,
@@ -256,4 +270,3 @@ export default function App() {
     </div>
   );
 }
-
