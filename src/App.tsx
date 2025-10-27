@@ -27,9 +27,15 @@ const LINKS = {
   checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
   registro: "https://forms.office.com/r/mt0JTBJiK6?origin=lprLink",
   reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
+  programacao:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
+  painel:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
+  duvidas:
+    "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
 } as const;
 
-/* ===== Menu (ordem/nome que você pediu) ===== */
+/* ===== Menu (ordem com “Dúvidas…” por último) ===== */
 const MENU = [
   {
     id: "registro",
@@ -43,18 +49,24 @@ const MENU = [
     url: LINKS.checklist,
     Icon: IconChecklist,
   },
+  { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
+  { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
+
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
-  {
-    id: "okr",
-    title: "OKR de Manutenção (Fechamentos)",
-    url: LINKS.okr,
-    Icon: IconOKR,
-  },
+  { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
   { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconInfo },
+
+  // por último
+  {
+    id: "duvidas",
+    title: "Dúvidas e Sugestões sobre os processos de Manutenção",
+    url: LINKS.duvidas,
+    Icon: IconInfo,
+  },
 ];
 
 /* ===== Banner ===== */
@@ -75,12 +87,11 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* CSS fino pro header e pro banner no mobile */}
       <style>{`
         .topbar { position: sticky; top: 0; z-index: 100; background: #cc0000; padding: 8px 10px; box-shadow: 0 6px 18px rgba(0,0,0,.15); }
         .topbar-inner {
           max-width: 1200px; margin: 0 auto; display: grid; align-items: center; gap: 8px;
-          grid-template-columns: auto 64px 1fr 92px; /* [botão] [logo comitê] [título] [femsa] */
+          grid-template-columns: auto 64px 1fr 92px; /* [menu] [logo comitê] [título] [femsa] */
         }
         .menu-btn {
           width: 44px; height: 44px; border: none; border-radius: 999px; background: #b80000; color: #fff;
@@ -92,10 +103,8 @@ export default function App() {
         .title-chip {
           color: #fff; font-weight: 900; text-align: center; padding: 8px 12px; border-radius: 999px;
           background: rgba(255,255,255,.12); letter-spacing: .4px; white-space: nowrap;
-          font-size: clamp(16px, 2.9vw, 28px); /* sempre numa linha, encolhe se preciso */
+          font-size: clamp(16px, 2.9vw, 28px);
         }
-
-        /* Mobile */
         @media (max-width: 480px) {
           .topbar-inner { grid-template-columns: auto 44px 1fr 64px; gap: 6px; }
           .logo-comite { height: 40px; }
@@ -103,14 +112,12 @@ export default function App() {
           .title-chip { font-size: clamp(14px, 4.2vw, 19px); padding: 6px 10px; }
         }
 
-        /* Conteúdo/Banner */
         .banners-container { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 18px 12px 32px; }
         .banner { width: 100%; height: auto; max-width: 980px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.12); display:block; }
         @media (max-width: 1024px) { .banner { max-width: 900px; } }
         @media (max-width: 768px)  { .banner { max-width: 100%; border-radius: 14px; } }
         @media (max-width: 420px)  { .banner { border-radius: 12px; } }
 
-        /* Drawer */
         .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); transition: opacity .2s ease; z-index: 100; }
         .drawer { position: fixed; top:0; left:0; height:100dvh; width:320px; max-width:86vw; background:#fff;
                   box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102; display:flex; flex-direction:column;
@@ -120,7 +127,7 @@ export default function App() {
         .drawer-ico { color:#cc0000; display:grid; place-items:center; }
       `}</style>
 
-      {/* ===== Topbar com botão integrado ===== */}
+      {/* ===== Topbar ===== */}
       <header className="topbar">
         <div className="topbar-inner">
           <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
@@ -137,7 +144,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* ===== Overlay + Drawer ===== */}
+      {/* ===== Drawer ===== */}
       <div
         className="drawer-overlay"
         style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
@@ -179,7 +186,7 @@ export default function App() {
         </nav>
       </aside>
 
-      {/* ===== Conteúdo: apenas o banner ===== */}
+      {/* ===== Conteúdo ===== */}
       <main className="banners-container">
         {BANNERS.map(({ id, img, url }) => (
           <a key={id} href={url} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
@@ -190,3 +197,4 @@ export default function App() {
     </div>
   );
 }
+
