@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IconDDM,
   IconOKR,
@@ -66,266 +66,101 @@ const MENU = [
 export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // Fecha com ESC
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setDrawerOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Trava o scroll do body quando o drawer está aberto
+  useEffect(() => {
+    const original = document.body.style.overflow;
+    document.body.style.overflow = drawerOpen ? "hidden" : original || "";
+    return () => {
+      document.body.style.overflow = original || "";
+    };
+  }, [drawerOpen]);
+
   const toggleDrawer = (open: boolean) => () => setDrawerOpen(open);
 
-  return (
-    <div className="app">
-      {/* ===== BOTÃO SANDUÍCHE (flutuante no canto) ===== */}
-      <button
-        className="fab-menu"
-        aria-label="Abrir menu de categorias"
-        onClick={toggleDrawer(true)}
-      >
-        <span />
-        <span />
-        <span />
-      </button>
+  // Scroll suave manual (independe de CSS global). Mantém o # na URL.
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const id = href.replace(/^#/, "");
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Ajuste fino opcional (se houver topbar fixa com altura):
+      // window.scrollBy({ top: -8, behavior: "instant" as ScrollBehavior }); // pode deixar comentado
+      history.replaceState(null, "", `#${id}`);
+    }
+    setDrawerOpen(false);
+  };
 
-      {/* ===== DRAWER (menu lateral) ===== */}
-      <div
-        className={`drawer-scrim ${drawerOpen ? "open" : ""}`}
-        onClick={toggleDrawer(false)}
-      />
-      <aside className={`drawer ${drawerOpen ? "open" : ""}`} role="dialog" aria-label="Categorias">
-        <div className="drawer-header">
-          <strong>Categorias</strong>
-          <button
-            className="drawer-close"
-            aria-label="Fechar menu"
-            onClick={toggleDrawer(false)}
-            title="Fechar"
-          >
-            ×
-          </button>
-        </div>
-
-        <nav className="drawer-nav">
-          {MENU.map(({ id, title, href, Icon }) => (
-            <a
-              key={id}
-              className="drawer-link"
-              href={href}
-              onClick={toggleDrawer(false)}
-            >
-              <span className="drawer-ico">
-                <Icon />
-              </span>
-              <span className="drawer-text">{title}</span>
-            </a>
-          ))}
-        </nav>
-      </aside>
-
-      {/* ===== CABEÇALHO – COMITÊ (esq) • Título (centro) • FEMSA (dir) ===== */}
-      <header className="topbar">
-        <div className="topbar-inner">
-          <img className="logo-comite" src="/logo-comite.png" alt="Logo do Comitê" />
-
-          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
-            <span>COMITÊ DE MANUTENÇÃO • JDI</span>
-          </div>
-
-          <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
-        </div>
-      </header>
-
-      {/* ===== CONTEÚDO ===== */}
-      <main className="container">
-        <section className="grid">
-
-          {/* 1) REGISTRO */}
-          <div id="registro" />
-          <a
-            className="card"
-            id="linkRegistroPrestacao"
-            href="https://forms.office.com/r/mt0JTBJiK6?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconRegistroPCM /></div>
-            <div className="card-body">
-              <h2>REGISTRO DE REUNIÕES DE ABERTURA DE PCM E PRESTAÇÃO DE CONTAS</h2>
-              <p>Aberturas de PCM e Prestação de Contas</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 2) CHECKLIST */}
-          <div id="checklist" />
-          <a
-            className="card"
-            id="linkChecklistPartida"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconChecklist /></div>
-            <div className="card-body">
-              <h2>CHECKLIST PÓS-PARTIDA</h2>
-              <p>CIP/SETUP/PCM/Grandes Manutenções</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 3) DDM’s */}
-          <div id="ddms" />
-          <a
-            className="card"
-            id="linkDDM"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconDDM /></div>
-            <div className="card-body">
-              <h2>DDM’S</h2>
-              <p>Diálogos de Manutenção</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 4) PROGRAMAÇÃO DE PCM */}
-          <div id="programacao" />
-          <a
-            className="card"
-            id="linkProgramacaoPCM"
-            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=Ye4Wad"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconChecklist /></div>
-            <div className="card-body">
-              <h2>PROGRAMAÇÃO DE PCM</h2>
-              <p>Planejamento semanal das manutenções preventivas</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 5) PAINEL DE DISTRIBUIÇÃO DE HORAS */}
-          <div id="distribuicao" />
-          <a
-            className="card"
-            id="linkPainelHoras"
-            href="https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=LYYchz"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconOKR /></div>
-            <div className="card-body">
-              <h2>PAINEL DE DISTRIBUIÇÃO DE HORAS</h2>
-              <p>Acompanhamento da alocação de horas PCM</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* 6) OKR DE MANUTENÇÃO */}
-          <div id="okr" />
-          <a
-            className="card"
-            id="linkOKR"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconOKR /></div>
-            <div className="card-body">
-              <h2>OKR DE MANUTENÇÃO</h2>
-              <p>Fechamentos</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* INFORMATIVOS */}
-          <div id="informativos" />
-          <a
-            className="card"
-            id="linkInformativos"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconInfo /></div>
-            <div className="card-body">
-              <h2>INFORMATIVOS</h2>
-              <p>Informativos sobre as rotinas de manutenção</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* PAPÉIS & RESPONSABILIDADES */}
-          <div id="papeis" />
-          <a
-            className="card"
-            id="linkPapeis"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconPapeis /></div>
-            <div className="card-body">
-              <h2>PAPÉIS &amp; RESPONSABILIDADES</h2>
-              <p>Papéis e responsabilidades conforme MOM</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* ONE PAGER */}
-          <div id="onepager" />
-          <a
-            className="card"
-            id="linkOnePager"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconOnePager /></div>
-            <div className="card-body">
-              <h2>ONE PAGER</h2>
-              <p>Resumo dos principais indicadores de manutenção</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* TREINAMENTOS */}
-          <div id="treinamentos" />
-          <a
-            className="card"
-            id="linkTreinamentos"
-            href="https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconTreinamentos /></div>
-            <div className="card-body">
-              <h2>TREINAMENTOS</h2>
-              <p>Sou novo na função de T2/téc. de Manutenção/T3 e agora?</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-          {/* RECONHECIMENTOS */}
-          <div id="reconhecimentos" />
-          <a
-            className="card"
-            id="linkReconhecimentos"
-            href="https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="card-icon"><IconReconhecimentos /></div>
-            <div className="card-body">
-              <h2>RECONHECIMENTOS</h2>
-              <p>Áreas reconhecidas por atingimento de meta</p>
-            </div>
-            <div className="card-cta">Abrir</div>
-          </a>
-
-        </section>
-      </main>
-
-      <footer className="footer">
-        <small>© 2025 COMITÊ DE MANUTENÇÃO JDI — FEMSA</small>
-      </footer>
-    </div>
-  );
-}
+  /* Estilos inline mínimos para garantir funcionamento mesmo sem CSS externo.
+     Se você já tem CSS (fab-menu, drawer, etc.), estes estilos apenas ajudam. */
+  const styles = {
+    fab: {
+      position: "fixed" as const,
+      left: 16,
+      bottom: 16,
+      zIndex: 1001,
+      width: 52,
+      height: 52,
+      borderRadius: 9999,
+      border: "none",
+      background: "#cc0000",
+      color: "#fff",
+      boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
+      display: "grid",
+      placeItems: "center",
+      cursor: "pointer",
+    },
+    fabBars: {
+      width: 22,
+      height: 2,
+      background: "#fff",
+      display: "block",
+      borderRadius: 2,
+      margin: "2px 0",
+    },
+    scrim: (open: boolean) => ({
+      position: "fixed" as const,
+      inset: 0,
+      background: "rgba(0,0,0,0.35)",
+      opacity: open ? 1 : 0,
+      pointerEvents: open ? "auto" : "none",
+      transition: "opacity .2s ease",
+      zIndex: 1000,
+    }),
+    drawer: (open: boolean) => ({
+      position: "fixed" as const,
+      top: 0,
+      left: 0,
+      height: "100dvh",
+      width: 300,
+      maxWidth: "85vw",
+      background: "#fff",
+      boxShadow: "4px 0 24px rgba(0,0,0,0.18)",
+      transform: open ? "translateX(0)" : "translateX(-102%)",
+      transition: "transform .22s ease-out",
+      zIndex: 1002,
+      display: "flex",
+      flexDirection: "column" as const,
+    }),
+    drawerHeader: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "14px 14px 10px 16px",
+      borderBottom: "1px solid #eee",
+      gap: 10,
+    },
+    drawerCloseBtn: {
+      background: "transparent",
+      border: "none",
+      color: "#333",
+      c
