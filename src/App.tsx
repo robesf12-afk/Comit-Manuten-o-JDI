@@ -1,16 +1,5 @@
 // src/App.tsx
 import React, { useEffect, useState } from "react";
-import {
-  IconOKR,
-  IconDDM,
-  IconOnePager,
-  IconTreinamentos,
-  IconPapeis,
-  IconInfo,
-  IconChecklist,
-  IconRegistroPCM,
-  IconReconhecimentos,
-} from "./icons";
 
 const LINKS = {
   okr: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
@@ -22,27 +11,29 @@ const LINKS = {
   checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
   registro: "https://forms.office.com/r/mt0JTBJiK6?origin=lprLink",
   reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-} as const;
+};
 
 const MENU = [
-  { id: "okr", title: "OKR de Manutenção", Icon: IconOKR, url: LINKS.okr },
-  { id: "ddm", title: "DDM’s", Icon: IconDDM, url: LINKS.ddm },
-  { id: "onepager", title: "One Pager", Icon: IconOnePager, url: LINKS.onepager },
-  { id: "treinamentos", title: "Treinamentos", Icon: IconTreinamentos, url: LINKS.treinamentos },
-  { id: "papeis", title: "Papéis & Responsabilidades", Icon: IconPapeis, url: LINKS.papeis },
-  { id: "informativos", title: "Informativos", Icon: IconInfo, url: LINKS.informativos },
-  { id: "checklist", title: "Checklist Pós-Partida", Icon: IconChecklist, url: LINKS.checklist },
-  { id: "registro", title: "Registro de Reuniões / PCM", Icon: IconRegistroPCM, url: LINKS.registro },
-  { id: "reconhecimentos", title: "Reconhecimentos", Icon: IconReconhecimentos, url: LINKS.reconhecimentos },
+  { title: "OKR de Manutenção", url: LINKS.okr },
+  { title: "DDM’s", url: LINKS.ddm },
+  { title: "One Pager", url: LINKS.onepager },
+  { title: "Treinamentos", url: LINKS.treinamentos },
+  { title: "Papéis & Responsabilidades", url: LINKS.papeis },
+  { title: "Informativos", url: LINKS.informativos },
+  { title: "Checklist Pós-Partida", url: LINKS.checklist },
+  { title: "Registro de Reuniões / PCM", url: LINKS.registro },
+  { title: "Reconhecimentos", url: LINKS.reconhecimentos },
 ];
 
 export default function App() {
   const [open, setOpen] = useState(false);
 
+  // trava scroll com menu aberto
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+  // ESC fecha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
@@ -51,5 +42,41 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* FAB*
+      {/* Botão do menu */}
+      <button className="fab-left" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+        <span className="bar" /><span className="bar" /><span className="bar" />
+      </button>
+
+      {/* Overlay + Drawer */}
+      <div className={`drawer-overlay ${open ? "show" : ""}`} onClick={() => setOpen(false)} />
+      <aside className={`drawer ${open ? "open" : ""}`} role="dialog" aria-modal="true" aria-label="Categorias">
+        <div className="drawer-header">
+          <strong>Categorias</strong>
+          <button className="drawer-close" onClick={() => setOpen(false)}>×</button>
+        </div>
+        <nav className="drawer-nav">
+          {MENU.map((item) => (
+            <a
+              key={item.title}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="drawer-link"
+              onClick={() => setOpen(false)}
+            >
+              {item.title}
+            </a>
+          ))}
+        </nav>
+      </aside>
+
+      {/* CONTEÚDO: apenas o banner enviado, clicando leva ao OKR */}
+      <main className="banners-container">
+        <a href={LINKS.okr} target="_blank" rel="noopener noreferrer">
+          <img className="banner" src="/banner-reconhecimentos.png" alt="Reconhecimentos / OKR" />
+        </a>
+      </main>
+    </div>
+  );
+}
 
