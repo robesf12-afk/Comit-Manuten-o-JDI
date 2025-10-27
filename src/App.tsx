@@ -109,16 +109,16 @@ export default function App() {
   return (
     <div className="app">
       <style>{`
-        /* ===== Topbar ===== */
+        /* ===== Topbar (desktop/tablet) ===== */
         .topbar{
           position: sticky; top: 0; z-index: 100;
           background:#cc0000;
-          padding:0; /* sem padding para encostar no canto */
+          padding:0;
           box-shadow:0 6px 18px rgba(0,0,0,.15);
         }
         .topbar-inner{
           max-width:1200px; margin:0 auto;
-          padding:6px 6px; /* padding interno mínimo */
+          padding:6px 6px;
           display:grid; align-items:center; gap:6px;
           grid-template-columns:auto 58px 1fr 92px; /* [menu] [logo comitê] [título] [femsa] */
         }
@@ -128,7 +128,7 @@ export default function App() {
           background:#b80000; color:#fff;
           box-shadow:0 4px 12px rgba(0,0,0,.25);
           display:grid; place-items:center; cursor:pointer;
-          justify-self:start; margin-left:0; /* colado na esquerda */
+          justify-self:start; margin-left:0;
         }
         .menu-btn .bar{ width:22px; height:2px; background:#fff; margin:2.5px 0; border-radius:2px; display:block; }
 
@@ -143,7 +143,7 @@ export default function App() {
           font-size:clamp(16px, 2.7vw, 28px);
         }
 
-        /* ===== Mobile: duas linhas para nunca cortar ===== */
+        /* ===== Somente celular (≤ 430px) ===== */
         @media (max-width:430px){
           .topbar-inner{
             grid-template-areas:
@@ -151,25 +151,48 @@ export default function App() {
               "title title title";
             grid-template-columns:auto 1fr auto;
             row-gap:4px;
+            padding:4px 8px 8px;   /* menos altura e mais respiro lateral */
+            align-items:center;
+            gap:8px;
           }
           .ga-menu{ grid-area:menu; }
           .ga-logo{ grid-area:logo; }
           .ga-title{ grid-area:title; }
           .ga-femsa{ grid-area:femsa; }
 
-          .menu-btn{ width:40px; height:40px; }
-          .menu-btn .bar{ width:20px; }
-          .logo-comite{ height:38px; }
-          .logo-femsa{ height:34px; }
-          .title-chip{ font-size:clamp(14px, 4.2vw, 18px); padding:6px 10px; white-space:normal; }
+          /* Botão sanduíche menor */
+          .menu-btn{ width:36px; height:36px; box-shadow:0 3px 8px rgba(0,0,0,.22); }
+          .menu-btn .bar{ width:18px; height:2px; }
+
+          /* Logos menores e equilibrados */
+          .logo-comite{ height:32px; }
+          .logo-femsa{  height:28px; }
+
+          /* Título mais leve e baixo */
+          .title-chip{
+            font-size:clamp(13px, 3.8vw, 16px);
+            padding:4px 8px;
+            border-radius:10px;
+            line-height:1.05;
+            letter-spacing:.2px;
+            background:rgba(255,255,255,.16);
+            white-space:nowrap;
+          }
+
+          /* Banner menos “grandão” e com respiro do topo */
+          .banners-container{ padding:10px 10px 24px; }
+          .banner{
+            max-width:92vw;
+            border-radius:12px;
+            box-shadow:0 3px 10px rgba(0,0,0,.12);
+          }
         }
 
-        /* ===== Conteúdo ===== */
+        /* ===== Conteúdo (padrão) ===== */
         .banners-container{ display:flex; flex-direction:column; align-items:center; gap:22px; padding:14px 12px 28px; }
         .banner{ width:100%; height:auto; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); display:block; }
         @media (max-width:1024px){ .banner{ max-width:900px; } }
         @media (max-width:768px){ .banner{ max-width:100%; border-radius:14px; } }
-        @media (max-width:420px){ .banner{ border-radius:12px; } }
 
         /* ===== Drawer ===== */
         .drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); transition:opacity .2s ease; z-index:100; }
@@ -222,4 +245,3 @@ export default function App() {
     </div>
   );
 }
-
