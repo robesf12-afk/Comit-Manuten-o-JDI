@@ -12,38 +12,25 @@ import {
 } from "./icons";
 
 /* ===== Ícones locais ===== */
-/* "?" para Dúvidas e Sugestões */
 const IconHelp: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-    <path
-      d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
+    <path d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     <circle cx="12" cy="18" r="1.25" fill="currentColor" />
   </svg>
 );
-
-/* Documento/folheto para Informativos */
 const IconDoc: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="2" />
     <path d="M14 3v5h5" stroke="currentColor" strokeWidth="2" />
-    <path d="M9.5 12h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <path d="M9.5 15.5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M9.5 12h5M9.5 15.5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
-
-/* Moeda + engrenagem para Custo de Manutenção */
 const IconCost: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    {/* Moeda */}
     <circle cx="8" cy="14" r="4.5" stroke="currentColor" strokeWidth="2" />
     <line x1="6.2" y1="13.2" x2="9.8" y2="13.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     <line x1="6.2" y1="15.6" x2="9.8" y2="15.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    {/* Engrenagem (mini) */}
     <circle cx="17" cy="7" r="2" stroke="currentColor" strokeWidth="2" />
     <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <line x1="17" y1="2.6" x2="17" y2="1.6" />
@@ -85,18 +72,8 @@ const LINKS = {
 
 /* ===== Menu ===== */
 const MENU = [
-  {
-    id: "registro",
-    title: "Registro de reuniões Abertura de PCM e Prestação de Contas",
-    url: LINKS.registro,
-    Icon: IconRegistroPCM,
-  },
-  {
-    id: "checklist",
-    title: "Registro Check List Pós Partida de PCM",
-    url: LINKS.checklist,
-    Icon: IconChecklist,
-  },
+  { id: "registro", title: "Registro de reuniões Abertura de PCM e Prestação de Contas", url: LINKS.registro, Icon: IconRegistroPCM },
+  { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
 
@@ -113,7 +90,7 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-/* ===== Banner ===== */
+/* ===== Banners ===== */
 const BANNERS = [{ id: "okr", img: "/banner-reconhecimentos.png", url: LINKS.okr }];
 
 export default function App() {
@@ -132,57 +109,76 @@ export default function App() {
   return (
     <div className="app">
       <style>{`
-        .topbar { position: sticky; top: 0; z-index: 100; background: #cc0000; padding: 6px 8px; box-shadow: 0 6px 18px rgba(0,0,0,.15); }
-        .topbar-inner {
-          max-width: 1200px; margin: 0 auto; display: grid; align-items: center; gap: 8px;
-          grid-template-columns: auto 64px 1fr 92px; /* [menu] [logo comitê] [título] [femsa] */
+        /* ===== Topbar ===== */
+        .topbar{
+          position: sticky; top: 0; z-index: 100;
+          background:#cc0000;
+          padding:0; /* sem padding para encostar no canto */
+          box-shadow:0 6px 18px rgba(0,0,0,.15);
         }
-        .menu-btn { width: 44px; height: 44px; border: none; border-radius: 999px; background: #b80000; color: #fff;
-          box-shadow: 0 4px 12px rgba(0,0,0,.25); display: grid; place-items: center; cursor: pointer; }
-        .menu-btn .bar { width: 22px; height: 2px; background: #fff; margin: 2.5px 0; border-radius: 2px; display: block; }
-
-        .logo-comite { height: 48px; object-fit: contain; }
-        .logo-femsa { height: 44px; object-fit: contain; justify-self: end; }
-        .title-chip {
-          color: #fff; font-weight: 900; text-align: center; padding: 8px 12px; border-radius: 999px;
-          background: rgba(255,255,255,.12); letter-spacing: .35px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-          font-size: clamp(16px, 2.7vw, 28px);
+        .topbar-inner{
+          max-width:1200px; margin:0 auto;
+          padding:6px 6px; /* padding interno mínimo */
+          display:grid; align-items:center; gap:6px;
+          grid-template-columns:auto 58px 1fr 92px; /* [menu] [logo comitê] [título] [femsa] */
         }
 
-        /* ===== Layout especial para telas estreitas: duas linhas ===== */
-        @media (max-width: 430px) {
-          .topbar-inner {
+        .menu-btn{
+          width:44px; height:44px; border:none; border-radius:999px;
+          background:#b80000; color:#fff;
+          box-shadow:0 4px 12px rgba(0,0,0,.25);
+          display:grid; place-items:center; cursor:pointer;
+          justify-self:start; margin-left:0; /* colado na esquerda */
+        }
+        .menu-btn .bar{ width:22px; height:2px; background:#fff; margin:2.5px 0; border-radius:2px; display:block; }
+
+        .logo-comite{ height:46px; object-fit:contain; }
+        .logo-femsa{ height:44px; object-fit:contain; justify-self:end; }
+
+        .title-chip{
+          color:#fff; font-weight:900; text-align:center;
+          padding:8px 12px; border-radius:999px;
+          background:rgba(255,255,255,.12);
+          letter-spacing:.35px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+          font-size:clamp(16px, 2.7vw, 28px);
+        }
+
+        /* ===== Mobile: duas linhas para nunca cortar ===== */
+        @media (max-width:430px){
+          .topbar-inner{
             grid-template-areas:
               "menu logo femsa"
               "title title title";
-            grid-template-columns: auto 1fr auto;
-            row-gap: 4px;
+            grid-template-columns:auto 1fr auto;
+            row-gap:4px;
           }
-          .ga-menu  { grid-area: menu; }
-          .ga-logo  { grid-area: logo; }
-          .ga-title { grid-area: title; }
-          .ga-femsa { grid-area: femsa; }
+          .ga-menu{ grid-area:menu; }
+          .ga-logo{ grid-area:logo; }
+          .ga-title{ grid-area:title; }
+          .ga-femsa{ grid-area:femsa; }
 
-          .logo-comite { height: 36px; }
-          .logo-femsa { height: 32px; }
-          .title-chip { font-size: clamp(14px, 4.2vw, 18px); padding: 6px 10px; white-space: normal; }
-          .menu-btn { width: 40px; height: 40px; }
-          .menu-btn .bar { width: 20px; }
+          .menu-btn{ width:40px; height:40px; }
+          .menu-btn .bar{ width:20px; }
+          .logo-comite{ height:38px; }
+          .logo-femsa{ height:34px; }
+          .title-chip{ font-size:clamp(14px, 4.2vw, 18px); padding:6px 10px; white-space:normal; }
         }
 
-        .banners-container { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 14px 12px 28px; }
-        .banner { width: 100%; height: auto; max-width: 980px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.12); display:block; }
-        @media (max-width: 1024px) { .banner { max-width: 900px; } }
-        @media (max-width: 768px)  { .banner { max-width: 100%; border-radius: 14px; } }
-        @media (max-width: 420px)  { .banner { border-radius: 12px; } }
+        /* ===== Conteúdo ===== */
+        .banners-container{ display:flex; flex-direction:column; align-items:center; gap:22px; padding:14px 12px 28px; }
+        .banner{ width:100%; height:auto; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); display:block; }
+        @media (max-width:1024px){ .banner{ max-width:900px; } }
+        @media (max-width:768px){ .banner{ max-width:100%; border-radius:14px; } }
+        @media (max-width:420px){ .banner{ border-radius:12px; } }
 
-        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); transition: opacity .2s ease; z-index: 100; }
-        .drawer { position: fixed; top:0; left:0; height:100dvh; width:320px; max-width:86vw; background:#fff;
-                  box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102; display:flex; flex-direction:column;
-                  transition: transform .22s ease-out; }
-        .drawer-header { display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px 16px; border-bottom:1px solid #eee; }
-        .drawer-link { display:grid; grid-template-columns:26px 1fr; align-items:center; gap:12px; padding:12px 10px; border-radius:10px; color:#222; text-decoration:none; }
-        .drawer-ico { color:#cc0000; display:grid; place-items:center; }
+        /* ===== Drawer ===== */
+        .drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); transition:opacity .2s ease; z-index:100; }
+        .drawer{ position:fixed; top:0; left:0; height:100dvh; width:320px; max-width:86vw; background:#fff;
+                 box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102; display:flex; flex-direction:column;
+                 transition:transform .22s ease-out; }
+        .drawer-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px 16px; border-bottom:1px solid #eee; }
+        .drawer-link{ display:grid; grid-template-columns:26px 1fr; align-items:center; gap:12px; padding:12px 10px; border-radius:10px; color:#222; text-decoration:none; }
+        .drawer-ico{ color:#cc0000; display:grid; place-items:center; }
       `}</style>
 
       {/* ===== Topbar ===== */}
@@ -193,50 +189,21 @@ export default function App() {
           </button>
 
           <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
-
-          <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">
-            COMITÊ DE MANUTENÇÃO • JDI
-          </div>
-
+          <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">COMITÊ DE MANUTENÇÃO • JDI</div>
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
       {/* ===== Drawer ===== */}
-      <div
-        className="drawer-overlay"
-        style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
-        onClick={() => setOpen(false)}
-      />
-      <aside
-        className="drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Categorias"
-        style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}
-      >
+      <div className="drawer-overlay" style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }} onClick={() => setOpen(false)} />
+      <aside className="drawer" role="dialog" aria-modal="true" aria-label="Categorias" style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}>
         <div className="drawer-header">
           <strong style={{ fontSize: 18 }}>Categorias</strong>
-          <button
-            onClick={() => setOpen(false)}
-            style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }}
-            aria-label="Fechar menu"
-            title="Fechar"
-          >
-            ×
-          </button>
+          <button onClick={() => setOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }} aria-label="Fechar menu" title="Fechar">×</button>
         </div>
-
         <nav style={{ padding: "8px 6px 16px 6px", overflow: "auto" }}>
           {MENU.map(({ id, title, url, Icon }) => (
-            <a
-              key={id}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="drawer-link"
-              onClick={() => setOpen(false)}
-            >
+            <a key={id} href={url} target="_blank" rel="noopener noreferrer" className="drawer-link" onClick={() => setOpen(false)}>
               <span className="drawer-ico"><Icon /></span>
               <span>{title}</span>
             </a>
