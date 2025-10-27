@@ -339,3 +339,23 @@ html {
   place-items: center;
   color: #cc0000; /* cor do ícone */
 }
+.banners-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 80px 16px 40px;
+}
+
+.banner {
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform .25s ease;
+}
+
+.banner:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
