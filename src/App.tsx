@@ -12,7 +12,6 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* LINKS das pastas/destinos */
 const LINKS = {
   okr: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
   ddm: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD",
@@ -25,7 +24,6 @@ const LINKS = {
   reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
 } as const;
 
-/* Itens do menu – cada um abre a pasta/link */
 const MENU = [
   { id: "okr", title: "OKR de Manutenção", Icon: IconOKR, url: LINKS.okr },
   { id: "ddm", title: "DDM’s", Icon: IconDDM, url: LINKS.ddm },
@@ -33,5 +31,25 @@ const MENU = [
   { id: "treinamentos", title: "Treinamentos", Icon: IconTreinamentos, url: LINKS.treinamentos },
   { id: "papeis", title: "Papéis & Responsabilidades", Icon: IconPapeis, url: LINKS.papeis },
   { id: "informativos", title: "Informativos", Icon: IconInfo, url: LINKS.informativos },
-  { id: "checklist", title: "Checklist Pós-Partida", Icon: Icon
+  { id: "checklist", title: "Checklist Pós-Partida", Icon: IconChecklist, url: LINKS.checklist },
+  { id: "registro", title: "Registro de Reuniões / PCM", Icon: IconRegistroPCM, url: LINKS.registro },
+  { id: "reconhecimentos", title: "Reconhecimentos", Icon: IconReconhecimentos, url: LINKS.reconhecimentos },
+];
+
+export default function App() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+  }, [open]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <div className="app">
+      {/* FAB*
 
