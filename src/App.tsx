@@ -12,7 +12,7 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* ===== Links das pastas/destinos ===== */
+/* ===== Links ===== */
 const LINKS = {
   okr: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
   ddm: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD",
@@ -29,8 +29,7 @@ const LINKS = {
   reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
 } as const;
 
-/* ===== Itens do menu lateral (com ícones) =====
-   Ordem e nomes conforme solicitado */
+/* ===== Menu (ordem/nome que você pediu) ===== */
 const MENU = [
   {
     id: "registro",
@@ -58,18 +57,16 @@ const MENU = [
   { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconInfo },
 ];
 
-/* ===== Banners (por enquanto só 1) ===== */
+/* ===== Banner ===== */
 const BANNERS = [{ id: "okr", img: "/banner-reconhecimentos.png", url: LINKS.okr }];
 
 export default function App() {
   const [open, setOpen] = useState(false);
 
-  // trava scroll com menu aberto
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-  // ESC fecha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
@@ -78,134 +75,84 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* ===== Topbar vermelha com logos ===== */}
-      <header
-        className="topbar"
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          background: "#cc0000",
-          padding: "10px 16px",
-          boxShadow: "0 6px 18px rgba(0,0,0,.15)",
-        }}
-      >
-        <div
-          className="topbar-inner"
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "120px 1fr 120px",
-            alignItems: "center",
-            gap: 12,
-          }}
-        >
-          <img
-            src="/logo-comite.png"
-            alt="Comitê de Manutenção JDI"
-            style={{ height: 56, objectFit: "contain" }}
-            className="logo-comite"
-          />
-          <div
-            className="title-chip"
-            aria-label="Comitê de Manutenção JDI"
-            style={{
-              color: "#fff",
-              fontWeight: 800,
-              textAlign: "center",
-              padding: "10px 14px",
-              borderRadius: 999,
-              background: "rgba(255,255,255,.12)",
-              letterSpacing: 0.5,
-            }}
-          >
+      {/* CSS fino pro header e pro banner no mobile */}
+      <style>{`
+        .topbar { position: sticky; top: 0; z-index: 100; background: #cc0000; padding: 8px 10px; box-shadow: 0 6px 18px rgba(0,0,0,.15); }
+        .topbar-inner {
+          max-width: 1200px; margin: 0 auto; display: grid; align-items: center; gap: 8px;
+          grid-template-columns: auto 64px 1fr 92px; /* [botão] [logo comitê] [título] [femsa] */
+        }
+        .menu-btn {
+          width: 44px; height: 44px; border: none; border-radius: 999px; background: #b80000; color: #fff;
+          box-shadow: 0 4px 12px rgba(0,0,0,.25); display: grid; place-items: center; cursor: pointer;
+        }
+        .menu-btn .bar { width: 22px; height: 2px; background: #fff; margin: 2.5px 0; border-radius: 2px; display: block; }
+        .logo-comite { height: 48px; object-fit: contain; }
+        .logo-femsa { height: 44px; object-fit: contain; justify-self: end; }
+        .title-chip {
+          color: #fff; font-weight: 900; text-align: center; padding: 8px 12px; border-radius: 999px;
+          background: rgba(255,255,255,.12); letter-spacing: .4px; white-space: nowrap;
+          font-size: clamp(16px, 2.9vw, 28px); /* sempre numa linha, encolhe se preciso */
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+          .topbar-inner { grid-template-columns: auto 44px 1fr 64px; gap: 6px; }
+          .logo-comite { height: 40px; }
+          .logo-femsa { height: 36px; }
+          .title-chip { font-size: clamp(14px, 4.2vw, 19px); padding: 6px 10px; }
+        }
+
+        /* Conteúdo/Banner */
+        .banners-container { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 18px 12px 32px; }
+        .banner { width: 100%; height: auto; max-width: 980px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,.12); display:block; }
+        @media (max-width: 1024px) { .banner { max-width: 900px; } }
+        @media (max-width: 768px)  { .banner { max-width: 100%; border-radius: 14px; } }
+        @media (max-width: 420px)  { .banner { border-radius: 12px; } }
+
+        /* Drawer */
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); transition: opacity .2s ease; z-index: 100; }
+        .drawer { position: fixed; top:0; left:0; height:100dvh; width:320px; max-width:86vw; background:#fff;
+                  box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102; display:flex; flex-direction:column;
+                  transition: transform .22s ease-out; }
+        .drawer-header { display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px 16px; border-bottom:1px solid #eee; }
+        .drawer-link { display:grid; grid-template-columns:26px 1fr; align-items:center; gap:12px; padding:12px 10px; border-radius:10px; color:#222; text-decoration:none; }
+        .drawer-ico { color:#cc0000; display:grid; place-items:center; }
+      `}</style>
+
+      {/* ===== Topbar com botão integrado ===== */}
+      <header className="topbar">
+        <div className="topbar-inner">
+          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+            <span className="bar" /><span className="bar" /><span className="bar" />
+          </button>
+
+          <img className="logo-comite" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
+
+          <div className="title-chip" aria-label="Comitê de Manutenção JDI">
             COMITÊ DE MANUTENÇÃO • JDI
           </div>
-          <img
-            src="/logo-femsa.png"
-            alt="Coca-Cola FEMSA"
-            style={{ height: 56, objectFit: "contain", justifySelf: "end" }}
-            className="logo-femsa"
-          />
+
+          <img className="logo-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
-      {/* ===== Botão sanduíche (topo, vermelho – lado esquerdo) ===== */}
-      <button
-        className="fab-top"
-        aria-label="Abrir menu"
-        onClick={() => setOpen(true)}
-        style={{
-          position: "fixed",
-          top: 14,
-          left: 14, // <- lado esquerdo
-          zIndex: 101,
-          width: 52,
-          height: 52,
-          border: "none",
-          borderRadius: 9999,
-          background: "#cc0000",
-          color: "#fff",
-          boxShadow: "0 6px 18px rgba(0,0,0,.25)",
-          display: "grid",
-          placeItems: "center",
-          cursor: "pointer",
-        }}
-      >
-        <span style={{ width: 22, height: 2, background: "#fff", margin: 2, borderRadius: 2, display: "block" }} />
-        <span style={{ width: 22, height: 2, background: "#fff", margin: 2, borderRadius: 2, display: "block" }} />
-        <span style={{ width: 22, height: 2, background: "#fff", margin: 2, borderRadius: 2, display: "block" }} />
-      </button>
-
       {/* ===== Overlay + Drawer ===== */}
       <div
-        className={`drawer-overlay ${open ? "show" : ""}`}
+        className="drawer-overlay"
+        style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
         onClick={() => setOpen(false)}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(0,0,0,.35)",
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity .2s ease",
-          zIndex: 100,
-        }}
       />
       <aside
-        className={`drawer ${open ? "open" : ""}`}
+        className="drawer"
         role="dialog"
         aria-modal="true"
         aria-label="Categorias"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          height: "100dvh",
-          width: 320,
-          maxWidth: "86vw",
-          background: "#fff",
-          boxShadow: "4px 0 24px rgba(0,0,0,.18)",
-          transform: open ? "translateX(0)" : "translateX(-102%)",
-          transition: "transform .22s ease-out",
-          zIndex: 102,
-          display: "flex",
-          flexDirection: "column",
-        }}
+        style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}
       >
-        <div
-          className="drawer-header"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "14px 14px 10px 16px",
-            borderBottom: "1px solid #eee",
-          }}
-        >
+        <div className="drawer-header">
           <strong style={{ fontSize: 18 }}>Categorias</strong>
           <button
-            className="drawer-close"
             onClick={() => setOpen(false)}
             style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }}
             aria-label="Fechar menu"
@@ -215,7 +162,7 @@ export default function App() {
           </button>
         </div>
 
-        <nav className="drawer-nav" style={{ padding: "8px 6px 16px 6px", overflow: "auto" }}>
+        <nav style={{ padding: "8px 6px 16px 6px", overflow: "auto" }}>
           {MENU.map(({ id, title, url, Icon }) => (
             <a
               key={id}
@@ -224,46 +171,19 @@ export default function App() {
               rel="noopener noreferrer"
               className="drawer-link"
               onClick={() => setOpen(false)}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "26px 1fr",
-                alignItems: "center",
-                gap: 12,
-                padding: "12px 10px",
-                borderRadius: 10,
-                color: "#222",
-                textDecoration: "none",
-              }}
             >
-              <span className="drawer-ico" style={{ color: "#cc0000", display: "grid", placeItems: "center" }}>
-                <Icon />
-              </span>
+              <span className="drawer-ico"><Icon /></span>
               <span>{title}</span>
             </a>
           ))}
         </nav>
       </aside>
 
-      {/* ===== Conteúdo: Banner central ===== */}
-      <main
-        className="banners-container"
-        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, padding: "24px 16px 40px" }}
-      >
+      {/* ===== Conteúdo: apenas o banner ===== */}
+      <main className="banners-container">
         {BANNERS.map(({ id, img, url }) => (
           <a key={id} href={url} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
-            <img
-              className="banner"
-              src={img}
-              alt={id}
-              style={{
-                width: "100%",
-                maxWidth: 1200,
-                borderRadius: 16,
-                boxShadow: "0 4px 12px rgba(0,0,0,.12)",
-                display: "block",
-                margin: "0 auto",
-              }}
-            />
+            <img className="banner" src={img} alt={id} />
           </a>
         ))}
       </main>
