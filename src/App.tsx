@@ -1,221 +1,269 @@
 // src/App.tsx
-import React, { useEffect, useState } from "react";
-import {
-  IconOKR,
-  IconDDM,
-  IconOnePager,
-  IconTreinamentos,
-  IconPapeis,
-  IconChecklist,
-  IconRegistroPCM,
-  IconReconhecimentos,
-} from "./icons";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
-/* ===== Ícones locais ===== */
-const IconHelp: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-    <path d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <circle cx="12" cy="18" r="1.25" fill="currentColor" />
-  </svg>
-);
-const IconDoc: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="2" />
-    <path d="M14 3v5h5" stroke="currentColor" strokeWidth="2" />
-    <path d="M9.5 12h5M9.5 15.5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-  </svg>
-);
-const IconCost: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="8" cy="14" r="4.5" stroke="currentColor" strokeWidth="2" />
-    <line x1="6.2" y1="13.2" x2="9.8" y2="13.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <line x1="6.2" y1="15.6" x2="9.8" y2="15.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <circle cx="17" cy="7" r="2" stroke="currentColor" strokeWidth="2" />
-    <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <line x1="17" y1="2.6" x2="17" y2="1.6" />
-      <line x1="17" y1="12.4" x2="17" y2="13.4" />
-      <line x1="12.6" y1="7" x2="11.6" y2="7" />
-      <line x1="21.4" y1="7" x2="22.4" y2="7" />
-      <line x1="13.9" y1="3.9" x2="13.2" y2="3.2" />
-      <line x1="20.8" y1="10.8" x2="21.5" y2="11.5" />
-      <line x1="20.8" y1="3.2" x2="21.5" y2="2.5" />
-      <line x1="13.9" y1="10.1" x2="13.2" y2="10.8" />
-    </g>
+/* =====================  CONFIG  ===================== */
+/** Link público do seu config.json no OneDrive/SharePoint */
+const CONFIG_URL =
+  "https://cocacolafemsa-my.sharepoint.com/personal/roberta_dossantos_kof_com_mx/_layouts/15/download.aspx?UniqueId=efa02a02bc7442f8abd89e5c9785bc5e&e=RpZvWo";
+
+/** Regex para detectar URL de imagem direta */
+const IMG_RE = /\.(png|jpe?g|gif|webp|svg)(\?|$)/i;
+
+/* =====================  TIPAGENS  ===================== */
+type Slide = {
+  img: string;   // pode ser imagem OU uma pasta/link de SharePoint
+  link?: string; // opcional: link clicável (ex.: custo com drill-down)
+};
+
+type Section = {
+  type: "carousel" | "single";
+  title: string;
+  slides: Slide[];
+};
+
+type RemoteConfig = {
+  updated_at?: string;
+  sections: Section[];
+};
+
+/* =====================  ÍCONES  ===================== */
+const IconFolder: React.FC<{ size?: number }> = ({ size = 22 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke="currentColor" strokeWidth="2"/>
   </svg>
 );
 
-/* ===== Links ===== */
-const LINKS = {
-  okr: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
-  ddm: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/DDM%C2%B4S?csf=1&web=1&e=kXfLLD",
-  onepager:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1",
-  treinamentos:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/TREINAMENTOS?csf=1&web=1&e=RYgJ70",
-  papeis:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu",
-  informativos:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y",
-  checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-  registro: "https://forms.office.com/r/mt0JTBJiK6?origin=lprLink",
-  reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-  programacao:
-    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
-  painel:
-    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
-  duvidas:
-    "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
-  custo:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
-} as const;
+const IconLink: React.FC<{ size?: number }> = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L10 5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 1 0 7.07 7.07L14 19"
+          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
 
-/* ===== Menu ===== */
-const MENU = [
-  { id: "registro", title: "Registro de reuniões Abertura de PCM e Prestação de Contas", url: LINKS.registro, Icon: IconRegistroPCM },
-  { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
-  { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
-  { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
+/* =====================  UTILS  ===================== */
+function isImageUrl(url: string) {
+  return IMG_RE.test(url);
+}
 
-  { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
-  { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
-  { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
+function clsx(...xs: Array<string | false | null | undefined>) {
+  return xs.filter(Boolean).join(" ");
+}
 
-  { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
-  { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
-  { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
-  { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
+/* =====================  COMPONENTES  ===================== */
+const Carousel: React.FC<{ slides: Slide[]; height?: number | string; autoMs?: number }> = ({
+  slides,
+  height = 280,
+  autoMs = 6000,
+}) => {
+  const [idx, setIdx] = useState(0);
+  const len = slides.length || 1;
+  const timer = useRef<number | null>(null);
 
-  { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconDoc },
-  { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
-];
+  useEffect(() => {
+    if (len <= 1) return;
+    timer.current = window.setInterval(() => setIdx((i) => (i + 1) % len), autoMs);
+    return () => {
+      if (timer.current) window.clearInterval(timer.current);
+    };
+  }, [len, autoMs]);
 
-/* ===== Banners ===== */
-const BANNERS = [{ id: "okr", img: "/banner-reconhecimentos.png", url: LINKS.okr }];
+  const go = (to: number) => setIdx((to + len) % len);
 
+  const current = slides[idx];
+
+  const content = useMemo(() => {
+    // Se for imagem direta, renderiza <img>, senão um cartão com botão para abrir pasta/link
+    if (isImageUrl(current.img)) {
+      return (
+        <img
+          src={current.img}
+          alt=""
+          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+        />
+      );
+    }
+    return (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "grid",
+          placeItems: "center",
+          padding: 16,
+          textAlign: "center",
+          color: "#333",
+        }}
+      >
+        <div style={{ opacity: 0.85, maxWidth: 520 }}>
+          <IconFolder size={32} />
+          <p style={{ margin: "10px 0 14px" }}>
+            Este item é uma <strong>pasta/arquivo do SharePoint</strong>.
+            <br />
+            Toque abaixo para abrir e visualizar as imagens.
+          </p>
+          <a
+            href={current.link || current.img}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 14px",
+              borderRadius: 10,
+              background: "#cc0000",
+              color: "#fff",
+              textDecoration: "none",
+              boxShadow: "0 8px 20px rgba(0,0,0,.18)",
+            }}
+          >
+            <IconLink />
+            Abrir no SharePoint
+          </a>
+        </div>
+      </div>
+    );
+  }, [current]);
+
+  return (
+    <div
+      className="carousel"
+      style={{
+        position: "relative",
+        width: "100%",
+        height,
+        borderRadius: 16,
+        background: "#fff",
+        boxShadow: "0 8px 24px rgba(0,0,0,.10)",
+        overflow: "hidden",
+      }}
+    >
+      {content}
+
+      {len > 1 && (
+        <>
+          <button
+            aria-label="Anterior"
+            onClick={() => go(idx - 1)}
+            style={navBtnStyle("left")}
+          >
+            ‹
+          </button>
+          <button
+            aria-label="Próximo"
+            onClick={() => go(idx + 1)}
+            style={navBtnStyle("right")}
+          >
+            ›
+          </button>
+          <div style={dotsWrapStyle}>
+            {slides.map((_, i) => (
+              <span
+                key={i}
+                onClick={() => setIdx(i)}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 999,
+                  background: i === idx ? "#cc0000" : "rgba(0,0,0,.25)",
+                  cursor: "pointer",
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const navBtnStyle = (side: "left" | "right"): React.CSSProperties => ({
+  position: "absolute",
+  top: "50%",
+  [side]: 10,
+  transform: "translateY(-50%)",
+  width: 36,
+  height: 36,
+  borderRadius: "999px",
+  border: "none",
+  background: "rgba(0,0,0,.55)",
+  color: "#fff",
+  fontSize: 20,
+  cursor: "pointer",
+});
+
+const dotsWrapStyle: React.CSSProperties = {
+  position: "absolute",
+  bottom: 10,
+  left: 0,
+  right: 0,
+  margin: "0 auto",
+  display: "flex",
+  gap: 8,
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+/* =====================  APP  ===================== */
 export default function App() {
   const [open, setOpen] = useState(false);
+  const [cfg, setCfg] = useState<RemoteConfig | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
+  // trava scroll com menu aberto
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+  // ESC fecha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Fetch do config.json (OneDrive/SharePoint)
+  useEffect(() => {
+    (async () => {
+      try {
+        setErr(null);
+        const res = await fetch(CONFIG_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = (await res.json()) as RemoteConfig;
+        // sanity check
+        if (!data || !Array.isArray(data.sections)) {
+          throw new Error("Formato inválido do config.json");
+        }
+        setCfg(data);
+      } catch (e: any) {
+        setErr(
+          "Não consegui ler o config.json do OneDrive. Verifique se o link é público e tente novamente."
+        );
+        console.error("Erro ao ler config.json:", e);
+      }
+    })();
+  }, []);
+
   return (
     <div className="app">
-      <style>{`
-        /* ===== Topbar (desktop/tablet) ===== */
-        .topbar{
-          position: sticky; top: 0; z-index: 100;
-          background:#cc0000;
-          padding:0;
-          box-shadow:0 6px 18px rgba(0,0,0,.15);
-        }
-        .topbar-inner{
-          position:relative;
-          max-width:1200px; margin:0 auto;
-          padding:6px 6px;
-          display:grid; align-items:center; gap:6px;
-          grid-template-columns:auto 58px 1fr 92px;
-        }
-        .menu-btn{
-          width:44px; height:44px; border:none; border-radius:999px;
-          background:#b80000; color:#fff;
-          box-shadow:0 4px 12px rgba(0,0,0,.25);
-          display:grid; place-items:center; cursor:pointer;
-          justify-self:start; margin-left:0;
-        }
-        .menu-btn .bar{ width:22px; height:2px; background:#fff; margin:2.5px 0; border-radius:2px; display:block; }
-        .logo-comite{ height:46px; object-fit:contain; }
-        .logo-femsa{ height:44px; object-fit:contain; justify-self:end; }
-        .title-chip{
-          color:#fff; font-weight:900; text-align:center;
-          padding:8px 12px; border-radius:999px;
-          background:rgba(255,255,255,.12);
-          letter-spacing:.35px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-          font-size:clamp(16px, 2.7vw, 28px);
-        }
+      <style>{css}</style>
 
-        /* ===== Somente celular (≤ 430px) ===== */
-        @media (max-width:430px){
-          .topbar-inner{
-            grid-template-columns:40px 1fr auto;
-            grid-template-areas:"logo title femsa";
-            padding:6px 8px 18px;     /* +4px de respiro inferior */
-            gap:8px;
-          }
-          .ga-logo  { grid-area: logo; }
-          .ga-title { grid-area: title; align-self:start; }
-          .ga-femsa { grid-area: femsa; }
-
-          /* MENU MAIS BAIXO */
-          .menu-btn{
-            position:absolute;
-            left:8px;
-            bottom:-30px;           /* antes -18px; desce para não cobrir o logo */
-            width:40px; height:40px;
-            border-radius:12px;
-            background:#cc0000;
-            box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85);
-            z-index: 101;
-          }
-          .menu-btn .bar{ width:18px; height:2px; }
-
-          .logo-comite{ height:32px; }
-          .logo-femsa{ height:28px; }
-          .title-chip{
-            font-size:clamp(13px, 3.8vw, 16px);
-            padding:4px 8px;
-            border-radius:10px;
-            line-height:1.05;
-            letter-spacing:.2px;
-            background:rgba(255,255,255,.16);
-          }
-
-          /* BANNER MAIS PARA BAIXO */
-          .banners-container{ padding:42px 10px 24px; } /* antes 24px no topo */
-          .banner{
-            max-width:92vw;
-            border-radius:12px;
-            box-shadow:0 3px 10px rgba(0,0,0,.12);
-          }
-        }
-
-        /* ===== Conteúdo (padrão) ===== */
-        .banners-container{ display:flex; flex-direction:column; align-items:center; gap:22px; padding:14px 12px 28px; }
-        .banner{ width:100%; height:auto; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); display:block; }
-        @media (max-width:1024px){ .banner{ max-width:900px; } }
-        @media (max-width:768px){ .banner{ max-width:100%; border-radius:14px; } }
-
-        /* ===== Drawer ===== */
-        .drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); transition:opacity .2s ease; z-index:100; }
-        .drawer{ position:fixed; top:0; left:0; height:100dvh; width:320px; max-width:86vw; background:#fff;
-                 box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102; display:flex; flex-direction:column;
-                 transition:transform .22s ease-out; }
-        .drawer-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px 16px; border-bottom:1px solid #eee; }
-        .drawer-link{ display:grid; grid-template-columns:26px 1fr; align-items:center; gap:12px; padding:12px 10px; border-radius:10px; color:#222; text-decoration:none; }
-        .drawer-ico{ color:#cc0000; display:grid; place-items:center; }
-      `}</style>
-
-      {/* ===== Topbar ===== */}
+      {/* Topbar */}
       <header className="topbar">
         <div className="topbar-inner">
-          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+          <button className="menu-btn ga-menu" aria-label="Abrir menu" onClick={() => setOpen(true)}>
             <span className="bar" /><span className="bar" /><span className="bar" />
           </button>
 
           <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
-          <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">COMITÊ DE MANUTENÇÃO • JDI</div>
+          <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">
+            COMITÊ DE MANUTENÇÃO • JDI
+          </div>
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
-      {/* ===== Drawer ===== */}
+      {/* Drawer */}
       <div
         className="drawer-overlay"
         style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
@@ -239,31 +287,157 @@ export default function App() {
             ×
           </button>
         </div>
+
         <nav style={{ padding: "8px 6px 16px 6px", overflow: "auto" }}>
-          {MENU.map(({ id, title, url, Icon }) => (
-            <a
-              key={id}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="drawer-link"
-              onClick={() => setOpen(false)}
-            >
-              <span className="drawer-ico"><Icon /></span>
-              <span>{title}</span>
-            </a>
-          ))}
+          {/* Coloque aqui seus links fixos (os da barra lateral) se quiser manter */}
+          <a className="drawer-link" href="#" onClick={(e) => e.preventDefault()}>
+            <span className="drawer-ico"><IconFolder /></span>
+            <span>Conteúdos dinâmicos (banners)</span>
+          </a>
         </nav>
       </aside>
 
-      {/* ===== Conteúdo ===== */}
-      <main className="banners-container">
-        {BANNERS.map(({ id, img, url }) => (
-          <a key={id} href={url} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
-            <img className="banner" src={img} alt={id} />
-          </a>
+      {/* Conteúdo: se config ok, mostra seções; senão fallback */}
+      <main className="content">
+        {err && (
+          <div className="error">
+            {err}
+            <div style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>
+              Dica: abra o link do <code>config.json</code> em aba anônima e confirme se baixa um JSON.
+            </div>
+          </div>
+        )}
+
+        {!cfg && !err && (
+          <div className="loading">Carregando banners…</div>
+        )}
+
+        {cfg && cfg.sections.map((sec, i) => (
+          <section key={i} className="section">
+            <h2 className="section-title">{sec.title}</h2>
+
+            {sec.type === "carousel" ? (
+              <Carousel slides={sec.slides} height={useIsMobile() ? 240 : 340} />
+            ) : (
+              // single: usa primeiro slide
+              <Carousel slides={[sec.slides[0]]} height={useIsMobile() ? 220 : 300} autoMs={999999} />
+            )}
+          </section>
         ))}
+
+        {!cfg && !err && (
+          <>
+            {/* Fallback visual (caso o JSON ainda não carregue) */}
+            <section className="section">
+              <h2 className="section-title">Reconhecimentos</h2>
+              <div className="card">
+                <img
+                  src="/banner-reconhecimentos.png"
+                  alt="Reconhecimentos"
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+              </div>
+            </section>
+          </>
+        )}
       </main>
     </div>
   );
+}
+
+/* =====================  CSS (inline)  ===================== */
+const css = `
+.topbar{
+  position: sticky; top: 0; z-index: 100;
+  background:#cc0000;
+  padding:0;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+}
+.topbar-inner{
+  max-width:1200px; margin:0 auto;
+  padding:6px 6px;
+  display:grid; align-items:center; gap:6px;
+  grid-template-columns:auto 58px 1fr 92px;
+}
+
+.menu-btn{
+  width:44px; height:44px; border:none; border-radius:999px;
+  background:#b80000; color:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+  display:grid; place-items:center; cursor:pointer;
+  justify-self:start; margin-left:0;
+}
+.menu-btn .bar{ width:22px; height:2px; background:#fff; margin:2.5px 0; border-radius:2px; display:block; }
+
+.logo-comite{ height:46px; object-fit:contain; }
+.logo-femsa{ height:44px; object-fit:contain; justify-self:end; }
+
+.title-chip{
+  color:#fff; font-weight:900; text-align:center;
+  padding:8px 12px; border-radius:999px;
+  background:rgba(255,255,255,.12);
+  letter-spacing:.35px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  font-size:clamp(16px, 2.7vw, 28px);
+}
+
+/* Mobile 2 linhas p/ nunca cortar */
+@media (max-width:430px){
+  .topbar-inner{
+    grid-template-areas:
+      "menu logo femsa"
+      "title title title";
+    grid-template-columns:auto 1fr auto;
+    row-gap:4px;
+  }
+  .ga-menu{ grid-area:menu; }
+  .ga-logo{ grid-area:logo; }
+  .ga-title{ grid-area:title; }
+  .ga-femsa{ grid-area:femsa; }
+
+  .menu-btn{ width:40px; height:40px; }
+  .menu-btn .bar{ width:20px; }
+  .logo-comite{ height:38px; }
+  .logo-femsa{ height:34px; }
+  .title-chip{ font-size:clamp(14px, 4.2vw, 18px); padding:6px 10px; white-space:normal; }
+}
+
+.content{
+  max-width:1200px; margin: 0 auto; padding: 18px 12px 40px;
+}
+.section{ margin: 16px 0 28px; }
+.section-title{
+  font-size: clamp(18px, 2.2vw, 24px);
+  margin: 0 0 10px; font-weight: 800; color: #222;
+}
+
+.card{
+  width:100%; height:300px; border-radius:16px; background:#fff;
+  box-shadow:0 8px 24px rgba(0,0,0,.10); overflow:hidden;
+}
+@media (max-width:430px){ .card{ height:220px; } }
+
+.drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); transition:opacity .2s ease; z-index:100; }
+.drawer{ position:fixed; top:0; left:0; height:100dvh; width:320px; max-width:86vw; background:#fff;
+         box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102; display:flex; flex-direction:column;
+         transition:transform .22s ease-out; }
+.drawer-header{ display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px 16px; border-bottom:1px solid #eee; }
+.drawer-link{ display:grid; grid-template-columns:26px 1fr; align-items:center; gap:12px; padding:12px 10px; border-radius:10px; color:#222; text-decoration:none; }
+.drawer-ico{ color:#cc0000; display:grid; place-items:center; }
+
+.loading, .error{
+  margin: 22px 0; padding: 12px 14px; border-radius: 10px;
+}
+.loading{ background: #f6f6f6; color:#555; }
+.error{ background: #fff4f4; color:#8a0f0f; border: 1px solid #f2c1c1; }
+`;
+
+/* =====================  HOOKS  ===================== */
+function useIsMobile() {
+  const [is, setIs] = useState<boolean>(window.innerWidth <= 430);
+  useEffect(() => {
+    const on = () => setIs(window.innerWidth <= 430);
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+  }, []);
+  return is;
 }
