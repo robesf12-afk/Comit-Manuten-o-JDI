@@ -9,6 +9,12 @@ const CONFIG_URL =
 /** Regex para detectar URL de imagem direta */
 const IMG_RE = /\.(png|jpe?g|gif|webp|svg)(\?|$)/i;
 
+/** Fontes do onepagers.json: 1) local (quando o deploy já contém /public), 2) fallback RAW GitHub */
+const ONEPAGERS_JSON_SOURCES = [
+  "/banners_media/onepagers.json",
+  "https://raw.githubusercontent.com/robesf12-afk/Comit-Manuten-o-JDI/restore-layout-bom/public/banners_media/onepagers.json",
+] as const;
+
 /* =====================  TIPAGENS  ===================== */
 type Slide = {
   img: string;   // pode ser imagem OU uma pasta/link de SharePoint
@@ -47,6 +53,21 @@ function isImageUrl(url: string) {
 
 function clsx(...xs: Array<string | false | null | undefined>) {
   return xs.filter(Boolean).join(" ");
+}
+
+async function fetchJsonWithFallback<T = unknown>(urls: readonly string[]): Promise<T> {
+  let lastErr: unknown = null;
+  for (const u of urls) {
+    try {
+      const res = await fetch(u, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status} em ${u}`);
+      return (await res.json()) as T;
+    } catch (e) {
+      lastErr = e;
+      // tenta o próximo
+    }
+  }
+  throw lastErr ?? new Error("Falha ao buscar JSON em todas as fontes.");
 }
 
 /* =====================  COMPONENTES  ===================== */
@@ -210,7 +231,7 @@ export default function App() {
   const [cfg, setCfg] = useState<RemoteConfig | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
-  // >>> NOVO: estado dos OnePagers (local /public/banners_media)
+  // OnePagers (local/RAW)
   const [onePagers, setOnePagers] = useState<string[]>([]);
   const [onePagersErr, setOnePagersErr] = useState<string | null>(null);
 
@@ -248,19 +269,17 @@ export default function App() {
     })();
   }, []);
 
-  // >>> NOVO: Fetch do onepagers.json local
+  // Fetch do onepagers.json com fallback (local -> RAW GitHub)
   useEffect(() => {
     (async () => {
       try {
         setOnePagersErr(null);
-        const res = await fetch("/banners_media/onepagers.json", { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const list = (await res.json()) as string[];
+        const list = await fetchJsonWithFallback<string[]>(ONEPAGERS_JSON_SOURCES);
         if (!Array.isArray(list)) throw new Error("Formato inválido do onepagers.json");
         setOnePagers(list);
       } catch (e) {
         console.error("Erro ao carregar onepagers.json:", e);
-        setOnePagersErr("Não consegui carregar o onepagers.json.");
+        setOnePagersErr("Não consegui carregar o onepagers.json (local e fallback).");
       }
     })();
   }, []);
@@ -268,9 +287,12 @@ export default function App() {
   // Mapeia arquivos do onepagers.json → Slides do carrossel
   const onePagerSlides: Slide[] = useMemo(
     () =>
-      (onePagers || []).map((name) => ({
-        img: `/banners_media/${encodeURIComponent(name)}`,
-      })),
+      (onePagers || []).map((name) => {
+        // Se o JSON vier com nome simples, monta caminho local; se vier URL absoluta, usa direto
+        const isAbs = /^https?:\/\//i.test(name);
+        const url = isAbs ? name : `/banners_media/${encodeURIComponent(name)}`;
+        return { img: url };
+      }),
     [onePagers]
   );
 
@@ -344,7 +366,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Seção ONE PAGER (sempre tenta mostrar, independente do config.json) */}
+        {/* Seção ONE PAGER */}
         {onePagerSlides.length > 0 && (
           <section className="section">
             <h2 className="section-title">One Pager</h2>
