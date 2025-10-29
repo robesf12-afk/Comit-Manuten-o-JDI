@@ -210,6 +210,10 @@ export default function App() {
   const [cfg, setCfg] = useState<RemoteConfig | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
+  // >>> NOVO: estado dos OnePagers (local /public/banners_media)
+  const [onePagers, setOnePagers] = useState<string[]>([]);
+  const [onePagersErr, setOnePagersErr] = useState<string | null>(null);
+
   // trava scroll com menu aberto
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -243,6 +247,32 @@ export default function App() {
       }
     })();
   }, []);
+
+  // >>> NOVO: Fetch do onepagers.json local
+  useEffect(() => {
+    (async () => {
+      try {
+        setOnePagersErr(null);
+        const res = await fetch("/banners_media/onepagers.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const list = (await res.json()) as string[];
+        if (!Array.isArray(list)) throw new Error("Formato inválido do onepagers.json");
+        setOnePagers(list);
+      } catch (e) {
+        console.error("Erro ao carregar onepagers.json:", e);
+        setOnePagersErr("Não consegui carregar o onepagers.json.");
+      }
+    })();
+  }, []);
+
+  // Mapeia arquivos do onepagers.json → Slides do carrossel
+  const onePagerSlides: Slide[] = useMemo(
+    () =>
+      (onePagers || []).map((name) => ({
+        img: `/banners_media/${encodeURIComponent(name)}`,
+      })),
+    [onePagers]
+  );
 
   return (
     <div className="app">
@@ -297,8 +327,9 @@ export default function App() {
         </nav>
       </aside>
 
-      {/* Conteúdo: se config ok, mostra seções; senão fallback */}
+      {/* Conteúdo */}
       <main className="content">
+        {/* Erros */}
         {err && (
           <div className="error">
             {err}
@@ -307,11 +338,26 @@ export default function App() {
             </div>
           </div>
         )}
+        {onePagersErr && (
+          <div className="error">
+            {onePagersErr}
+          </div>
+        )}
 
-        {!cfg && !err && (
+        {/* Seção ONE PAGER (sempre tenta mostrar, independente do config.json) */}
+        {onePagerSlides.length > 0 && (
+          <section className="section">
+            <h2 className="section-title">One Pager</h2>
+            <Carousel slides={onePagerSlides} height={useIsMobile() ? 240 : 340} />
+          </section>
+        )}
+
+        {/* Loading geral (quando nada veio ainda) */}
+        {!cfg && !err && onePagerSlides.length === 0 && (
           <div className="loading">Carregando banners…</div>
         )}
 
+        {/* Seções do config.json (SharePoint) */}
         {cfg && cfg.sections.map((sec, i) => (
           <section key={i} className="section">
             <h2 className="section-title">{sec.title}</h2>
@@ -325,20 +371,18 @@ export default function App() {
           </section>
         ))}
 
-        {!cfg && !err && (
-          <>
-            {/* Fallback visual (caso o JSON ainda não carregue) */}
-            <section className="section">
-              <h2 className="section-title">Reconhecimentos</h2>
-              <div className="card">
-                <img
-                  src="/banner-reconhecimentos.png"
-                  alt="Reconhecimentos"
-                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                />
-              </div>
-            </section>
-          </>
+        {/* Fallback visual (caso o JSON remoto ainda não tenha carregado) */}
+        {!cfg && !err && onePagerSlides.length > 0 && (
+          <section className="section">
+            <h2 className="section-title">Reconhecimentos</h2>
+            <div className="card">
+              <img
+                src="/banner-reconhecimentos.png"
+                alt="Reconhecimentos"
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />
+            </div>
+          </section>
         )}
       </main>
     </div>
