@@ -2,11 +2,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 /* =====================  FONTES DOS BANNERS  ===================== */
-/** 1) Caminho que o Vercel/Dev serve a partir de /public */
+/** 1) Caminho servido pelo app a partir de /public */
 const ONEPAGERS_LOCAL_JSON = "/banners_media/onepagers.json";
 const ONEPAGERS_LOCAL_IMG_BASE = "/banners_media/";
 
-/** 2) Fallback direto do GitHub RAW (sua branch restore-layout-bom) */
+/** 2) Fallback RAW GitHub (branch restore-layout-bom) */
 const GH_USER = "robesf12-afk";
 const GH_REPO = "Comit-Manuten-o-JDI";
 const GH_BRANCH = "restore-layout-bom";
@@ -15,19 +15,13 @@ const ONEPAGERS_RAW_JSON =
 const ONEPAGERS_RAW_IMG_BASE =
   `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/${GH_BRANCH}/public/banners_media/`;
 
-/** Regex para detectar URL de imagem direta */
+/** Regex simples de imagem */
 const IMG_RE = /\.(png|jpe?g|gif|webp|svg)(\?|$)/i;
 
 /* =====================  TIPOS  ===================== */
 type Slide = { img: string; link?: string };
 
-/* =====================  ÍCONES  ===================== */
-const IconFolder: React.FC<{ size?: number }> = ({ size = 22 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" stroke="currentColor" strokeWidth="2"/>
-  </svg>
-);
-
+/* =====================  UTILS  ===================== */
 function isImageUrl(u: string) { return IMG_RE.test(u); }
 
 /* =====================  CARROSSEL  ===================== */
@@ -59,12 +53,7 @@ const Carousel: React.FC<{ slides: Slide[]; height?: number | string; autoMs?: n
     }
     return (
       <div style={{ width:"100%", height:"100%", display:"grid", placeItems:"center", padding:16, textAlign:"center", color:"#333" }}>
-        <div style={{ opacity:0.85, maxWidth:520 }}>
-          <IconFolder size={32} />
-          <p style={{ margin:"10px 0 14px" }}>
-            Este item não é uma imagem direta.
-          </p>
-        </div>
+        <p>Arquivo não é uma imagem direta: <code>{current.img}</code></p>
       </div>
     );
   }, [current]);
@@ -110,16 +99,16 @@ const dotsWrap: React.CSSProperties = {
   display:"flex", gap:8, justifyContent:"center", alignItems:"center",
 };
 
-/* =====================  APP (só One Pagers)  ===================== */
+/* =====================  APP (apenas One Pagers)  ===================== */
 export default function App() {
   const [open, setOpen] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
 
   const [onePagers, setOnePagers] = useState<string[]>([]);
   const [imgBase, setImgBase] = useState<string>(ONEPAGERS_LOCAL_IMG_BASE);
   const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
+  const [fonte, setFonte] = useState<string>("—");
 
-  // Bloqueia scroll quando menu abre
   useEffect(() => { document.body.style.overflow = open ? "hidden" : ""; }, [open]);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -127,38 +116,68 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Busca primeiro local (Vercel/dev). Se falhar, cai pro RAW do GitHub.
   useEffect(() => {
     (async () => {
       setLoading(true);
       setErr(null);
+      setFonte("—");
       try {
-        // 1) tenta local
-        let ok = false;
+        // 1) tenta LOCAL
+        console.log("[onepagers] tentando LOCAL:", ONEPAGERS_LOCAL_JSON);
         try {
           const r = await fetch(ONEPAGERS_LOCAL_JSON, { cache: "no-store" });
           if (r.ok) {
-            const list = (await r.json()) as string[];
+            const list = (await safeJson(r)) as string[] | null;
             if (Array.isArray(list)) {
+              console.log("[onepagers] OK local:", list);
               setOnePagers(list);
               setImgBase(ONEPAGERS_LOCAL_IMG_BASE);
-              ok = true;
+              setFonte("local");
+              setLoading(false);
+              return;
             }
+          } else {
+            console.warn("[onepagers] local respondeu", r.status);
           }
-        } catch (_) {/* ignora e tenta RAW */}
-
-        // 2) fallback RAW
-        if (!ok) {
-          const r2 = await fetch(ONEPAGERS_RAW_JSON, { cache: "no-store" });
-          if (!r2.ok) throw new Error(`RAW ${r2.status}`);
-          const list2 = (await r2.json()) as string[];
-          if (!Array.isArray(list2)) throw new Error("RAW inválido");
-          setOnePagers(list2);
-          setImgBase(ONEPAGERS_RAW_IMG_BASE);
+        } catch (e) {
+          console.warn("[onepagers] erro local:", e);
         }
-      } catch (e) {
-        console.error("Erro onepagers:", e);
-        setErr("Não consegui carregar os One Pagers. Confira se o arquivo onepagers.json existe.");
+
+        // 2) tenta RAW
+        console.log("[onepagers] tentando RAW:", ONEPAGERS_RAW_JSON);
+        try {
+          const r2 = await fetch(ONEPAGERS_RAW_JSON, { cache: "no-store" });
+          if (r2.ok) {
+            const list2 = (await safeJson(r2)) as string[] | null;
+            if (Array.isArray(list2)) {
+              console.log("[onepagers] OK raw:", list2);
+              setOnePagers(list2);
+              setImgBase(ONEPAGERS_RAW_IMG_BASE);
+              setFonte("raw");
+              setLoading(false);
+              return;
+            }
+          } else {
+            console.warn("[onepagers] raw respondeu", r2.status);
+          }
+        } catch (e) {
+          console.warn("[onepagers] erro raw:", e);
+        }
+
+        // 3) FALLBACK hardcoded (garante render)
+        const fallback = [
+          "one pager G1.PNG",
+          "one pager G2.PNG",
+          "one pager G3.PNG",
+          "one pager fabrica.PNG",
+        ];
+        console.warn("[onepagers] usando FALLBACK hardcoded:", fallback);
+        setOnePagers(fallback);
+        setImgBase(ONEPAGERS_LOCAL_IMG_BASE); // imagens estão em /public/banners_media/
+        setFonte("fallback");
+      } catch (e: any) {
+        console.error("[onepagers] erro geral:", e);
+        setErr(String(e?.message || e));
       } finally {
         setLoading(false);
       }
@@ -174,7 +193,7 @@ export default function App() {
     <div className="app">
       <style>{css}</style>
 
-      {/* Topbar simples */}
+      {/* Topbar */}
       <header className="topbar">
         <div className="topbar-inner">
           <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
@@ -186,7 +205,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Drawer (placeholder) */}
+      {/* Drawer */}
       <div className="drawer-overlay" style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }} onClick={() => setOpen(false)} />
       <aside className="drawer" aria-label="Categorias" style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}>
         <div className="drawer-header">
@@ -195,7 +214,7 @@ export default function App() {
         </div>
         <nav style={{ padding: "8px 6px 16px 6px", overflow:"auto" }}>
           <a className="drawer-link" href="#" onClick={(e) => e.preventDefault()}>
-            <span style={{ color:"#cc0000", display:"grid", placeItems:"center" }}><IconFolder /></span>
+            <span style={{ color:"#cc0000", display:"grid", placeItems:"center" }}><span style={{width:22,height:22,display:"inline-block",background:"#cc0000",borderRadius:4}}/></span>
             <span>One Pagers</span>
           </a>
         </nav>
@@ -205,8 +224,16 @@ export default function App() {
       <main className="content">
         {loading && <div className="loading">Carregando banners…</div>}
 
+        {!loading && (
+          <div style={{ fontSize: 12, opacity: .7, margin: "6px 0 12px" }}>
+            Fonte dos dados: <strong>{fonte}</strong>{imgBase ? ` • imgBase: ${imgBase}` : ""}
+          </div>
+        )}
+
         {!loading && err && (
-          <div className="error">{err}</div>
+          <div className="error">
+            {err}
+          </div>
         )}
 
         {!loading && !err && slides.length > 0 && (
@@ -217,13 +244,24 @@ export default function App() {
         )}
 
         {!loading && !err && slides.length === 0 && (
-          <div className="loading" style={{ background:"#fffdf2" }}>
-            Nada para exibir ainda. Verifique se os arquivos estão no preview desta branch.
+          <div className="error" style={{ background:"#fffdf2", borderColor:"#e6da9a", color:"#8a6d00" }}>
+            Nada para exibir. Confirme que os arquivos estão em <code>/public/banners_media/</code> e que o
+            <code> onepagers.json</code> contém os nomes corretos (respeita maiúsculas/minúsculas).
           </div>
         )}
       </main>
     </div>
   );
+}
+
+/* Parse JSON com captura de erro para evitar tela branca */
+async function safeJson(res: Response) {
+  try {
+    return await res.json();
+  } catch (e) {
+    console.warn("[safeJson] JSON inválido:", e);
+    return null;
+  }
 }
 
 /* =====================  CSS  ===================== */
@@ -292,4 +330,5 @@ function useIsMobile() {
   }, []);
   return is;
 }
+
 
