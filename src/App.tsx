@@ -224,7 +224,7 @@ export default function App() {
             position:absolute;
             left:8px;
             bottom:-26px;   /* posição que você gostou visualmente */
-            width:20px;height:40px;
+            width:40px;height:30px;
             border-radius:12px;
             background:#cc0000;
             box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85);
@@ -233,7 +233,7 @@ export default function App() {
 
           /* AQUI: descemos bem os banners */
           .banners-container{
-            padding:600px 10px 24px; /* era 100, depois 130 → agora 150 pra garantir */
+            padding:1000px 10px 24px; /* era 100, depois 130 → agora 150 pra garantir */
           }
         }
 
