@@ -15,12 +15,7 @@ import {
 const IconHelp: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-    <path
-      d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
+    <path d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     <circle cx="12" cy="18" r="1.25" fill="currentColor" />
   </svg>
 );
@@ -100,45 +95,43 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-// banners estáticos (ficam EMBAIXO)
-const STATIC_BANNERS = [
-  {
-    img: "/banner-reconhecimentos.png",
-    url: LINKS.reconhecimentos,
-  },
-  // pode ir colocando outros aqui
-  // { img: "/banner-manutencao.png", url: LINKS.okr },
+// aqui eu já coloquei os OUTROS arquivos que vi na sua print
+const STATIC_FROM_FOLDER = [
+  { img: "/banners_media/ASSERTIVIDADE.png" },
+  { img: "/banners_media/quebra diaria.PNG" },
+  { img: "/banners_media/quebra por linha.PNG" },
+  { img: "/banners_media/ÁREAS.jpeg" },
+  // se tiver mais depois, é só colocar aqui
 ];
 
 export default function App() {
   const [open, setOpen] = useState(false);
 
-  // estado pros one pagers (carrossel)
+  // carrossel
   const [onePagers, setOnePagers] = useState<string[]>([]);
-  const [bannerErro, setBannerErro] = useState<string | null>(null);
   const [bannerIndex, setBannerIndex] = useState(0);
+  const [bannerErro, setBannerErro] = useState<string | null>(null);
 
-  // refs pra swipe
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // bloqueia scroll quando o drawer está aberto
+  // trava scroll com drawer
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-  // ESC fecha o drawer
+  // ESC
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // carrega só os one pagers
+  // carrega onepagers.json
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
-        if (!res.ok) throw new Error("Não achei /banners_media/onepagers.json");
+        if (!res.ok) throw new Error("não achei onepagers.json");
         return res.json();
       })
       .then((data: string[]) => {
@@ -146,8 +139,6 @@ export default function App() {
           setBannerErro("Nenhum One Pager encontrado.");
           return;
         }
-
-        // força a ordem: fabrica, G1, G2, G3, resto
         const ordemForcada = [
           "one pager fabrica.PNG",
           "one pager G1.PNG",
@@ -163,12 +154,12 @@ export default function App() {
         setBannerIndex(0);
       })
       .catch((err) => {
-        console.error("Erro carregando onepagers:", err);
+        console.error(err);
         setBannerErro("Não foi possível carregar o carrossel.");
       });
   }, []);
 
-  // carrossel automático
+  // auto slide
   useEffect(() => {
     if (onePagers.length <= 1) return;
     const t = setInterval(() => {
@@ -177,7 +168,7 @@ export default function App() {
     return () => clearInterval(t);
   }, [onePagers]);
 
-  // swipe handlers
+  // swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -189,84 +180,73 @@ export default function App() {
     const diff = touchStartX.current - touchEndX.current;
     const minSwipe = 40;
     if (diff > minSwipe) {
-      // esquerda -> próximo
-      setBannerIndex((prev) => (prev + 1) % onePagers.length);
+      setBannerIndex((p) => (p + 1) % onePagers.length);
     } else if (diff < -minSwipe) {
-      // direita -> anterior
-      setBannerIndex((prev) => (prev - 1 + onePagers.length) % onePagers.length);
+      setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
     }
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
-  // one pager atual
-  const currentOnePager =
-    onePagers.length > 0 ? `/banners_media/${onePagers[bannerIndex]}` : null;
+  const currentOnePager = onePagers.length > 0 ? `/banners_media/${onePagers[bannerIndex]}` : null;
 
   return (
     <div className="app">
       <style>{`
-        /* ===== Topbar (desktop/tablet) ===== */
         .topbar{
           position: sticky; top: 0; z-index: 100;
           background:#cc0000;
-          padding:0;
           box-shadow:0 6px 18px rgba(0,0,0,.15);
         }
         .topbar-inner{
           position:relative;
           max-width:1200px; margin:0 auto;
           padding:6px 6px;
-          display:grid; align-items:center; gap:6px;
+          display:grid; gap:6px; align-items:center;
           grid-template-columns:auto 58px 1fr 92px;
         }
         .menu-btn{
           width:44px; height:44px; border:none; border-radius:999px;
           background:#b80000; color:#fff;
+          display:grid; place-items:center;
           box-shadow:0 4px 12px rgba(0,0,0,.25);
-          display:grid; place-items:center; cursor:pointer;
-          justify-self:start; margin-left:0;
+          cursor:pointer;
         }
-        .menu-btn .bar{ width:22px; height:2px; background:#fff; margin:2.5px 0; border-radius:2px; display:block; }
-        .logo-comite{ height:46px; object-fit:contain; }
-        .logo-femsa{ height:44px; object-fit:contain; justify-self:end; }
+        .menu-btn .bar{ width:22px; height:2px; background:#fff; margin:2.5px 0; border-radius:2px; }
+        .logo-comite{ height:46px; }
+        .logo-femsa{ height:44px; justify-self:end; }
         .title-chip{
           color:#fff; font-weight:900; text-align:center;
-          padding:8px 12px; border-radius:999px;
           background:rgba(255,255,255,.12);
-          letter-spacing:.35px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+          padding:8px 12px; border-radius:999px;
+          white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
           font-size:clamp(16px, 2.7vw, 28px);
         }
 
-        /* ===== Somente celular (≤ 430px) ===== */
         @media (max-width:430px){
           .topbar-inner{
             grid-template-columns:40px 1fr auto;
             grid-template-areas:"logo title femsa";
             padding:6px 8px 18px;
-            gap:8px;
           }
-          .ga-logo  { grid-area: logo; }
-          .ga-title { grid-area: title; align-self:start; }
-          .ga-femsa { grid-area: femsa; }
+          .ga-logo{ grid-area:logo; height:32px; }
+          .ga-title{ grid-area:title; }
+          .ga-femsa{ grid-area:femsa; height:28px; }
 
           .menu-btn{
             position:absolute;
             left:8px;
-            bottom:-30px;
+            bottom:-40px;   /* desci mais */
             width:40px; height:40px;
             border-radius:12px;
-            background:#cc0000;
             box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85);
-            z-index: 101;
+            z-index:101;
           }
-          .menu-btn .bar{ width:18px; height:2px; }
 
-          /* AQUI: mais espaço no topo do container pra não ficar atrás do botão */
-          .banners-container{ padding:58px 10px 24px; }
+          /* AQUI: mais espaço pros banners */
+          .banners-container{ padding:92px 10px 24px; } /* pode subir pra 100 se ainda encostar */
         }
 
-        /* ===== Conteúdo ===== */
         .banners-container{
           display:flex;
           flex-direction:column;
@@ -282,35 +262,21 @@ export default function App() {
           background:#000;
           overflow:hidden;
         }
-        /* IMPORTANTE: permitir pinch-zoom */
         .banner-dinamico img{
           width:100%;
           height:auto;
           display:block;
-          touch-action:auto;   /* NÃO travar gestos */
-        }
-        @media (max-width:768px){
-          .banner-dinamico{ max-width:100%; border-radius:14px; }
+          touch-action:auto;
         }
 
-        /* bolinhas */
         .banner-dots{
-          display:flex;
-          gap:6px;
-          justify-content:center;
+          display:flex; gap:6px; justify-content:center;
         }
         .banner-dot{
-          width:9px; height:9px;
-          border-radius:999px;
-          background:#ddd;
-          border:none;
+          width:9px; height:9px; border-radius:999px; background:#ddd; border:none;
         }
-        .banner-dot.active{
-          background:#cc0000;
-          width:28px;
-        }
+        .banner-dot.active{ background:#cc0000; width:28px; }
 
-        /* banners estáticos (embaixo) */
         .static-banner{
           width:100%;
           max-width:980px;
@@ -319,49 +285,40 @@ export default function App() {
           display:block;
         }
 
-        /* Drawer */
         .drawer-overlay{
-          position:fixed; inset:0;
-          background:rgba(0,0,0,.35);
+          position:fixed; inset:0; background:rgba(0,0,0,.35);
           transition:opacity .2s ease; z-index:100;
         }
         .drawer{
           position:fixed; top:0; left:0; height:100dvh; width:320px; max-width:86vw;
-          background:#fff;
-          box-shadow:4px 0 24px rgba(0,0,0,.18);
-          z-index:102;
-          display:flex; flex-direction:column;
+          background:#fff; box-shadow:4px 0 24px rgba(0,0,0,.18);
+          z-index:102; display:flex; flex-direction:column;
           transition:transform .22s ease-out;
         }
         .drawer-header{
-          display:flex; align-items:center; justify-content:space-between;
+          display:flex; justify-content:space-between; align-items:center;
           padding:14px 14px 10px 16px; border-bottom:1px solid #eee;
         }
         .drawer-link{
-          display:grid; grid-template-columns:26px 1fr; align-items:center; gap:12px;
+          display:grid; grid-template-columns:26px 1fr; gap:12px; align-items:center;
           padding:12px 10px; border-radius:10px; color:#222; text-decoration:none;
         }
         .drawer-ico{ color:#cc0000; display:grid; place-items:center; }
       `}</style>
 
-      {/* ===== Topbar ===== */}
+      {/* Topbar */}
       <header className="topbar">
         <div className="topbar-inner">
-          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
-            <span className="bar" />
-            <span className="bar" />
-            <span className="bar" />
+          <button className="menu-btn" onClick={() => setOpen(true)} aria-label="Abrir menu">
+            <span className="bar" /><span className="bar" /><span className="bar" />
           </button>
-
           <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
-          <div className="title-chip ga-title" aria-label="Comitê de Manutenção JDI">
-            COMITÊ DE MANUTENÇÃO • JDI
-          </div>
+          <div className="title-chip ga-title">COMITÊ DE MANUTENÇÃO • JDI</div>
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
 
-      {/* ===== Drawer ===== */}
+      {/* Drawer */}
       <div
         className="drawer-overlay"
         style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
@@ -369,19 +326,13 @@ export default function App() {
       />
       <aside
         className="drawer"
+        style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}
         role="dialog"
         aria-modal="true"
-        aria-label="Categorias"
-        style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}
       >
         <div className="drawer-header">
-          <strong style={{ fontSize: 18 }}>Categorias</strong>
-          <button
-            onClick={() => setOpen(false)}
-            style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }}
-            aria-label="Fechar menu"
-            title="Fechar"
-          >
+          <strong>Categorias</strong>
+          <button onClick={() => setOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22 }}>
             ×
           </button>
         </div>
@@ -395,43 +346,22 @@ export default function App() {
               className="drawer-link"
               onClick={() => setOpen(false)}
             >
-              <span className="drawer-ico">
-                <Icon />
-              </span>
+              <span className="drawer-ico"><Icon /></span>
               <span>{title}</span>
             </a>
           ))}
         </nav>
       </aside>
 
-      {/* ===== Conteúdo ===== */}
+      {/* Conteúdo */}
       <main className="banners-container">
-        {/* 1) Carrossel dinâmico SÓ de one pagers */}
+        {/* Carrossel dinâmico */}
         {bannerErro ? (
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "960px",
-              background: "#fee",
-              color: "#900",
-              padding: "12px 14px",
-              borderRadius: "12px",
-            }}
-          >
+          <div style={{ maxWidth: 960, width: "100%", background: "#fee", padding: 12, borderRadius: 12, color: "#900" }}>
             {bannerErro}
           </div>
         ) : !currentOnePager ? (
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "960px",
-              background: "#eee",
-              color: "#777",
-              padding: "14px 14px",
-              borderRadius: "12px",
-              textAlign: "center",
-            }}
-          >
+          <div style={{ maxWidth: 960, width: "100%", background: "#eee", padding: 12, borderRadius: 12, textAlign: "center" }}>
             Carregando One Pagers...
           </div>
         ) : (
@@ -442,20 +372,16 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* sem link aqui → não abre nada se clicar forte */}
+              {/* sem link pra não abrir ao arrastar */}
               <img src={currentOnePager} alt={onePagers[bannerIndex]} />
             </div>
-
-            {/* bolinhas */}
             {onePagers.length > 1 && (
               <div className="banner-dots">
                 {onePagers.map((_, i) => (
                   <button
                     key={i}
-                    type="button"
                     className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
                     onClick={() => setBannerIndex(i)}
-                    aria-label={`Ver One Pager ${i + 1}`}
                   />
                 ))}
               </div>
@@ -463,19 +389,13 @@ export default function App() {
           </>
         )}
 
-        {/* 2) Banners estáticos (abaixo) */}
-        {STATIC_BANNERS.map((b, i) => (
-          <a
-            key={i}
-            href={b.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ width: "100%", maxWidth: "980px" }}
-          >
-            <img src={b.img} alt={`banner-${i}`} className="static-banner" />
-          </a>
+        {/* Banners estáticos que estavam na pasta */}
+        {STATIC_FROM_FOLDER.map((b, i) => (
+          <img key={i} src={b.img} alt={`banner-${i}`} className="static-banner" />
         ))}
       </main>
     </div>
   );
 }
+
+           
