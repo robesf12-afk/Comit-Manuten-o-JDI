@@ -72,22 +72,30 @@ const LINKS = {
 
 /* ===== Menu ===== */
 const MENU = [
-  { id: "registro", title: "Registro de reuniões Abertura de PCM e Prestação de Contas", url: LINKS.registro, Icon: IconRegistroPCM },
+  {
+    id: "registro",
+    title: "Registro de reuniões Abertura de PCM e Prestação de Contas",
+    url: LINKS.registro,
+    Icon: IconRegistroPCM,
+  },
   { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
+
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
+
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
+
   { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconDoc },
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-// banners estáticos que estão na pasta
+// banners estáticos
 const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ASSERTIVIDADE.png" },
   { img: "/banners_media/quebra diaria.PNG" },
@@ -104,7 +112,7 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // trava scroll quando o menu abre
+  // travar scroll quando o menu abre
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
@@ -116,7 +124,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // carrega onepagers.json
+  // carrega ONLY onepagers.json
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -128,11 +136,12 @@ export default function App() {
         const ordenados = ordem.filter((n) => data.includes(n));
         const extras = data.filter((n) => !ordem.includes(n));
         setOnePagers([...ordenados, ...extras]);
+        setBannerIndex(0);
       })
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
   }, []);
 
-  // troca automática
+  // auto slide
   useEffect(() => {
     if (onePagers.length <= 1) return;
     const t = setInterval(() => setBannerIndex((p) => (p + 1) % onePagers.length), 5000);
@@ -147,11 +156,12 @@ export default function App() {
     touchEndX.current = e.touches[0].clientX;
   };
   const handleTouchEnd = () => {
-    if (touchStartX.current == null || touchEndX.current == null) return;
+    if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
-    if (diff > 40) {
+    const minSwipe = 40;
+    if (diff > minSwipe) {
       setBannerIndex((p) => (p + 1) % onePagers.length);
-    } else if (diff < -40) {
+    } else if (diff < -minSwipe) {
       setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
     }
     touchStartX.current = null;
@@ -200,21 +210,20 @@ export default function App() {
         }
 
         /* ===== Mobile ===== */
-        @media(max-width:430px){
+        @media (max-width:430px){
           .topbar-inner{
             grid-template-columns:40px 1fr auto;
             grid-template-areas:"logo title femsa";
             padding:6px 8px 18px;
           }
-          .ga-logo{grid-area:logo;height:32px;}
-          .ga-title{grid-area:title;}
-          .ga-femsa{grid-area:femsa;height:28px;}
+          .ga-logo{ grid-area:logo; height:32px; }
+          .ga-title{ grid-area:title; }
+          .ga-femsa{ grid-area:femsa; height:28px; }
 
-          /* botão no lugar padrão */
           .menu-btn{
             position:absolute;
             left:8px;
-            bottom:-26px;
+            bottom:-26px;   /* posição que você gostou visualmente */
             width:40px;height:40px;
             border-radius:12px;
             background:#cc0000;
@@ -222,24 +231,13 @@ export default function App() {
             z-index:101;
           }
 
-          /* desvia os banners para a direita */
+          /* AQUI: descemos bem os banners */
           .banners-container{
-            padding:100px 10px 24px;
-            align-items:flex-start;      /* ← deixa alinhar pela esquerda */
-          }
-          .banner-dinamico,
-          .static-banner{
-            margin-left:54px;            /* ← desvio do botão */
-            max-width: calc(100vw - 68px); /* 54 da margem + 14 de respiro */
-          }
-          /* bolinhas acompanham o banner */
-          .banner-dots{
-            margin-left:54px;
-            justify-content:flex-start;
+            padding:150px 10px 24px; /* era 100, depois 130 → agora 150 pra garantir */
           }
         }
 
-        /* ===== Conteúdo geral ===== */
+        /* ===== Conteúdo ===== */
         .banners-container{
           display:flex;
           flex-direction:column;
@@ -306,9 +304,10 @@ export default function App() {
       {/* ===== Topbar ===== */}
       <header className="topbar">
         <div className="topbar-inner">
-          <button className="menu-btn" onClick={() => setOpen(true)} aria-label="Abrir menu">
-            <span className="bar"/><span className="bar"/><span className="bar"/>
+          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+            <span className="bar" /><span className="bar" /><span className="bar" />
           </button>
+
           <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
           <div className="title-chip ga-title">COMITÊ DE MANUTENÇÃO • JDI</div>
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
@@ -329,7 +328,11 @@ export default function App() {
       >
         <div className="drawer-header">
           <strong style={{ fontSize: 18 }}>Categorias</strong>
-          <button onClick={() => setOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22 }}>
+          <button
+            onClick={() => setOpen(false)}
+            style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }}
+            aria-label="Fechar menu"
+          >
             ×
           </button>
         </div>
@@ -352,7 +355,7 @@ export default function App() {
 
       {/* ===== Conteúdo ===== */}
       <main className="banners-container">
-        {/* Carrossel */}
+        {/* Carrossel dinâmico */}
         {bannerErro ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
             {bannerErro}
@@ -369,7 +372,7 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* sem link pra não abrir no clique forte */}
+              {/* sem link pra não abrir ao arrastar */}
               <img src={currentOnePager} alt={onePagers[bannerIndex]} />
             </div>
             {onePagers.length > 1 && (
@@ -379,6 +382,7 @@ export default function App() {
                     key={i}
                     className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
                     onClick={() => setBannerIndex(i)}
+                    aria-label={`Ver banner ${i + 1}`}
                   />
                 ))}
               </div>
@@ -386,7 +390,7 @@ export default function App() {
           </>
         )}
 
-        {/* estáticos embaixo */}
+        {/* Banners estáticos */}
         {STATIC_FROM_FOLDER.map((b, i) => (
           <img key={i} src={b.img} alt={`banner-${i}`} className="static-banner" />
         ))}
@@ -394,3 +398,4 @@ export default function App() {
     </div>
   );
 }
+
