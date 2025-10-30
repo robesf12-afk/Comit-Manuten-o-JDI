@@ -233,7 +233,7 @@ export default function App() {
 
           /* AQUI: descemos bem os banners */
           .banners-container{
-            padding:150px 10px 24px; /* era 100, depois 130 → agora 150 pra garantir */
+            padding:200px 10px 24px; /* era 100, depois 130 → agora 150 pra garantir */
           }
         }
 
