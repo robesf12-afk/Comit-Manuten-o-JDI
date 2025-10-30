@@ -72,30 +72,22 @@ const LINKS = {
 
 /* ===== Menu ===== */
 const MENU = [
-  {
-    id: "registro",
-    title: "Registro de reuniões Abertura de PCM e Prestação de Contas",
-    url: LINKS.registro,
-    Icon: IconRegistroPCM,
-  },
+  { id: "registro", title: "Registro de reuniões Abertura de PCM e Prestação de Contas", url: LINKS.registro, Icon: IconRegistroPCM },
   { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
-
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
-
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
-
   { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconDoc },
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-// Banners estáticos que estão na pasta
+// banners estáticos que estão na pasta
 const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ASSERTIVIDADE.png" },
   { img: "/banners_media/quebra diaria.PNG" },
@@ -105,29 +97,26 @@ const STATIC_FROM_FOLDER = [
 
 export default function App() {
   const [open, setOpen] = useState(false);
-
-  // one pagers (carrossel)
   const [onePagers, setOnePagers] = useState<string[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [bannerErro, setBannerErro] = useState<string | null>(null);
 
-  // swipe
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // travar scroll quando menu aberto
+  // trava scroll quando o menu abre
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-  // ESC fecha menu
+  // ESC fecha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // carregar only onepagers.json
+  // carrega onepagers.json
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -135,24 +124,22 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        // força ordem: fabrica, G1, G2, G3
         const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
         const ordenados = ordem.filter((n) => data.includes(n));
         const extras = data.filter((n) => !ordem.includes(n));
         setOnePagers([...ordenados, ...extras]);
-        setBannerIndex(0);
       })
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
   }, []);
 
-  // auto slide
+  // troca automática
   useEffect(() => {
     if (onePagers.length <= 1) return;
     const t = setInterval(() => setBannerIndex((p) => (p + 1) % onePagers.length), 5000);
     return () => clearInterval(t);
   }, [onePagers]);
 
-  // swipe handlers
+  // swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -160,14 +147,11 @@ export default function App() {
     touchEndX.current = e.touches[0].clientX;
   };
   const handleTouchEnd = () => {
-    if (touchStartX.current === null || touchEndX.current === null) return;
+    if (touchStartX.current == null || touchEndX.current == null) return;
     const diff = touchStartX.current - touchEndX.current;
-    const minSwipe = 40;
-    if (diff > minSwipe) {
-      // próximo
+    if (diff > 40) {
       setBannerIndex((p) => (p + 1) % onePagers.length);
-    } else if (diff < -minSwipe) {
-      // anterior
+    } else if (diff < -40) {
       setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
     }
     touchStartX.current = null;
@@ -198,70 +182,64 @@ export default function App() {
           position:relative;
         }
         .menu-btn{
-          width:44px;
-          height:44px;
-          border:none;
-          border-radius:999px;
-          background:#b80000;
-          color:#fff;
-          display:grid;
-          place-items:center;
+          width:44px;height:44px;border:none;border-radius:999px;
+          background:#b80000;color:#fff;
+          display:grid;place-items:center;
           box-shadow:0 4px 12px rgba(0,0,0,.25);
           cursor:pointer;
         }
-        .menu-btn .bar{
-          width:22px;
-          height:2px;
-          background:#fff;
-          margin:2.5px 0;
-          border-radius:2px;
-        }
-        .logo-comite{ height:46px; object-fit:contain; }
-        .logo-femsa{ height:44px; object-fit:contain; justify-self:end; }
+        .menu-btn .bar{width:22px;height:2px;background:#fff;margin:2.5px 0;border-radius:2px;}
+        .logo-comite{height:46px;}
+        .logo-femsa{height:44px;justify-self:end;}
         .title-chip{
-          color:#fff;
-          font-weight:900;
-          text-align:center;
+          color:#fff;font-weight:900;text-align:center;
           background:rgba(255,255,255,.12);
-          padding:8px 12px;
-          border-radius:999px;
-          white-space:nowrap;
-          overflow:hidden;
-          text-overflow:ellipsis;
+          padding:8px 12px;border-radius:999px;
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
           font-size:clamp(16px, 2.7vw, 28px);
         }
 
         /* ===== Mobile ===== */
-        @media (max-width:430px){
+        @media(max-width:430px){
           .topbar-inner{
             grid-template-columns:40px 1fr auto;
             grid-template-areas:"logo title femsa";
             padding:6px 8px 18px;
           }
-          .ga-logo{ grid-area:logo; height:32px; }
-          .ga-title{ grid-area:title; }
-          .ga-femsa{ grid-area:femsa; height:28px; }
+          .ga-logo{grid-area:logo;height:32px;}
+          .ga-title{grid-area:title;}
+          .ga-femsa{grid-area:femsa;height:28px;}
 
-          /* botão na posição boa, sem pegar o banner */
+          /* botão no lugar padrão */
           .menu-btn{
             position:absolute;
             left:8px;
-            bottom:-26px;   /* se ainda pegar, pode ir pra -22 */
-            width:40px;
-            height:40px;
+            bottom:-26px;
+            width:40px;height:40px;
             border-radius:12px;
             background:#cc0000;
             box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85);
             z-index:101;
           }
 
-          /* DESCER OS BANNERS */
+          /* desvia os banners para a direita */
           .banners-container{
-            padding:130px 10px 24px;  /* antes 100px */
+            padding:100px 10px 24px;
+            align-items:flex-start;      /* ← deixa alinhar pela esquerda */
+          }
+          .banner-dinamico,
+          .static-banner{
+            margin-left:54px;            /* ← desvio do botão */
+            max-width: calc(100vw - 68px); /* 54 da margem + 14 de respiro */
+          }
+          /* bolinhas acompanham o banner */
+          .banner-dots{
+            margin-left:54px;
+            justify-content:flex-start;
           }
         }
 
-        /* ===== Conteúdo ===== */
+        /* ===== Conteúdo geral ===== */
         .banners-container{
           display:flex;
           flex-direction:column;
@@ -281,7 +259,7 @@ export default function App() {
           width:100%;
           height:auto;
           display:block;
-          touch-action:auto; /* deixa dar zoom */
+          touch-action:auto;
         }
         .banner-dots{
           display:flex;
@@ -289,15 +267,10 @@ export default function App() {
           justify-content:center;
         }
         .banner-dot{
-          width:9px;
-          height:9px;
-          border-radius:999px;
-          background:#ddd;
-          border:none;
+          width:9px;height:9px;border-radius:999px;background:#ddd;border:none;
         }
         .banner-dot.active{
-          background:#cc0000;
-          width:28px;
+          background:#cc0000;width:28px;
         }
         .static-banner{
           width:100%;
@@ -309,53 +282,33 @@ export default function App() {
 
         /* ===== Drawer ===== */
         .drawer-overlay{
-          position:fixed;
-          inset:0;
-          background:rgba(0,0,0,.35);
-          transition:opacity .2s ease;
-          z-index:100;
+          position:fixed;inset:0;background:rgba(0,0,0,.35);
+          transition:opacity .2s ease;z-index:100;
         }
         .drawer{
-          position:fixed;
-          top:0;
-          left:0;
-          height:100dvh;
-          width:320px;
-          max-width:86vw;
-          background:#fff;
-          box-shadow:4px 0 24px rgba(0,0,0,.18);
-          z-index:102;
-          display:flex;
-          flex-direction:column;
+          position:fixed;top:0;left:0;height:100dvh;width:320px;max-width:86vw;
+          background:#fff;box-shadow:4px 0 24px rgba(0,0,0,.18);
+          z-index:102;display:flex;flex-direction:column;
           transition:transform .22s ease-out;
         }
         .drawer-header{
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          padding:14px 14px 10px 16px;
-          border-bottom:1px solid #eee;
+          display:flex;align-items:center;justify-content:space-between;
+          padding:14px 14px 10px 16px;border-bottom:1px solid #eee;
         }
         .drawer-link{
-          display:grid;
-          grid-template-columns:26px 1fr;
-          gap:12px;
-          align-items:center;
-          padding:12px 10px;
-          border-radius:10px;
-          color:#222;
-          text-decoration:none;
+          display:grid;grid-template-columns:26px 1fr;gap:12px;
+          align-items:center;padding:12px 10px;border-radius:10px;
+          color:#222;text-decoration:none;
         }
-        .drawer-ico{ color:#cc0000; display:grid; place-items:center; }
+        .drawer-ico{color:#cc0000;display:grid;place-items:center;}
       `}</style>
 
       {/* ===== Topbar ===== */}
       <header className="topbar">
         <div className="topbar-inner">
-          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
-            <span className="bar" /><span className="bar" /><span className="bar" />
+          <button className="menu-btn" onClick={() => setOpen(true)} aria-label="Abrir menu">
+            <span className="bar"/><span className="bar"/><span className="bar"/>
           </button>
-
           <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
           <div className="title-chip ga-title">COMITÊ DE MANUTENÇÃO • JDI</div>
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
@@ -373,14 +326,10 @@ export default function App() {
         style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }}
         role="dialog"
         aria-modal="true"
-        aria-label="Categorias"
       >
         <div className="drawer-header">
           <strong style={{ fontSize: 18 }}>Categorias</strong>
-          <button
-            onClick={() => setOpen(false)}
-            style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }}
-          >
+          <button onClick={() => setOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22 }}>
             ×
           </button>
         </div>
@@ -403,7 +352,7 @@ export default function App() {
 
       {/* ===== Conteúdo ===== */}
       <main className="banners-container">
-        {/* 1) Carrossel dinâmico SÓ dos one pagers */}
+        {/* Carrossel */}
         {bannerErro ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
             {bannerErro}
@@ -420,7 +369,7 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* sem link pra não abrir ao arrastar */}
+              {/* sem link pra não abrir no clique forte */}
               <img src={currentOnePager} alt={onePagers[bannerIndex]} />
             </div>
             {onePagers.length > 1 && (
@@ -430,7 +379,6 @@ export default function App() {
                     key={i}
                     className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
                     onClick={() => setBannerIndex(i)}
-                    aria-label={`Ver banner ${i + 1}`}
                   />
                 ))}
               </div>
@@ -438,7 +386,7 @@ export default function App() {
           </>
         )}
 
-        {/* 2) Banners estáticos da pasta */}
+        {/* estáticos embaixo */}
         {STATIC_FROM_FOLDER.map((b, i) => (
           <img key={i} src={b.img} alt={`banner-${i}`} className="static-banner" />
         ))}
