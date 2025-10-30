@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   IconOKR,
   IconDDM,
@@ -108,6 +108,10 @@ export default function App() {
   const [bannerErro, setBannerErro] = useState<string | null>(null);
   const [bannerIndex, setBannerIndex] = useState(0);
 
+  // refs pra swipe
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
   // bloqueia scroll quando o drawer está aberto
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -130,20 +134,54 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setBanners(data);
-          setBannerIndex(0);
-        } else {
+        if (!Array.isArray(data) || data.length === 0) {
           setBannerErro("Nenhum banner encontrado.");
+          return;
         }
+
+        // 1) força a ordem dos ONE PAGERS primeiro
+        const ordemForcada = [
+          "one pager fabrica.PNG",
+          "one pager G1.PNG",
+          "one pager G2.PNG",
+          "one pager G3.PNG",
+        ];
+
+        const dinamicosOrdenados: string[] = [];
+
+        // coloca os que existem na ordem desejada
+        ordemForcada.forEach((nome) => {
+          if (data.includes(nome)) {
+            dinamicosOrdenados.push(nome);
+          }
+        });
+
+        // se vierem outros no json, coloca depois
+        const extras = data.filter((nome) => !ordemForcada.includes(nome));
+        dinamicosOrdenados.push(...extras);
+
+        // 2) agora sim adiciona os estáticos NO FINAL
+        const estaticos = [
+          "/banner-reconhecimentos.png",
+          // "/banner-manutencao.png",
+          // "/banner-treinamentos.png",
+        ];
+
+        const todos = [...dinamicosOrdenados, ...estaticos];
+
+        setBanners(todos);
+        setBannerIndex(0);
       })
       .catch((err) => {
         console.error("Erro carregando banners:", err);
-        setBannerErro("Não foi possível carregar os banners.");
+        // se o json falhar, mostra só os estáticos
+        const estaticos = ["/banner-reconhecimentos.png"];
+        setBanners(estaticos);
+        setBannerErro("Não foi possível carregar os banners dinâmicos.");
       });
   }, []);
 
-  // carrossel automático (só se tiver mais de 1)
+  // carrossel automático (pode deixar, você ainda pode arrastar)
   useEffect(() => {
     if (banners.length <= 1) return;
     const t = setInterval(() => {
@@ -152,8 +190,37 @@ export default function App() {
     return () => clearInterval(t);
   }, [banners]);
 
+  // funções de swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    const diff = touchStartX.current - touchEndX.current;
+    const minSwipe = 40;
+
+    if (diff > minSwipe) {
+      // esquerda -> próximo
+      setBannerIndex((prev) => (prev + 1) % banners.length);
+    } else if (diff < -minSwipe) {
+      // direita -> anterior
+      setBannerIndex((prev) => (prev - 1 + banners.length) % banners.length);
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   // banner atual
-  const currentBanner = banners.length > 0 ? `/banners_media/${banners[bannerIndex]}` : null;
+  const currentBanner =
+    banners.length > 0
+      ? banners[bannerIndex].startsWith("/")
+        ? banners[bannerIndex] // estático
+        : `/banners_media/${banners[bannerIndex]}` // vindo do json
+      : null;
 
   return (
     <div className="app">
@@ -248,6 +315,7 @@ export default function App() {
           border-radius:16px;
           box-shadow:0 4px 12px rgba(0,0,0,.12);
           display:block;
+          touch-action:pan-y;
         }
         @media (max-width:1024px){ .banner{ max-width:900px; } }
         @media (max-width:768px){ .banner{ max-width:100%; border-radius:14px; } }
@@ -263,6 +331,7 @@ export default function App() {
           border-radius:999px;
           background:#ddd;
           cursor:pointer;
+          border:none;
         }
         .banner-dot.active{
           background:#cc0000;
@@ -386,17 +455,27 @@ export default function App() {
           </div>
         ) : (
           <>
-            {/* banner atual */}
-            <a href={LINKS.okr} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
+            {/* banner atual (com swipe) */}
+            <a
+              href={LINKS.okr}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ width: "100%" }}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
               <img
                 className="banner"
                 src={currentBanner}
                 alt={banners[bannerIndex]}
-                onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
               />
             </a>
 
-            {/* bolinhas do carrossel (1 por imagem do json) */}
+            {/* bolinhas do carrossel */}
             {banners.length > 1 && (
               <div className="banner-dots">
                 {banners.map((_, i) => (
