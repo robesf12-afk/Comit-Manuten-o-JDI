@@ -100,11 +100,21 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
+// banners estáticos (ficam EMBAIXO)
+const STATIC_BANNERS = [
+  {
+    img: "/banner-reconhecimentos.png",
+    url: LINKS.reconhecimentos,
+  },
+  // pode ir colocando outros aqui
+  // { img: "/banner-manutencao.png", url: LINKS.okr },
+];
+
 export default function App() {
   const [open, setOpen] = useState(false);
 
-  // estado pros banners
-  const [banners, setBanners] = useState<string[]>([]);
+  // estado pros one pagers (carrossel)
+  const [onePagers, setOnePagers] = useState<string[]>([]);
   const [bannerErro, setBannerErro] = useState<string | null>(null);
   const [bannerIndex, setBannerIndex] = useState(0);
 
@@ -124,73 +134,50 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // carrega os banners da pasta pública
+  // carrega só os one pagers
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Não achei /banners_media/onepagers.json");
-        }
+        if (!res.ok) throw new Error("Não achei /banners_media/onepagers.json");
         return res.json();
       })
       .then((data: string[]) => {
         if (!Array.isArray(data) || data.length === 0) {
-          setBannerErro("Nenhum banner encontrado.");
+          setBannerErro("Nenhum One Pager encontrado.");
           return;
         }
 
-        // 1) força a ordem dos ONE PAGERS primeiro
+        // força a ordem: fabrica, G1, G2, G3, resto
         const ordemForcada = [
           "one pager fabrica.PNG",
           "one pager G1.PNG",
           "one pager G2.PNG",
           "one pager G3.PNG",
         ];
-
-        const dinamicosOrdenados: string[] = [];
-
-        // coloca os que existem na ordem desejada
+        const ordenados: string[] = [];
         ordemForcada.forEach((nome) => {
-          if (data.includes(nome)) {
-            dinamicosOrdenados.push(nome);
-          }
+          if (data.includes(nome)) ordenados.push(nome);
         });
-
-        // se vierem outros no json, coloca depois
-        const extras = data.filter((nome) => !ordemForcada.includes(nome));
-        dinamicosOrdenados.push(...extras);
-
-        // 2) agora sim adiciona os estáticos NO FINAL
-        const estaticos = [
-          "/banner-reconhecimentos.png",
-          // "/banner-manutencao.png",
-          // "/banner-treinamentos.png",
-        ];
-
-        const todos = [...dinamicosOrdenados, ...estaticos];
-
-        setBanners(todos);
+        const extras = data.filter((n) => !ordemForcada.includes(n));
+        setOnePagers([...ordenados, ...extras]);
         setBannerIndex(0);
       })
       .catch((err) => {
-        console.error("Erro carregando banners:", err);
-        // se o json falhar, mostra só os estáticos
-        const estaticos = ["/banner-reconhecimentos.png"];
-        setBanners(estaticos);
-        setBannerErro("Não foi possível carregar os banners dinâmicos.");
+        console.error("Erro carregando onepagers:", err);
+        setBannerErro("Não foi possível carregar o carrossel.");
       });
   }, []);
 
-  // carrossel automático (pode deixar, você ainda pode arrastar)
+  // carrossel automático
   useEffect(() => {
-    if (banners.length <= 1) return;
+    if (onePagers.length <= 1) return;
     const t = setInterval(() => {
-      setBannerIndex((prev) => (prev + 1) % banners.length);
-    }, 5000); // 5s
+      setBannerIndex((prev) => (prev + 1) % onePagers.length);
+    }, 5000);
     return () => clearInterval(t);
-  }, [banners]);
+  }, [onePagers]);
 
-  // funções de swipe
+  // swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -201,26 +188,20 @@ export default function App() {
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
     const minSwipe = 40;
-
     if (diff > minSwipe) {
       // esquerda -> próximo
-      setBannerIndex((prev) => (prev + 1) % banners.length);
+      setBannerIndex((prev) => (prev + 1) % onePagers.length);
     } else if (diff < -minSwipe) {
       // direita -> anterior
-      setBannerIndex((prev) => (prev - 1 + banners.length) % banners.length);
+      setBannerIndex((prev) => (prev - 1 + onePagers.length) % onePagers.length);
     }
-
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
-  // banner atual
-  const currentBanner =
-    banners.length > 0
-      ? banners[bannerIndex].startsWith("/")
-        ? banners[bannerIndex] // estático
-        : `/banners_media/${banners[bannerIndex]}` // vindo do json
-      : null;
+  // one pager atual
+  const currentOnePager =
+    onePagers.length > 0 ? `/banners_media/${onePagers[bannerIndex]}` : null;
 
   return (
     <div className="app">
@@ -281,46 +262,38 @@ export default function App() {
           }
           .menu-btn .bar{ width:18px; height:2px; }
 
-          .logo-comite{ height:32px; }
-          .logo-femsa{ height:28px; }
-          .title-chip{
-            font-size:clamp(13px, 3.8vw, 16px);
-            padding:4px 8px;
-            border-radius:10px;
-            line-height:1.05;
-            letter-spacing:.2px;
-            background:rgba(255,255,255,.16);
-          }
-
-          .banners-container{ padding:42px 10px 24px; }
-          .banner{
-            max-width:92vw;
-            border-radius:12px;
-            box-shadow:0 3px 10px rgba(0,0,0,.12);
-          }
+          /* AQUI: mais espaço no topo do container pra não ficar atrás do botão */
+          .banners-container{ padding:58px 10px 24px; }
         }
 
-        /* ===== Conteúdo (padrão) ===== */
+        /* ===== Conteúdo ===== */
         .banners-container{
           display:flex;
           flex-direction:column;
-          align-items:center;
-          gap:22px;
+          gap:18px;
           padding:14px 12px 28px;
+          align-items:center;
         }
-        .banner{
+        .banner-dinamico{
           width:100%;
-          height:auto;
           max-width:980px;
           border-radius:16px;
           box-shadow:0 4px 12px rgba(0,0,0,.12);
-          display:block;
-          touch-action:pan-y;
+          background:#000;
+          overflow:hidden;
         }
-        @media (max-width:1024px){ .banner{ max-width:900px; } }
-        @media (max-width:768px){ .banner{ max-width:100%; border-radius:14px; } }
+        /* IMPORTANTE: permitir pinch-zoom */
+        .banner-dinamico img{
+          width:100%;
+          height:auto;
+          display:block;
+          touch-action:auto;   /* NÃO travar gestos */
+        }
+        @media (max-width:768px){
+          .banner-dinamico{ max-width:100%; border-radius:14px; }
+        }
 
-        /* ===== bolinhas do carrossel ===== */
+        /* bolinhas */
         .banner-dots{
           display:flex;
           gap:6px;
@@ -330,16 +303,23 @@ export default function App() {
           width:9px; height:9px;
           border-radius:999px;
           background:#ddd;
-          cursor:pointer;
           border:none;
         }
         .banner-dot.active{
           background:#cc0000;
           width:28px;
-          transition:all .15s ease-out;
         }
 
-        /* ===== Drawer ===== */
+        /* banners estáticos (embaixo) */
+        .static-banner{
+          width:100%;
+          max-width:980px;
+          border-radius:14px;
+          box-shadow:0 4px 10px rgba(0,0,0,.08);
+          display:block;
+        }
+
+        /* Drawer */
         .drawer-overlay{
           position:fixed; inset:0;
           background:rgba(0,0,0,.35);
@@ -426,6 +406,7 @@ export default function App() {
 
       {/* ===== Conteúdo ===== */}
       <main className="banners-container">
+        {/* 1) Carrossel dinâmico SÓ de one pagers */}
         {bannerErro ? (
           <div
             style={{
@@ -433,13 +414,13 @@ export default function App() {
               maxWidth: "960px",
               background: "#fee",
               color: "#900",
-              padding: "10px 14px",
+              padding: "12px 14px",
               borderRadius: "12px",
             }}
           >
             {bannerErro}
           </div>
-        ) : !currentBanner ? (
+        ) : !currentOnePager ? (
           <div
             style={{
               width: "100%",
@@ -451,46 +432,49 @@ export default function App() {
               textAlign: "center",
             }}
           >
-            Carregando banners...
+            Carregando One Pagers...
           </div>
         ) : (
           <>
-            {/* banner atual (com swipe) */}
-            <a
-              href={LINKS.okr}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ width: "100%" }}
+            <div
+              className="banner-dinamico"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              <img
-                className="banner"
-                src={currentBanner}
-                alt={banners[bannerIndex]}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
-            </a>
+              {/* sem link aqui → não abre nada se clicar forte */}
+              <img src={currentOnePager} alt={onePagers[bannerIndex]} />
+            </div>
 
-            {/* bolinhas do carrossel */}
-            {banners.length > 1 && (
+            {/* bolinhas */}
+            {onePagers.length > 1 && (
               <div className="banner-dots">
-                {banners.map((_, i) => (
+                {onePagers.map((_, i) => (
                   <button
                     key={i}
                     type="button"
                     className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
                     onClick={() => setBannerIndex(i)}
-                    aria-label={`Ver banner ${i + 1}`}
+                    aria-label={`Ver One Pager ${i + 1}`}
                   />
                 ))}
               </div>
             )}
           </>
         )}
+
+        {/* 2) Banners estáticos (abaixo) */}
+        {STATIC_BANNERS.map((b, i) => (
+          <a
+            key={i}
+            href={b.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ width: "100%", maxWidth: "980px" }}
+          >
+            <img src={b.img} alt={`banner-${i}`} className="static-banner" />
+          </a>
+        ))}
       </main>
     </div>
   );
