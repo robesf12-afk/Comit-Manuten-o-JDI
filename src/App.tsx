@@ -103,9 +103,10 @@ const MENU = [
 export default function App() {
   const [open, setOpen] = useState(false);
 
-  // NOVO: estado pros banners
+  // estado pros banners
   const [banners, setBanners] = useState<string[]>([]);
   const [bannerErro, setBannerErro] = useState<string | null>(null);
+  const [bannerIndex, setBannerIndex] = useState(0);
 
   // bloqueia scroll quando o drawer está aberto
   useEffect(() => {
@@ -119,10 +120,8 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // NOVO: carrega os banners da pasta pública
+  // carrega os banners da pasta pública
   useEffect(() => {
-    // esse é exatamente o arquivo que você mostrou no GitHub:
-    // public/banners_media/onepagers.json
     fetch("/banners_media/onepagers.json")
       .then((res) => {
         if (!res.ok) {
@@ -133,6 +132,7 @@ export default function App() {
       .then((data: string[]) => {
         if (Array.isArray(data) && data.length > 0) {
           setBanners(data);
+          setBannerIndex(0);
         } else {
           setBannerErro("Nenhum banner encontrado.");
         }
@@ -142,6 +142,18 @@ export default function App() {
         setBannerErro("Não foi possível carregar os banners.");
       });
   }, []);
+
+  // carrossel automático (só se tiver mais de 1)
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const t = setInterval(() => {
+      setBannerIndex((prev) => (prev + 1) % banners.length);
+    }, 5000); // 5s
+    return () => clearInterval(t);
+  }, [banners]);
+
+  // banner atual
+  const currentBanner = banners.length > 0 ? `/banners_media/${banners[bannerIndex]}` : null;
 
   return (
     <div className="app">
@@ -240,6 +252,24 @@ export default function App() {
         @media (max-width:1024px){ .banner{ max-width:900px; } }
         @media (max-width:768px){ .banner{ max-width:100%; border-radius:14px; } }
 
+        /* ===== bolinhas do carrossel ===== */
+        .banner-dots{
+          display:flex;
+          gap:6px;
+          justify-content:center;
+        }
+        .banner-dot{
+          width:9px; height:9px;
+          border-radius:999px;
+          background:#ddd;
+          cursor:pointer;
+        }
+        .banner-dot.active{
+          background:#cc0000;
+          width:28px;
+          transition:all .15s ease-out;
+        }
+
         /* ===== Drawer ===== */
         .drawer-overlay{
           position:fixed; inset:0;
@@ -327,7 +357,6 @@ export default function App() {
 
       {/* ===== Conteúdo ===== */}
       <main className="banners-container">
-        {/* se der erro, mostra a caixinha e NÃO quebra o app */}
         {bannerErro ? (
           <div
             style={{
@@ -341,8 +370,7 @@ export default function App() {
           >
             {bannerErro}
           </div>
-        ) : banners.length === 0 ? (
-          // loading simples
+        ) : !currentBanner ? (
           <div
             style={{
               width: "100%",
@@ -357,24 +385,32 @@ export default function App() {
             Carregando banners...
           </div>
         ) : (
-          // quando carregou mesmo
-          banners.map((fileName, idx) => {
-            // monta o caminho EXATO da sua pasta pública
-            const src = `/banners_media/${fileName}`;
-            return (
-              <a key={idx} href={LINKS.okr} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
-                <img
-                  className="banner"
-                  src={src}
-                  alt={fileName}
-                  onError={(e) => {
-                    // se uma imagem quebrar, não deixa o app branco
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              </a>
-            );
-          })
+          <>
+            {/* banner atual */}
+            <a href={LINKS.okr} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
+              <img
+                className="banner"
+                src={currentBanner}
+                alt={banners[bannerIndex]}
+                onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+              />
+            </a>
+
+            {/* bolinhas do carrossel (1 por imagem do json) */}
+            {banners.length > 1 && (
+              <div className="banner-dots">
+                {banners.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
+                    onClick={() => setBannerIndex(i)}
+                    aria-label={`Ver banner ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
