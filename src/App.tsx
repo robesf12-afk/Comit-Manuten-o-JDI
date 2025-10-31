@@ -1,4 +1,5 @@
-// src/App.tsx
+
+     // src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
 import {
   IconOKR,
@@ -103,13 +104,12 @@ export default function App() {
   const [onePagers, setOnePagers] = useState<string[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [bannerErro, setBannerErro] = useState<string | null>(null);
-
-  const [isNarrow, setIsNarrow] = useState(true); // assume mobile na hidratação
+  const [isNarrow, setIsNarrow] = useState(true);
 
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // detectar largura real do dispositivo
+  // detecta largura
   useEffect(() => {
     if (typeof window !== "undefined") {
       const check = () => setIsNarrow(window.innerWidth <= 650);
@@ -168,8 +168,7 @@ export default function App() {
   };
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
-
-  const mobilePaddingTop = isNarrow ? 180 : 28; // ← AQUI manda mesmo
+  const mobilePaddingTop = isNarrow ? 130 : 28; // ← ajustado pra ficar no final do botão
 
   return (
     <div className="app">
@@ -209,7 +208,6 @@ export default function App() {
           font-size:clamp(16px, 2.7vw, 28px);
         }
 
-        /* botão posicionado no mobile */
         @media (max-width:600px){
           .topbar-inner{
             grid-template-columns:40px 1fr auto;
