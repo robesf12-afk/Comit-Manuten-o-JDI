@@ -1,5 +1,4 @@
-
-     // src/App.tsx
+// src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
 import {
   IconOKR,
@@ -104,12 +103,23 @@ export default function App() {
   const [onePagers, setOnePagers] = useState<string[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [bannerErro, setBannerErro] = useState<string | null>(null);
+
   const [isNarrow, setIsNarrow] = useState(true);
+  const [showIosBanner, setShowIosBanner] = useState(false);
 
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // detecta largura
+  // detectar se é iPhone / iPad / iPod
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const ua = window.navigator.userAgent;
+      const isIOSDevice = /iPhone|iPad|iPod/i.test(ua);
+      setShowIosBanner(isIOSDevice);
+    }
+  }, []);
+
+  // detectar largura
   useEffect(() => {
     if (typeof window !== "undefined") {
       const check = () => setIsNarrow(window.innerWidth <= 650);
@@ -119,16 +129,19 @@ export default function App() {
     }
   }, []);
 
+  // travar scroll quando o menu abre
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+  // ESC fecha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // carrega onepagers.json
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -145,12 +158,14 @@ export default function App() {
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
   }, []);
 
+  // troca automática
   useEffect(() => {
     if (onePagers.length <= 1) return;
     const t = setInterval(() => setBannerIndex((p) => (p + 1) % onePagers.length), 5000);
     return () => clearInterval(t);
   }, [onePagers]);
 
+  // swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -161,14 +176,17 @@ export default function App() {
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
     const min = 40;
-    if (diff > min) setBannerIndex((p) => (p + 1) % onePagers.length);
-    else if (diff < -min) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+    if (diff > min) {
+      setBannerIndex((p) => (p + 1) % onePagers.length);
+    } else if (diff < -min) {
+      setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+    }
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
-  const mobilePaddingTop = isNarrow ? 33 : 28; // ← ajustado pra ficar no final do botão
+  const mobilePaddingTop = isNarrow ? 130 : 28;
 
   return (
     <div className="app">
@@ -269,6 +287,27 @@ export default function App() {
           display:block;
         }
 
+        .ios-hint{
+          background:#fff7d9;
+          border:1px solid rgba(204,0,0,.35);
+          color:#492100;
+          margin:0 auto;
+          max-width:1200px;
+          padding:10px 14px;
+          display:flex;
+          gap:10px;
+          align-items:flex-start;
+          font-size:14px;
+        }
+        .ios-hint strong{ display:block; font-size:14px; }
+        .ios-hint button{
+          background:transparent;
+          border:none;
+          font-size:16px;
+          cursor:pointer;
+          margin-left:auto;
+        }
+
         .drawer-overlay{
           position:fixed;inset:0;background:rgba(0,0,0,.35);
           transition:opacity .2s ease;z-index:100;
@@ -304,6 +343,20 @@ export default function App() {
         </div>
       </header>
 
+      {/* ===== Aviso iPhone ===== */}
+      {showIosBanner && (
+        <div className="ios-hint">
+          <div>
+            <strong>iPhone detectado 📱</strong>
+            Para instalar o aplicativo: abra no Safari → toque no botão <b>compartilhar</b> (ícone de setinha) → escolha
+            <b> “Adicionar à Tela de Início”</b>.
+          </div>
+          <button onClick={() => setShowIosBanner(false)} aria-label="Fechar aviso">
+            ×
+          </button>
+        </div>
+      )}
+
       {/* ===== Drawer ===== */}
       <div
         className="drawer-overlay"
@@ -336,7 +389,9 @@ export default function App() {
               className="drawer-link"
               onClick={() => setOpen(false)}
             >
-              <span className="drawer-ico"><Icon /></span>
+              <span className="drawer-ico">
+                <Icon />
+              </span>
               <span>{title}</span>
             </a>
           ))}
@@ -387,3 +442,4 @@ export default function App() {
     </div>
   );
 }
+
