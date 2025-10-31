@@ -104,8 +104,20 @@ export default function App() {
   const [bannerIndex, setBannerIndex] = useState(0);
   const [bannerErro, setBannerErro] = useState<string | null>(null);
 
+  const [isNarrow, setIsNarrow] = useState(true); // assume mobile na hidratação
+
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+
+  // detectar largura real do dispositivo
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const check = () => setIsNarrow(window.innerWidth <= 650);
+      check();
+      window.addEventListener("resize", check);
+      return () => window.removeEventListener("resize", check);
+    }
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -148,17 +160,16 @@ export default function App() {
   const handleTouchEnd = () => {
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
-    const minSwipe = 40;
-    if (diff > minSwipe) {
-      setBannerIndex((p) => (p + 1) % onePagers.length);
-    } else if (diff < -minSwipe) {
-      setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
-    }
+    const min = 40;
+    if (diff > min) setBannerIndex((p) => (p + 1) % onePagers.length);
+    else if (diff < -min) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
+
+  const mobilePaddingTop = isNarrow ? 180 : 28; // ← AQUI manda mesmo
 
   return (
     <div className="app">
@@ -198,7 +209,7 @@ export default function App() {
           font-size:clamp(16px, 2.7vw, 28px);
         }
 
-        /* ===== Mobile (AGORA VAI) ===== */
+        /* botão posicionado no mobile */
         @media (max-width:600px){
           .topbar-inner{
             grid-template-columns:40px 1fr auto;
@@ -208,7 +219,6 @@ export default function App() {
           .ga-logo{ grid-area:logo; height:32px; }
           .ga-title{ grid-area:title; }
           .ga-femsa{ grid-area:femsa; height:28px; }
-
           .menu-btn{
             position:absolute;
             left:8px;
@@ -218,11 +228,6 @@ export default function App() {
             background:#cc0000;
             box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85);
             z-index:101;
-          }
-
-          /* agora sim: desce os banners */
-          .banners-container{
-            padding:400px 10px 24px;  /* se ainda encostar põe 180 */
           }
         }
 
@@ -341,7 +346,7 @@ export default function App() {
       </aside>
 
       {/* ===== Conteúdo ===== */}
-      <main className="banners-container">
+      <main className="banners-container" style={{ paddingTop: mobilePaddingTop }}>
         {/* Carrossel dinâmico */}
         {bannerErro ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
