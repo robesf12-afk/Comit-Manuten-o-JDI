@@ -1,28 +1,37 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Comitê de Manutenção JDI</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
 
-  <!-- Cor da barra do navegador / splash -->
-  <meta name="theme-color" content="#b30000" />
+    <!-- NOME DO APP (navegador e alguns devices usam isso) -->
+    <title>Comitê de Manutenção JDI</title>
+    <meta name="application-name" content="Comitê de Manutenção JDI" />
+    <meta name="apple-mobile-web-app-title" content="Comitê de Manutenção JDI" />
 
-  <!-- Manifest com ícone maskable (evita borda branca no Android) -->
-  <link rel="manifest" href="/manifest.json" />
+    <!-- Cor da barra do navegador / splash -->
+    <meta name="theme-color" content="#b30000" />
 
-  <!-- iOS PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Manifest com versionamento pra quebrar cache -->
+    <!-- MUITO IMPORTANTE: depois cria/edita o public/manifest.json pra ter o mesmo nome -->
+    <link rel="manifest" href="/manifest.json?v=27" />
 
-  <!-- Ícone para iOS (180x180, PNG transparente) -->
-  <link rel="apple-touch-icon" href="/logo-comite-180.png" />
+    <!-- iOS PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- CSS global -->
-  <link rel="stylesheet" href="/src/index.css" />
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
+    <!-- Ícone para iOS (180x180, PNG transparente) -->
+    <!-- garante que esse arquivo exista MESMO em /public/logo-comite-180.png -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo-comite-180.png" />
+
+    <!-- CSS global -->
+    <link rel="stylesheet" href="/src/index.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
