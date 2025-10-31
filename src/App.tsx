@@ -222,9 +222,9 @@ export default function App() {
 
           .menu-btn{
             position:absolute;
-            left:8px;
+            left:5px;
             bottom:-26px;   /* posição que você gostou visualmente */
-            width:40px;height:30px;
+            width:40px;height:40px;
             border-radius:12px;
             background:#cc0000;
             box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85);
