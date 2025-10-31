@@ -72,12 +72,7 @@ const LINKS = {
 
 /* ===== Menu ===== */
 const MENU = [
-  {
-    id: "registro",
-    title: "Registro de reuniões Abertura de PCM e Prestação de Contas",
-    url: LINKS.registro,
-    Icon: IconRegistroPCM,
-  },
+  { id: "registro", title: "Registro de reuniões Abertura de PCM e Prestação de Contas", url: LINKS.registro, Icon: IconRegistroPCM },
   { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
@@ -112,19 +107,16 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // travar scroll quando o menu abre
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-  // ESC fecha
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // carrega ONLY onepagers.json
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -141,14 +133,12 @@ export default function App() {
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
   }, []);
 
-  // auto slide
   useEffect(() => {
     if (onePagers.length <= 1) return;
     const t = setInterval(() => setBannerIndex((p) => (p + 1) % onePagers.length), 5000);
     return () => clearInterval(t);
   }, [onePagers]);
 
-  // swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -173,7 +163,6 @@ export default function App() {
   return (
     <div className="app">
       <style>{`
-        /* ===== Topbar ===== */
         .topbar{
           position: sticky;
           top: 0;
@@ -209,8 +198,8 @@ export default function App() {
           font-size:clamp(16px, 2.7vw, 28px);
         }
 
-        /* ===== Mobile ===== */
-        @media (max-width:430px){
+        /* ===== Mobile (AGORA VAI) ===== */
+        @media (max-width:600px){
           .topbar-inner{
             grid-template-columns:40px 1fr auto;
             grid-template-areas:"logo title femsa";
@@ -222,8 +211,8 @@ export default function App() {
 
           .menu-btn{
             position:absolute;
-            left:5px;
-            bottom:-26px;   /* posição que você gostou visualmente */
+            left:8px;
+            bottom:-26px;
             width:40px;height:40px;
             border-radius:12px;
             background:#cc0000;
@@ -231,13 +220,12 @@ export default function App() {
             z-index:101;
           }
 
-          /* AQUI: descemos bem os banners */
+          /* agora sim: desce os banners */
           .banners-container{
-            padding:1000px 10px 24px; /* era 100, depois 130 → agora 150 pra garantir */
+            padding:160px 10px 24px;  /* se ainda encostar põe 180 */
           }
         }
 
-        /* ===== Conteúdo ===== */
         .banners-container{
           display:flex;
           flex-direction:column;
@@ -278,7 +266,6 @@ export default function App() {
           display:block;
         }
 
-        /* ===== Drawer ===== */
         .drawer-overlay{
           position:fixed;inset:0;background:rgba(0,0,0,.35);
           transition:opacity .2s ease;z-index:100;
@@ -372,7 +359,6 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* sem link pra não abrir ao arrastar */}
               <img src={currentOnePager} alt={onePagers[bannerIndex]} />
             </div>
             {onePagers.length > 1 && (
@@ -398,4 +384,3 @@ export default function App() {
     </div>
   );
 }
-
