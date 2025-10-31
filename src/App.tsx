@@ -186,7 +186,7 @@ export default function App() {
   };
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
-  const mobilePaddingTop = isNarrow ? 130 : 28;
+  const mobilePaddingTop = isNarrow ? 33 : 28;
 
   return (
     <div className="app">
