@@ -222,7 +222,7 @@ export default function App() {
 
           /* agora sim: desce os banners */
           .banners-container{
-            padding:160px 10px 24px;  /* se ainda encostar põe 180 */
+            padding:400px 10px 24px;  /* se ainda encostar põe 180 */
           }
         }
 
