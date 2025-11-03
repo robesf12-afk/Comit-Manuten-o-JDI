@@ -16,7 +16,6 @@
     <meta name="theme-color" content="#b30000" />
 
     <!-- Manifest com versionamento pra quebrar cache -->
-    <!-- MUITO IMPORTANTE: depois cria/edita o public/manifest.json pra ter o mesmo nome -->
     <link rel="manifest" href="/manifest.json?v=27" />
 
     <!-- iOS PWA -->
@@ -24,11 +23,25 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <!-- Ícone para iOS (180x180, PNG transparente) -->
-    <!-- garante que esse arquivo exista MESMO em /public/logo-comite-180.png -->
     <link rel="apple-touch-icon" sizes="180x180" href="/logo-comite-180.png" />
 
     <!-- CSS global -->
     <link rel="stylesheet" href="/src/index.css" />
+
+    <!-- OneSignal Notificações (apenas adicionado; nada substituído) -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" async></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(function (OneSignal) {
+        OneSignal.init({
+          appId: "c9dee04e-1964-428a-90ec-f38dbe8c9be3",
+          // Se você tiver o Safari Web ID, coloque aqui. Caso contrário, pode deixar vazio.
+          safari_web_id: "",
+          // Habilita o prompt deslizante padrão para pedir permissão
+          promptOptions: { slidedown: { enabled: true } },
+        });
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
