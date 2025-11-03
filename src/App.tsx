@@ -98,6 +98,54 @@ const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ÁREAS.jpeg" },
 ];
 
+/* =========================================================================
+   CTA de Notificações: exibe em mobile; em iOS só no PWA instalado (standalone)
+   ========================================================================= */
+const NotifyCTA: React.FC = () => {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isMobile) return;
+
+    const isStandalone =
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      // @ts-ignore (iOS antigo)
+      window.navigator?.standalone === true;
+
+    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+    (window as any).OneSignalDeferred.push(async (OneSignal: any) => {
+      try {
+        const enabled = await OneSignal.isPushNotificationsEnabled?.();
+        if (enabled) return setShow(false);
+      } catch {
+        /* ignora */
+      }
+      // iOS: só mostra se estiver instalado; Android: mostra sempre
+      const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setShow(isiOS ? isStandalone : true);
+    });
+  }, []);
+
+  const request = () => {
+    try {
+      (window as any).OneSignal?.showSlidedownPrompt?.();
+    } catch {
+      (window as any).OneSignal?.Notifications?.requestPermission?.();
+    }
+  };
+
+  if (!show) return null;
+
+  return (
+    <div className="notify-cta" role="region" aria-label="Ativar notificações">
+      <span className="notify-title">🔔 Notificações</span>
+      <span className="notify-text">Toque para permitir avisos do Comitê.</span>
+      <button className="notify-btn" onClick={request}>Ativar</button>
+    </div>
+  );
+};
+
 export default function App() {
   const [open, setOpen] = useState(false);
   const [onePagers, setOnePagers] = useState<string[]>([]);
@@ -247,6 +295,26 @@ export default function App() {
           }
         }
 
+        /* ===== CTA Notificações ===== */
+        .notify-cta{
+          position:sticky; top:0; z-index:1100;
+          background:#fff7f7;
+          border:1px solid #ffd6d6;
+          border-radius:12px;
+          padding:10px 12px;
+          margin:8px 12px;
+          box-shadow:0 6px 18px rgba(0,0,0,.08);
+          display:flex; align-items:center; gap:10px;
+        }
+        .notify-title{ color:#b30000; font-weight:800; }
+        .notify-text{ font-size:13px; color:#333; }
+        .notify-btn{
+          margin-left:auto; background:#cc0000; color:#fff;
+          border:none; border-radius:999px; padding:8px 12px;
+          font-weight:800; cursor:pointer;
+          box-shadow:0 4px 12px rgba(179,0,0,.25);
+        }
+
         .banners-container{
           display:flex;
           flex-direction:column;
@@ -342,6 +410,9 @@ export default function App() {
           <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
         </div>
       </header>
+
+      {/* ===== CTA de Notificações (mobile) ===== */}
+      <NotifyCTA />
 
       {/* ===== Aviso iPhone ===== */}
       {showIosBanner && (
@@ -442,4 +513,3 @@ export default function App() {
     </div>
   );
 }
-
