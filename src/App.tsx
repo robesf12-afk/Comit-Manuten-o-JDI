@@ -1,7 +1,46 @@
-     // src/App.tsx
+// src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
-import { promptPushIfNeeded } from "./push";
 
+/* ===== OneSignal helpers (v16) ===== */
+function whenOneSignal(): Promise<any> {
+  return new Promise((resolve) => {
+    // v16 injeta OneSignalDeferred; resolvemos quando o SDK chama nossa função
+    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+    (window as any).OneSignalDeferred.push((OneSignal: any) => resolve(OneSignal));
+  });
+}
+
+async function getPushState() {
+  try {
+    const OneSignal = await whenOneSignal();
+    const enabled = await OneSignal.isPushNotificationsEnabled?.();
+    const perm =
+      (await OneSignal.User?.Permission?.getStatus?.()) ??
+      (typeof Notification !== "undefined" ? Notification.permission : "unsupported");
+    return { ok: true, enabled: !!enabled, permission: perm as string };
+  } catch (e) {
+    return { ok: false, enabled: false, permission: "unknown" };
+  }
+}
+
+async function requestPush() {
+  const OneSignal = await whenOneSignal();
+  try {
+    // v16
+    if (OneSignal.showSlidedownPrompt) {
+      await OneSignal.showSlidedownPrompt();
+    } else if (OneSignal.Notifications?.requestPermission) {
+      await OneSignal.Notifications.requestPermission();
+    }
+  } catch {
+    // fallback nativo
+    if (typeof Notification !== "undefined" && Notification.requestPermission) {
+      await Notification.requestPermission();
+    }
+  }
+}
+
+/* ===== Seus ícones ===== */
 import {
   IconOKR,
   IconDDM,
@@ -13,7 +52,7 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* ===== Ícones locais ===== */
+/* ===== Ícones locais extras ===== */
 const IconHelp: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
@@ -101,72 +140,95 @@ const STATIC_FROM_FOLDER = [
 ];
 
 /* =========================================================================
-   CTA de Notificações: exibe em mobile; em iOS só no PWA instalado (standalone)
+   CTA de Notificações (robusta v16)
    ========================================================================= */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
-  const [denied, setDenied] = useState(false);
+  const [state, setState] = useState<{ permission: string; enabled: boolean }>({ permission: "loading", enabled: false });
+  const [debugOpen, setDebugOpen] = useState(false);
 
+  // Atualiza estado inicial e reage a mudanças
   useEffect(() => {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (!isMobile) return;
+    let mounted = true;
 
-    // fecha quando habilitar
-    const onEnabled = () => setShow(false);
-    window.addEventListener("push-enabled", onEnabled);
+    const update = async () => {
+      const s = await getPushState();
+      if (!mounted) return;
+      setState({ permission: s.permission, enabled: s.enabled });
+      if (s.enabled) setShow(false);
+      else {
+        const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isStandalone =
+          (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+          // @ts-ignore (iOS antigo)
+          window.navigator?.standalone === true;
+        setShow(isiOS ? isStandalone : true);
+      }
+    };
 
+    update();
+
+    // Escuta inscrição
     (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
-    (window as any).OneSignalDeferred.push(async (OneSignal: any) => {
-      try {
-        const enabled = await OneSignal.isPushNotificationsEnabled?.();
-        if (enabled) {
-          setShow(false);
-          return;
-        }
-        const perm = await OneSignal.User?.Permission?.getStatus?.();
-        if (perm === "denied") {
-          setDenied(true);
-          setShow(true);
-          return;
-        }
-      } catch { /* ignora */ }
-
-      // iOS só mostra quando instalado; Android mostra sempre
-      const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const isStandalone =
-        (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-        // @ts-ignore (iOS antigo)
-        window.navigator?.standalone === true;
-      setShow(isiOS ? isStandalone : true);
-
-      // some ao inscrever
+    (window as any).OneSignalDeferred.push((OneSignal: any) => {
       OneSignal.on?.("subscriptionChange", (sub: boolean) => {
-        if (sub) window.dispatchEvent(new Event("push-enabled"));
+        setState((p) => ({ ...p, enabled: sub }));
+        if (sub) setShow(false);
       });
+      OneSignal.on?.("notificationPermissionChange", async () => update());
     });
 
-    return () => window.removeEventListener("push-enabled", onEnabled);
+    // debug visível se ?debugPush=1
+    try {
+      const u = new URL(window.location.href);
+      if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
+    } catch {}
+
+    return () => { mounted = false; };
   }, []);
 
-  const request = () => {
-    setDenied(false);
-    promptPushIfNeeded();
+  const onActivate = async () => {
+    await requestPush();
+    const s = await getPushState();
+    setState({ permission: s.permission, enabled: s.enabled });
+    if (s.enabled) setShow(false);
   };
 
-  if (!show) return null;
-
-  return (
-    <div className="notify-cta" role="region" aria-label="Ativar notificações">
-      <span className="notify-title">🔔 Notificações</span>
-      {denied ? (
-        <span className="notify-text">
-          Notificações bloqueadas. Toque no cadeado da barra de endereço → Permissões → ative <b>Notificações</b> e volte aqui.
-        </span>
-      ) : (
-        <span className="notify-text">Toque para permitir avisos do Comitê.</span>
+  if (!show) return (
+    <>
+      {/* Debug badge opcional */}
+      {debugOpen && (
+        <div style={{margin:"8px 12px",padding:"8px 12px",border:"1px dashed #bbb",borderRadius:8,fontSize:12,background:"#fafafa"}}>
+          <b>Debug Push</b>&nbsp;| permissão: <code>{state.permission}</code> | inscrito: <code>{String(state.enabled)}</code>
+        </div>
       )}
-      <button className="notify-btn" onClick={request}>{denied ? "Como permitir" : "Ativar"}</button>
-    </div>
+    </>
+  );
+
+  const denied = state.permission === "denied";
+  return (
+    <>
+      <div className="notify-cta" role="region" aria-label="Ativar notificações">
+        <span className="notify-title">🔔 Notificações</span>
+        {denied ? (
+          <span className="notify-text">
+            Notificações estão <b>bloqueadas</b> no navegador. Toque no cadeado da barra de endereço → Permissões →
+            ative <b>Notificações</b> e volte aqui.
+          </span>
+        ) : (
+          <span className="notify-text">Toque para permitir avisos do Comitê.</span>
+        )}
+        <button className="notify-btn" onClick={onActivate}>{denied ? "Como liberar" : "Ativar"}</button>
+      </div>
+
+      {/* Debug badge opcional */}
+      {debugOpen && (
+        <div style={{margin:"8px 12px",padding:"8px 12px",border:"1px dashed #bbb",borderRadius:8,fontSize:12,background:"#fafafa"}}>
+          <b>Debug Push</b>&nbsp;| permissão: <code>{state.permission}</code> | inscrito: <code>{String(state.enabled)}</code>
+          <button style={{marginLeft:8}} onClick={onActivate}>Forçar Prompt</button>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -443,12 +505,9 @@ export default function App() {
         <div className="ios-hint">
           <div>
             <strong>iPhone detectado 📱</strong>
-            Para instalar o aplicativo: abra no Safari → toque no botão <b>compartilhar</b> (ícone de setinha) → escolha
-            <b> “Adicionar à Tela de Início”</b>.
+            Para instalar o aplicativo: abra no Safari → toque no botão <b>compartilhar</b> → <b>“Adicionar à Tela de Início”</b>.
           </div>
-          <button onClick={() => setShowIosBanner(false)} aria-label="Fechar aviso">
-            ×
-          </button>
+          <button onClick={() => setShowIosBanner(false)} aria-label="Fechar aviso">×</button>
         </div>
       )}
 
