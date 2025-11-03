@@ -1,5 +1,7 @@
-// src/App.tsx
+     // src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
+import { promptPushIfNeeded } from "./push";
+
 import {
   IconOKR,
   IconDDM,
@@ -103,36 +105,52 @@ const STATIC_FROM_FOLDER = [
    ========================================================================= */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
+  const [denied, setDenied] = useState(false);
 
   useEffect(() => {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (!isMobile) return;
 
-    const isStandalone =
-      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-      // @ts-ignore (iOS antigo)
-      window.navigator?.standalone === true;
+    // fecha quando habilitar
+    const onEnabled = () => setShow(false);
+    window.addEventListener("push-enabled", onEnabled);
 
     (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
     (window as any).OneSignalDeferred.push(async (OneSignal: any) => {
       try {
         const enabled = await OneSignal.isPushNotificationsEnabled?.();
-        if (enabled) return setShow(false);
-      } catch {
-        /* ignora */
-      }
-      // iOS: só mostra se estiver instalado; Android: mostra sempre
+        if (enabled) {
+          setShow(false);
+          return;
+        }
+        const perm = await OneSignal.User?.Permission?.getStatus?.();
+        if (perm === "denied") {
+          setDenied(true);
+          setShow(true);
+          return;
+        }
+      } catch { /* ignora */ }
+
+      // iOS só mostra quando instalado; Android mostra sempre
       const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isStandalone =
+        (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+        // @ts-ignore (iOS antigo)
+        window.navigator?.standalone === true;
       setShow(isiOS ? isStandalone : true);
+
+      // some ao inscrever
+      OneSignal.on?.("subscriptionChange", (sub: boolean) => {
+        if (sub) window.dispatchEvent(new Event("push-enabled"));
+      });
     });
+
+    return () => window.removeEventListener("push-enabled", onEnabled);
   }, []);
 
   const request = () => {
-    try {
-      (window as any).OneSignal?.showSlidedownPrompt?.();
-    } catch {
-      (window as any).OneSignal?.Notifications?.requestPermission?.();
-    }
+    setDenied(false);
+    promptPushIfNeeded();
   };
 
   if (!show) return null;
@@ -140,8 +158,14 @@ const NotifyCTA: React.FC = () => {
   return (
     <div className="notify-cta" role="region" aria-label="Ativar notificações">
       <span className="notify-title">🔔 Notificações</span>
-      <span className="notify-text">Toque para permitir avisos do Comitê.</span>
-      <button className="notify-btn" onClick={request}>Ativar</button>
+      {denied ? (
+        <span className="notify-text">
+          Notificações bloqueadas. Toque no cadeado da barra de endereço → Permissões → ative <b>Notificações</b> e volte aqui.
+        </span>
+      ) : (
+        <span className="notify-text">Toque para permitir avisos do Comitê.</span>
+      )}
+      <button className="notify-btn" onClick={request}>{denied ? "Como permitir" : "Ativar"}</button>
     </div>
   );
 };
@@ -513,3 +537,4 @@ export default function App() {
     </div>
   );
 }
+
