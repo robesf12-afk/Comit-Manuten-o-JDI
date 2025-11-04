@@ -15,7 +15,7 @@ type PushDiag = {
   lastError?: string | null;
 };
 
-/** Espera o SDK v16 ficar pronto */
+/** Espera o SDK v16 ficar pronto (OneSignalDeferred) */
 function whenOneSignal(): Promise<any> {
   return new Promise((resolve) => {
     (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
@@ -32,19 +32,29 @@ export async function readDiagnostics(): Promise<PushDiag> {
     const permission =
       (await OneSignal.User?.Permission?.getStatus?.()) ??
       (typeof Notification !== "undefined" ? Notification.permission : "unsupported");
+
     let subscriptionId: string | null = null;
     try {
       subscriptionId = (await OneSignal.User?.Push?.getSubscriptionId?.()) ?? null;
     } catch {}
+
     return { ok: true, enabled, permission, isSupported, subscriptionId, lastError: null };
   } catch (e: any) {
-    return { ok: false, enabled: false, permission: "unknown", isSupported: false, subscriptionId: null, lastError: String(e?.message || e) };
+    return {
+      ok: false,
+      enabled: false,
+      permission: "unknown",
+      isSupported: false,
+      subscriptionId: null,
+      lastError: String(e?.message || e),
+    };
   }
 }
 
 /** Pede permissão (v16 + fallbacks) */
 async function requestPermission() {
   const OneSignal = await whenOneSignal();
+
   if (OneSignal.showSlidedownPrompt) {
     await OneSignal.showSlidedownPrompt();
     return;
@@ -86,7 +96,7 @@ async function ensureSubscribed(): Promise<string | null> {
 export async function activatePush(): Promise<PushDiag> {
   const OneSignal = await whenOneSignal();
 
-  // esconde CTA quando mudar para inscrito
+  // Esconde CTA quando mudar para inscrito
   OneSignal.on?.("subscriptionChange", (sub: boolean) => {
     if (sub) window.dispatchEvent(new Event("push-enabled"));
   });
@@ -113,3 +123,22 @@ export async function activatePush(): Promise<PushDiag> {
     return { ...(await readDiagnostics()), lastError: err };
   }
 }
+
+/** Compat com main.tsx: dispara o prompt se ainda não estiver inscrito */
+export async function promptPushIfNeeded() {
+  try {
+    const d = await readDiagnostics();
+    // já inscrito ou bloqueado → não faz nada
+    if (d.enabled || d.permission === "denied") return;
+
+    const r = await activatePush();
+
+    // se inscreveu, avisa o app para esconder o CTA
+    if (r.enabled) {
+      window.dispatchEvent(new Event("push-enabled"));
+    }
+  } catch {
+    // silencioso
+  }
+}
+
