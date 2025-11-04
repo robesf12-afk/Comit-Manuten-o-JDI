@@ -92,81 +92,148 @@ const STATIC_FROM_FOLDER = [
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
-  const [perm, setPerm] = useState("loading");
+  const [perm, setPerm] = useState<NotificationPermission | "loading">("loading");
   const [enabled, setEnabled] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const [subId, setSubId] = useState<string | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
+  // chave p/ "não mostrar de novo"
+  const DISMISS_KEY = "pushCTA:dismissed";
 
-    const update = async () => {
+  const computeShouldShow = (opts: {
+    enabled: boolean;
+    perm: NotificationPermission | "loading";
+    isSupported: boolean;
+    subId?: string | null;
+  }) => {
+    const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
+    if (dismissed) return false;
+    if (!opts.isSupported) return false;
+
+    // Se já está inscrito, some
+    if (opts.enabled) return false;
+
+    // Se já tem permissão "granted" OU já tem subId registrado, some
+    if (opts.perm === "granted") return false;
+    if (opts.subId) return false;
+
+    // Caso iOS PWA: só mostra quando em standalone (para não confundir com falta de suporte)
+    const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isStandalone =
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      // @ts-ignore
+      window.navigator?.standalone === true;
+
+    return isiOS ? isStandalone : true;
+  };
+
+  const refreshDiag = async () => {
+    try {
       const d = await readDiagnostics();
-      if (!mounted) return;
-      setPerm(d.permission);
-      setEnabled(d.enabled);
-      setIsSupported(d.isSupported);
+      setPerm(d.permission as NotificationPermission);
+      setEnabled(!!d.enabled);
+      setIsSupported(!!d.isSupported);
       setSubId(d.subscriptionId ?? null);
       setLastError(d.lastError ?? null);
 
-      if (d.enabled) {
-        setShow(false);
-      } else {
-        const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isStandalone =
-          (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-          // @ts-ignore
-          window.navigator?.standalone === true;
-        setShow(isiOS ? isStandalone : true);
-      }
+      const should = computeShouldShow({
+        enabled: !!d.enabled,
+        perm: d.permission as NotificationPermission,
+        isSupported: !!d.isSupported,
+        subId: d.subscriptionId ?? null,
+      });
+      setShow(should);
+    } catch (e) {
+      // Em caso de erro, não travar a UI
+      setIsSupported(true);
+      setShow(true);
+    }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    const init = async () => {
+      await refreshDiag();
+
+      // Eventos do OneSignal (v16)
+      (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+      (window as any).OneSignalDeferred.push((OneSignal: any) => {
+        OneSignal.on?.("subscriptionChange", async (sub: boolean) => {
+          if (!mounted) return;
+          setEnabled(sub);
+          if (sub) {
+            // Marca como não mostrar mais e esconde
+            localStorage.setItem(DISMISS_KEY, "1");
+            setShow(false);
+          }
+          await refreshDiag();
+        });
+        OneSignal.on?.("notificationPermissionChange", async () => {
+          if (!mounted) return;
+          await refreshDiag();
+        });
+      });
+
+      // Revalida quando a aba volta pro foco
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") refreshDiag();
+      });
+
+      // ?debugPush=1 abre o painel
+      try {
+        const u = new URL(window.location.href);
+        if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
+      } catch {}
     };
 
-    update();
-
-    // reagir a mudanças
-    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
-    (window as any).OneSignalDeferred.push((OneSignal: any) => {
-      OneSignal.on?.("subscriptionChange", async (sub: boolean) => {
-        setEnabled(sub);
-        if (sub) setShow(false);
-        const d = await readDiagnostics();
-        setSubId(d.subscriptionId ?? null);
-      });
-      OneSignal.on?.("notificationPermissionChange", async () => {
-        const d = await readDiagnostics();
-        setPerm(d.permission);
-      });
-    });
-
-    try {
-      const u = new URL(window.location.href);
-      if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
-    } catch {}
-
-    return () => { mounted = false; };
+    init();
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onActivate = async () => {
     const d = await activatePush();
-    setPerm(d.permission);
-    setEnabled(d.enabled);
-    setIsSupported(d.isSupported);
+    setPerm(d.permission as NotificationPermission);
+    setEnabled(!!d.enabled);
+    setIsSupported(!!d.isSupported);
     setSubId(d.subscriptionId ?? null);
     setLastError(d.lastError ?? null);
-    if (d.enabled) setShow(false);
+
+    // Se já habilitou ou permissão ficou granted, não mostrar mais
+    if (d.enabled || d.permission === "granted" || d.subscriptionId) {
+      localStorage.setItem(DISMISS_KEY, "1");
+      setShow(false);
+    } else {
+      // Mesmo que não tenha inscrito, reavalia regra (pega granted atrasado)
+      const should = computeShouldShow({
+        enabled: !!d.enabled,
+        perm: d.permission as NotificationPermission,
+        isSupported: !!d.isSupported,
+        subId: d.subscriptionId ?? null,
+      });
+      setShow(should);
+    }
+  };
+
+  const dismiss = () => {
+    localStorage.setItem(DISMISS_KEY, "1");
+    setShow(false);
   };
 
   if (!show) {
     return (
       <>
         {debugOpen && (
-          <div style={{margin:"8px 12px",padding:"8px 12px",border:"1px dashed #bbb",borderRadius:8,fontSize:12,background:"#fafafa"}}>
+          <div style={{ margin: "8px 12px", padding: "8px 12px", border: "1px dashed #bbb", borderRadius: 8, fontSize: 12, background: "#fafafa" }}>
             <b>Debug Push</b> | permissão: <code>{perm}</code> | inscrito: <code>{String(enabled)}</code> | suportado: <code>{String(isSupported)}</code>
             {subId ? <> | subId: <code>{subId}</code></> : null}
             {lastError ? <> | erro: <code>{lastError}</code></> : null}
-            <button style={{marginLeft:8}} onClick={onActivate}>Forçar Prompt</button>
+            <button style={{ marginLeft: 8 }} onClick={onActivate}>Forçar Prompt</button>
           </div>
         )}
       </>
@@ -187,15 +254,18 @@ const NotifyCTA: React.FC = () => {
         ) : (
           <span className="notify-text">Toque para permitir avisos do Comitê.</span>
         )}
-        <button className="notify-btn" onClick={onActivate}>{denied ? "Como liberar" : "Ativar"}</button>
+        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+          <button className="notify-btn" onClick={onActivate}>{denied ? "Como liberar" : "Ativar"}</button>
+          <button className="notify-btn" style={{ background: "#777" }} onClick={dismiss} aria-label="Não mostrar de novo">Não mostrar</button>
+        </div>
       </div>
 
       {debugOpen && (
-        <div style={{margin:"8px 12px",padding:"8px 12px",border:"1px dashed #bbb",borderRadius:8,fontSize:12,background:"#fafafa"}}>
+        <div style={{ margin: "8px 12px", padding: "8px 12px", border: "1px dashed #bbb", borderRadius: 8, fontSize: 12, background: "#fafafa" }}>
           <b>Debug Push</b> | permissão: <code>{perm}</code> | inscrito: <code>{String(enabled)}</code> | suportado: <code>{String(isSupported)}</code>
           {subId ? <> | subId: <code>{subId}</code></> : null}
           {lastError ? <> | erro: <code>{lastError}</code></> : null}
-          <button style={{marginLeft:8}} onClick={onActivate}>Forçar Prompt</button>
+          <button style={{ marginLeft: 8 }} onClick={onActivate}>Forçar Prompt</button>
         </div>
       )}
     </>
@@ -302,7 +372,7 @@ export default function App() {
         .notify-cta{ position:sticky; top:0; z-index:1100; background:#fff7f7; border:1px solid #ffd6d6; border-radius:12px; padding:10px 12px; margin:8px 12px; box-shadow:0 6px 18px rgba(0,0,0,.08); display:flex; align-items:center; gap:10px; }
         .notify-title{ color:#b30000; font-weight:800; }
         .notify-text{ font-size:13px; color:#333; }
-        .notify-btn{ margin-left:auto; background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
+        .notify-btn{ background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
         .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
         .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; }
         .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; }
