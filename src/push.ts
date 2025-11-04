@@ -6,7 +6,16 @@ declare global {
   }
 }
 
-/** Aguarda o SDK v16 ficar pronto */
+type PushDiag = {
+  ok: boolean;
+  enabled: boolean;
+  permission: string;
+  isSupported: boolean;
+  subscriptionId?: string | null;
+  lastError?: string | null;
+};
+
+/** Espera o SDK v16 ficar pronto */
 function whenOneSignal(): Promise<any> {
   return new Promise((resolve) => {
     (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
@@ -14,83 +23,93 @@ function whenOneSignal(): Promise<any> {
   });
 }
 
-/** Retorna estado atual */
-export async function getPushState() {
+/** Lê estado + diagnósticos */
+export async function readDiagnostics(): Promise<PushDiag> {
   try {
     const OneSignal = await whenOneSignal();
-    const enabled = await OneSignal.isPushNotificationsEnabled?.();
-    const perm =
+    const isSupported = !!(await OneSignal.Notifications?.isPushSupported?.());
+    const enabled = !!(await OneSignal.isPushNotificationsEnabled?.());
+    const permission =
       (await OneSignal.User?.Permission?.getStatus?.()) ??
       (typeof Notification !== "undefined" ? Notification.permission : "unsupported");
-    return { ok: true, enabled: !!enabled, permission: perm as string };
-  } catch {
-    return { ok: false, enabled: false, permission: "unknown" };
+    let subscriptionId: string | null = null;
+    try {
+      subscriptionId = (await OneSignal.User?.Push?.getSubscriptionId?.()) ?? null;
+    } catch {}
+    return { ok: true, enabled, permission, isSupported, subscriptionId, lastError: null };
+  } catch (e: any) {
+    return { ok: false, enabled: false, permission: "unknown", isSupported: false, subscriptionId: null, lastError: String(e?.message || e) };
   }
 }
 
-/** Pede permissão (v16) */
-export async function requestPermission() {
+/** Pede permissão (v16 + fallbacks) */
+async function requestPermission() {
   const OneSignal = await whenOneSignal();
-  // tenta a UI padrão
   if (OneSignal.showSlidedownPrompt) {
     await OneSignal.showSlidedownPrompt();
     return;
   }
-  // API nova
   if (OneSignal.Notifications?.requestPermission) {
     await OneSignal.Notifications.requestPermission();
     return;
   }
-  // fallback nativo
   if (typeof Notification !== "undefined" && Notification.requestPermission) {
     await Notification.requestPermission();
   }
 }
 
-/** 🔥 Força a INSCRIÇÃO após permissão concedida (tenta todas as APIs) */
-export async function ensureSubscribed() {
+/** Força inscrição (tenta todas as APIs conhecidas) */
+async function ensureSubscribed(): Promise<string | null> {
   const OneSignal = await whenOneSignal();
-  try {
-    // v16 nova (algumas contas)
-    if (OneSignal.User?.Push?.enable) {
-      await OneSignal.User.Push.enable(); // tenta inscrever
-    }
-    // legado / compat
-    if (OneSignal.registerForPushNotifications) {
-      await OneSignal.registerForPushNotifications({ modalPrompt: false });
-    }
-    // em alguns ambientes, pedir permissão já inscreve; reforçamos novamente:
-    if (OneSignal.Slidedown?.promptPush) {
-      await OneSignal.Slidedown.promptPush(); // compat
-    }
-  } catch {
-    // ignora
+  let subId: string | null = null;
+
+  // API nova
+  if (OneSignal.User?.Push?.enable) {
+    await OneSignal.User.Push.enable();
   }
+  // Compat/legado
+  if (OneSignal.registerForPushNotifications) {
+    await OneSignal.registerForPushNotifications({ modalPrompt: false });
+  }
+  // Slidedown (alguns projetos ainda usam)
+  if (OneSignal.Slidedown?.promptPush) {
+    await OneSignal.Slidedown.promptPush();
+  }
+
+  try {
+    subId = (await OneSignal.User?.Push?.getSubscriptionId?.()) ?? null;
+  } catch {}
+  return subId;
 }
 
-/** Fluxo: se não inscrito → pede permissão → inscreve → dispara evento */
-export async function promptPushIfNeeded() {
+/** Fluxo completo + retorno com diagnóstico */
+export async function activatePush(): Promise<PushDiag> {
   const OneSignal = await whenOneSignal();
 
-  // escuta mudança e avisa o app para esconder o banner
+  // esconde CTA quando mudar para inscrito
   OneSignal.on?.("subscriptionChange", (sub: boolean) => {
     if (sub) window.dispatchEvent(new Event("push-enabled"));
   });
 
-  const st1 = await getPushState();
-  if (st1.enabled) {
+  let diag = await readDiagnostics();
+  if (diag.enabled) {
     window.dispatchEvent(new Event("push-enabled"));
-    return;
+    return diag;
   }
 
-  // se ainda não tem "granted", pede permissão
-  if (st1.permission !== "granted") {
+  // se ainda não concedeu, pede
+  if (diag.permission !== "granted") {
     await requestPermission();
   }
 
-  // força inscrição (mesmo com granted)
-  await ensureSubscribed();
-
-  const st2 = await getPushState();
-  if (st2.enabled) window.dispatchEvent(new Event("push-enabled"));
+  try {
+    const subId = await ensureSubscribed();
+    diag = await readDiagnostics();
+    if (!diag.subscriptionId && subId) diag.subscriptionId = subId;
+    if (diag.enabled) window.dispatchEvent(new Event("push-enabled"));
+    return diag;
+  } catch (e: any) {
+    const err = String(e?.message || e);
+    return { ...(await readDiagnostics()), lastError: err };
+  }
 }
