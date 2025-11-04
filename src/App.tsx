@@ -353,4 +353,3 @@ export default function App() {
           .ga-title{ grid-area:title; }
           .ga-femsa{ grid-area:femsa; height:28px; }
           .menu-btn{ position:absolute; left:8px; bottom:-26px; width:40px;height:40px; border-radius:12px; background:#cc0000; box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85); z-index:101
-
