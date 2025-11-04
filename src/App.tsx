@@ -1,46 +1,7 @@
 // src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
+import { getPushState, promptPushIfNeeded } from "./push";
 
-/* ===== OneSignal helpers (v16) ===== */
-function whenOneSignal(): Promise<any> {
-  return new Promise((resolve) => {
-    // v16 injeta OneSignalDeferred; resolvemos quando o SDK chama nossa função
-    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
-    (window as any).OneSignalDeferred.push((OneSignal: any) => resolve(OneSignal));
-  });
-}
-
-async function getPushState() {
-  try {
-    const OneSignal = await whenOneSignal();
-    const enabled = await OneSignal.isPushNotificationsEnabled?.();
-    const perm =
-      (await OneSignal.User?.Permission?.getStatus?.()) ??
-      (typeof Notification !== "undefined" ? Notification.permission : "unsupported");
-    return { ok: true, enabled: !!enabled, permission: perm as string };
-  } catch (e) {
-    return { ok: false, enabled: false, permission: "unknown" };
-  }
-}
-
-async function requestPush() {
-  const OneSignal = await whenOneSignal();
-  try {
-    // v16
-    if (OneSignal.showSlidedownPrompt) {
-      await OneSignal.showSlidedownPrompt();
-    } else if (OneSignal.Notifications?.requestPermission) {
-      await OneSignal.Notifications.requestPermission();
-    }
-  } catch {
-    // fallback nativo
-    if (typeof Notification !== "undefined" && Notification.requestPermission) {
-      await Notification.requestPermission();
-    }
-  }
-}
-
-/* ===== Seus ícones ===== */
 import {
   IconOKR,
   IconDDM,
@@ -147,7 +108,6 @@ const NotifyCTA: React.FC = () => {
   const [state, setState] = useState<{ permission: string; enabled: boolean }>({ permission: "loading", enabled: false });
   const [debugOpen, setDebugOpen] = useState(false);
 
-  // Atualiza estado inicial e reage a mudanças
   useEffect(() => {
     let mounted = true;
 
@@ -155,20 +115,24 @@ const NotifyCTA: React.FC = () => {
       const s = await getPushState();
       if (!mounted) return;
       setState({ permission: s.permission, enabled: s.enabled });
-      if (s.enabled) setShow(false);
-      else {
-        const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isStandalone =
-          (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-          // @ts-ignore (iOS antigo)
-          window.navigator?.standalone === true;
-        setShow(isiOS ? isStandalone : true);
+
+      if (s.enabled) {
+        setShow(false);
+        return;
       }
+
+      // Mostrar CTA: Android sempre; iOS só se instalado (standalone)
+      const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isStandalone =
+        (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+        // @ts-ignore
+        window.navigator?.standalone === true;
+      setShow(isiOS ? isStandalone : true);
     };
 
     update();
 
-    // Escuta inscrição
+    // Esconder quando inscrever
     (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
     (window as any).OneSignalDeferred.push((OneSignal: any) => {
       OneSignal.on?.("subscriptionChange", (sub: boolean) => {
@@ -178,7 +142,6 @@ const NotifyCTA: React.FC = () => {
       OneSignal.on?.("notificationPermissionChange", async () => update());
     });
 
-    // debug visível se ?debugPush=1
     try {
       const u = new URL(window.location.href);
       if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
@@ -188,22 +151,24 @@ const NotifyCTA: React.FC = () => {
   }, []);
 
   const onActivate = async () => {
-    await requestPush();
-    const s = await getPushState();
+    await promptPushIfNeeded();        // pede permissão + força inscrição
+    const s = await getPushState();    // revalida estado
     setState({ permission: s.permission, enabled: s.enabled });
     if (s.enabled) setShow(false);
   };
 
-  if (!show) return (
-    <>
-      {/* Debug badge opcional */}
-      {debugOpen && (
-        <div style={{margin:"8px 12px",padding:"8px 12px",border:"1px dashed #bbb",borderRadius:8,fontSize:12,background:"#fafafa"}}>
-          <b>Debug Push</b>&nbsp;| permissão: <code>{state.permission}</code> | inscrito: <code>{String(state.enabled)}</code>
-        </div>
-      )}
-    </>
-  );
+  if (!show) {
+    return (
+      <>
+        {debugOpen && (
+          <div style={{margin:"8px 12px",padding:"8px 12px",border:"1px dashed #bbb",borderRadius:8,fontSize:12,background:"#fafafa"}}>
+            <b>Debug Push</b>&nbsp;| permissão: <code>{state.permission}</code> | inscrito: <code>{String(state.enabled)}</code>
+            <button style={{marginLeft:8}} onClick={onActivate}>Forçar Prompt</button>
+          </div>
+        )}
+      </>
+    );
+  }
 
   const denied = state.permission === "denied";
   return (
@@ -221,7 +186,6 @@ const NotifyCTA: React.FC = () => {
         <button className="notify-btn" onClick={onActivate}>{denied ? "Como liberar" : "Ativar"}</button>
       </div>
 
-      {/* Debug badge opcional */}
       {debugOpen && (
         <div style={{margin:"8px 12px",padding:"8px 12px",border:"1px dashed #bbb",borderRadius:8,fontSize:12,background:"#fafafa"}}>
           <b>Debug Push</b>&nbsp;| permissão: <code>{state.permission}</code> | inscrito: <code>{String(state.enabled)}</code>
