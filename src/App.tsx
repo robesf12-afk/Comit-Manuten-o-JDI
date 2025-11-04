@@ -352,4 +352,101 @@ export default function App() {
           .ga-logo{ grid-area:logo; height:32px; }
           .ga-title{ grid-area:title; }
           .ga-femsa{ grid-area:femsa; height:28px; }
-          .menu-btn{ position:absolute; left:8px; bottom:-26px; width:40px;height:40px; border-radius:12px; background:#cc0000; box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85); z-index:101
+          .menu-btn{ position:absolute; left:8px; bottom:-26px; width:40px;height:40px; border-radius:12px; background:#cc0000; box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85); z-index:101; }
+        }
+        .notify-cta{ position:sticky; top:0; z-index:1100; background:#fff7f7; border:1px solid #ffd6d6; border-radius:12px; padding:10px 12px; margin:8px 12px; box-shadow:0 6px 18px rgba(0,0,0,.08); display:flex; align-items:center; gap:10px; }
+        .notify-title{ color:#b30000; font-weight:800; }
+        .notify-text{ font-size:13px; color:#333; }
+        .notify-btn{ background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
+        .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
+        .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; }
+        .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; }
+        .banner-dots{ display:flex; gap:6px; justify-content:center; }
+        .banner-dot{ width:9px;height:9px;border-radius:999px;background:#ddd;border:none; }
+        .banner-dot.active{ background:#cc0000;width:28px; }
+        .static-banner{ width:100%; max-width:980px; border-radius:14px; box-shadow:0 4px 10px rgba(0,0,0,.08); display:block; }
+        .ios-hint{ background:#fff7d9; border:1px solid rgba(204,0,0,.35); color:#492100; margin:0 auto; max-width:1200px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; font-size:14px; }
+        .ios-hint strong{ display:block; font-size:14px; }
+        .ios-hint button{ background:transparent; border:none; font-size:16px; cursor:pointer; margin-left:auto; }
+        .drawer-overlay{ position:fixed;inset:0;background:rgba(0,0,0,.35); transition:opacity .2s ease;z-index:100; }
+        .drawer{ position:fixed;top:0;left:0;height:100dvh;width:320px;max-width:86vw; background:#fff;box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102;display:flex;flex-direction:column; transition:transform .22s ease-out; }
+        .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
+        .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
+        .drawer-ico{color:#cc0000;display:grid;place-items:center;}
+      `}</style>
+
+      {/* Topbar */}
+      <header className="topbar">
+        <div className="topbar-inner">
+          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
+            <span className="bar" /><span className="bar" /><span className="bar" />
+          </button>
+          <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
+          <div className="title-chip ga-title">COMITÊ DE MANUTENÇÃO • JDI</div>
+          <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
+        </div>
+      </header>
+
+      {/* CTA Notificações */}
+      <NotifyCTA />
+
+      {/* Aviso iPhone */}
+      {showIosBanner && (
+        <div className="ios-hint">
+          <div>
+            <strong>iPhone detectado 📱</strong>
+            Para instalar: no Safari → compartilhar → Adicionar à Tela de Início.
+          </div>
+          <button onClick={() => setShowIosBanner(false)} aria-label="Fechar aviso">×</button>
+        </div>
+      )}
+
+      {/* Drawer */}
+      <div className="drawer-overlay" style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }} onClick={() => setOpen(false)} />
+      <aside className="drawer" style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }} role="dialog" aria-modal="true">
+        <div className="drawer-header">
+          <strong style={{ fontSize: 18 }}>Categorias</strong>
+          <button onClick={() => setOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }} aria-label="Fechar menu">×</button>
+        </div>
+        <nav style={{ padding: "8px 6px 16px 6px", overflow: "auto" }}>
+          {MENU.map(({ id, title, url, Icon }) => (
+            <a key={id} href={url} target="_blank" rel="noopener noreferrer" className="drawer-link" onClick={() => setOpen(false)}>
+              <span className="drawer-ico"><Icon /></span>
+              <span>{title}</span>
+            </a>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Conteúdo */}
+      <main className="banners-container" style={{ paddingTop: isNarrow ? 33 : 28 }}>
+        {bannerErro ? (
+          <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
+            {bannerErro}
+          </div>
+        ) : !currentOnePager ? (
+          <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
+            Carregando One Pagers...
+          </div>
+        ) : (
+          <>
+            <div className="banner-dinamico" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+              <img src={currentOnePager} alt={onePagers[bannerIndex]} />
+            </div>
+            {onePagers.length > 1 && (
+              <div className="banner-dots">
+                {onePagers.map((_, i) => (
+                  <button key={i} className={`banner-dot ${i === bannerIndex ? "active" : ""}`} onClick={() => setBannerIndex(i)} aria-label={`Ver banner ${i + 1}`} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {STATIC_FROM_FOLDER.map((b, i) => (
+          <img key={i} src={b.img} alt={`banner-${i}`} className="static-banner" />
+        ))}
+      </main>
+    </div>
+  );
+}
