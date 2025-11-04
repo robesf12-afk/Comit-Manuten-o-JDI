@@ -1,4 +1,4 @@
-// src/App.tsx
+  // src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { readDiagnostics, activatePush } from "./push";
 
@@ -284,11 +284,18 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
+  // ⚠️ ÚNICA MUDANÇA: mostrar o aviso do iPhone só quando NÃO estiver instalado
   useEffect(() => {
     if (typeof window !== "undefined") {
       const ua = window.navigator.userAgent;
-      const isIOSDevice = /iPhone|iPad|iPod/i.test(ua);
-      setShowIosBanner(isIOSDevice);
+      const isiOS = /iPhone|iPad|iPod/i.test(ua);
+      let isStandalone = false;
+      try {
+        isStandalone =
+          (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+          (window.navigator && (window.navigator as any).standalone === true);
+      } catch {}
+      setShowIosBanner(isiOS && !isStandalone);
     }
   }, []);
 
@@ -465,4 +472,4 @@ export default function App() {
     </div>
   );
 }
-   
+         
