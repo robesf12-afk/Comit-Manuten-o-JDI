@@ -93,7 +93,7 @@ const STATIC_FROM_FOLDER = [
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
-  const [perm, setPerm] = useState("loading"); // string simples
+  const [perm, setPerm] = useState("loading");
   const [enabled, setEnabled] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const [subId, setSubId] = useState<string | null>(null);
@@ -102,13 +102,9 @@ const NotifyCTA: React.FC = () => {
 
   const DISMISS_KEY = "pushCTA:dismissed";
 
-  const computeShouldShow = (opts: {
-    enabled: boolean;
-    perm: string;
-    isSupported: boolean;
-    subId?: string | null;
-  }) => {
-    const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
+  const computeShouldShow = (opts: { enabled: boolean; perm: string; isSupported: boolean; subId?: string | null; }) => {
+    let dismissed = false;
+    try { dismissed = localStorage.getItem(DISMISS_KEY) === "1"; } catch {}
     if (dismissed) return false;
     if (!opts.isSupported) return false;
     if (opts.enabled) return false;
@@ -118,8 +114,7 @@ const NotifyCTA: React.FC = () => {
     const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isStandalone =
       (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-      // @ts-ignore
-      window.navigator?.standalone === true;
+      (window.navigator && (window.navigator as any).standalone === true);
 
     return isiOS ? isStandalone : true;
   };
@@ -127,17 +122,18 @@ const NotifyCTA: React.FC = () => {
   const refreshDiag = async () => {
     try {
       const d = await readDiagnostics();
-      setPerm(d.permission || "default");
-      setEnabled(!!d.enabled);
-      setIsSupported(!!d.isSupported);
-      setSubId(d.subscriptionId ?? null);
-      setLastError(d.lastError ?? null);
+      const permission = d && d.permission ? d.permission : "default";
+      setPerm(permission);
+      setEnabled(!!(d && d.enabled));
+      setIsSupported(!!(d && d.isSupported));
+      setSubId((d && d.subscriptionId) ? d.subscriptionId : null);
+      setLastError((d && d.lastError) ? d.lastError : null);
 
       const should = computeShouldShow({
-        enabled: !!d.enabled,
-        perm: d.permission || "default",
-        isSupported: !!d.isSupported,
-        subId: d.subscriptionId ?? null,
+        enabled: !!(d && d.enabled),
+        perm: permission,
+        isSupported: !!(d && d.isSupported),
+        subId: (d && d.subscriptionId) ? d.subscriptionId : null,
       });
       setShow(should);
     } catch {
@@ -154,19 +150,21 @@ const NotifyCTA: React.FC = () => {
 
       (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
       (window as any).OneSignalDeferred.push((OneSignal: any) => {
-        OneSignal.on?.("subscriptionChange", async (sub: boolean) => {
-          if (!mounted) return;
-          setEnabled(sub);
-          if (sub) {
-            localStorage.setItem(DISMISS_KEY, "1");
-            setShow(false);
-          }
-          await refreshDiag();
-        });
-        OneSignal.on?.("notificationPermissionChange", async () => {
-          if (!mounted) return;
-          await refreshDiag();
-        });
+        if (OneSignal && OneSignal.on) {
+          OneSignal.on("subscriptionChange", async (sub: boolean) => {
+            if (!mounted) return;
+            setEnabled(sub);
+            if (sub) {
+              try { localStorage.setItem(DISMISS_KEY, "1"); } catch {}
+              setShow(false);
+            }
+            await refreshDiag();
+          });
+          OneSignal.on("notificationPermissionChange", async () => {
+            if (!mounted) return;
+            await refreshDiag();
+          });
+        }
       });
 
       document.addEventListener("visibilitychange", () => {
@@ -185,28 +183,29 @@ const NotifyCTA: React.FC = () => {
 
   const onActivate = async () => {
     const d = await activatePush();
-    setPerm(d.permission || "default");
-    setEnabled(!!d.enabled);
-    setIsSupported(!!d.isSupported);
-    setSubId(d.subscriptionId ?? null);
-    setLastError(d.lastError ?? null);
+    const permission = d && d.permission ? d.permission : "default";
+    setPerm(permission);
+    setEnabled(!!(d && d.enabled));
+    setIsSupported(!!(d && d.isSupported));
+    setSubId((d && d.subscriptionId) ? d.subscriptionId : null);
+    setLastError((d && d.lastError) ? d.lastError : null);
 
-    if (d.enabled || d.permission === "granted" || d.subscriptionId) {
-      localStorage.setItem(DISMISS_KEY, "1");
+    if ((d && d.enabled) || permission === "granted" || (d && d.subscriptionId)) {
+      try { localStorage.setItem(DISMISS_KEY, "1"); } catch {}
       setShow(false);
     } else {
       const should = computeShouldShow({
-        enabled: !!d.enabled,
-        perm: d.permission || "default",
-        isSupported: !!d.isSupported,
-        subId: d.subscriptionId ?? null,
+        enabled: !!(d && d.enabled),
+        perm: permission,
+        isSupported: !!(d && d.isSupported),
+        subId: (d && d.subscriptionId) ? d.subscriptionId : null,
       });
       setShow(should);
     }
   };
 
   const dismiss = () => {
-    localStorage.setItem(DISMISS_KEY, "1");
+    try { localStorage.setItem(DISMISS_KEY, "1"); } catch {}
     setShow(false);
   };
 
@@ -335,7 +334,6 @@ export default function App() {
   };
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
-  const mobilePaddingTop = isNarrow ? 33 : 28;
 
   return (
     <div className="app">
