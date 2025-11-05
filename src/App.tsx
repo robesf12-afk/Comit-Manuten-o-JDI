@@ -175,7 +175,7 @@ const NotifyCTA: React.FC = () => {
           if (!mounted) return;
           setEnabled(sub);
           if (sub) {
-            localStorage.setItem(DISMISS_KEY, "1");
+            localStorage.setItem(DISMISSKEY, "1" as any);
             setShow(false);
           }
           await refreshDiag();
@@ -330,16 +330,16 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        // ORDEM solicitada: fábrica → G1 → G3 → G3
+        // ORDEM correta: fábrica → G1 → G2 → G3
         const ordem = [
           "one pager fabrica.PNG",
           "one pager G1.PNG",
-          "one pager G3.PNG",
+          "one pager G2.PNG",
           "one pager G3.PNG",
         ];
-        const ordenados = ordem.filter((n) => data.includes(n));
+        const primeiros = ordem.filter((n) => data.includes(n));
         const extras = data.filter((n) => !ordem.includes(n));
-        setOnePagers([...ordenados, ...extras]);
+        setOnePagers([...primeiros, ...extras]);
         setBannerIndex(0);
       })
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
@@ -397,6 +397,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onePagers]);
 
+  // **IMPORTANTE**: usar variáveis derivadas dentro do render
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
