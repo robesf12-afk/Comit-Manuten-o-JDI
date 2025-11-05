@@ -99,7 +99,6 @@ const NotifyCTA: React.FC = () => {
   const [lastError, setLastError] = useState<string | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
 
-  // chave p/ "não mostrar de novo"
   const DISMISS_KEY = "pushCTA:dismissed";
 
   const computeShouldShow = (opts: {
@@ -111,7 +110,6 @@ const NotifyCTA: React.FC = () => {
     const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
     if (dismissed) return false;
     if (!opts.isSupported) return false;
-
     if (opts.enabled) return false;
     if (opts.perm === "granted") return false;
     if (opts.subId) return false;
@@ -141,7 +139,7 @@ const NotifyCTA: React.FC = () => {
         subId: d.subscriptionId ?? null,
       });
       setShow(should);
-    } catch (e) {
+    } catch {
       setIsSupported(true);
       setShow(true);
     }
@@ -181,9 +179,7 @@ const NotifyCTA: React.FC = () => {
     };
 
     init();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -273,7 +269,7 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // Mostrar aviso do iPhone só quando NÃO estiver instalado
+  // Aviso iPhone só quando NÃO estiver instalado
   useEffect(() => {
     if (typeof window !== "undefined") {
       const ua = window.navigator.userAgent;
@@ -314,12 +310,7 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        const ordem = [
-          "one pager fabrica.PNG",
-          "one pager G1.PNG",
-          "one pager G2.PNG",
-          "one pager G3.PNG",
-        ];
+        const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
         const ordenados = ordem.filter((n) => data.includes(n));
         const extras = data.filter((n) => !ordem.includes(n));
         setOnePagers([...ordenados, ...extras]);
@@ -328,22 +319,19 @@ export default function App() {
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
   }, []);
 
-  // Sem carrossel automático — mudança só manual
+  // sem automático
   useEffect(() => {
     if (onePagers.length > 0) setBannerIndex(0);
   }, [onePagers]);
 
   const nextSlide = () => {
-    if (onePagers.length > 0) {
-      setBannerIndex((p) => (p + 1) % onePagers.length);
-    }
+    if (onePagers.length > 0) setBannerIndex((p) => (p + 1) % onePagers.length);
   };
   const prevSlide = () => {
-    if (onePagers.length > 0) {
-      setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
-    }
+    if (onePagers.length > 0) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
   };
 
+  // Swipe no mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -361,6 +349,31 @@ export default function App() {
     touchStartX.current = null;
     touchEndX.current = null;
   };
+
+  // ⌨️ Atalhos de teclado (desktop)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // só em telas largas
+      if (window.innerWidth < 701) return;
+      // se drawer está aberto, ignora
+      if (open) return;
+      // se está digitando em algum campo, ignora
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (["input", "textarea", "select"].includes(tag)) return;
+      // se há seleção de texto grande, ignora para não atrapalhar
+      if (window.getSelection && String(window.getSelection()).length > 0) return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prevSlide();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onePagers]);
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
@@ -402,31 +415,20 @@ export default function App() {
         .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
         .drawer-ico{color:#cc0000;display:grid;place-items:center;}
 
-        /* ===== Setas laterais (desktop) ===== */
+        /* Setas laterais (desktop) */
         .banner-arrow{
-          position:absolute;
-          top:50%;
-          transform:translateY(-50%);
-          width:42px;height:42px;
-          border:none;border-radius:999px;
-          background:rgba(0,0,0,.35);
-          backdrop-filter:saturate(120%) blur(2px);
-          color:#fff; display:grid; place-items:center;
-          cursor:pointer;
-          box-shadow:0 4px 10px rgba(0,0,0,.25);
-          transition:background .15s ease, transform .15s ease;
-          user-select:none;
+          position:absolute; top:50%; transform:translateY(-50%);
+          width:42px;height:42px; border:none;border-radius:999px;
+          background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
+          cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
+          transition:background .15s ease, transform .15s ease; user-select:none;
         }
         .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
         .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
         .banner-arrow.left{ left:10px; }
         .banner-arrow.right{ right:10px; }
         .banner-arrow svg{ width:20px;height:20px; }
-
-        /* Esconde setas em telas menores (mobile) */
-        @media (max-width: 700px){
-          .banner-arrow{ display:none; }
-        }
+        @media (max-width: 700px){ .banner-arrow{ display:none; } }
       `}</style>
 
       {/* Topbar */}
