@@ -99,7 +99,7 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-/* banners estáticos */
+// banners estáticos
 const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ASSERTIVIDADE.png" },
   { img: "/banners_media/quebra diaria.PNG" },
@@ -322,43 +322,52 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // ===== Util: ordena por palavras-chave (fabrica, g1, g2, g3) =====
-  function ordenarOnePagersPorChave(lista: string[]) {
-    const norm = (s: string) =>
-      s
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // remove acentos
-        .toLowerCase()
-        .trim();
+  // ===== util de normalização para casar nomes de arquivos com tolerância
+  const norm = (s: string) =>
+    s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
 
-    const by = (token: string) => lista.find((n) => norm(n).includes(token));
-
-    const fabrica = by("fabrica"); // pega qualquer coisa com "fabrica"
-    const g1 = by("g1");
-    const g2 = by("g2");
-    const g3 = by("g3");
-
-    const escolhidos = [fabrica, g1, g2, g3].filter(Boolean) as string[];
-
-    // adiciona os demais (que não foram escolhidos), sem duplicar
-    const resto = lista.filter((n) => !escolhidos.includes(n));
-
-    return [...escolhidos, ...resto];
-  }
-
-  // ===== Carregar JSON e impor ORDEM fixa por chave =====
+  // carrega JSON com cache-busting e ordena de forma determinística
   useEffect(() => {
-    fetch("/banners_media/onepagers.json")
-      .then((res) => {
+    const load = async () => {
+      try {
+        // cache-buster para furar SW/CDN/navegador
+        const res = await fetch(`/banners_media/onepagers.json?v=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) throw new Error("não achei onepagers.json");
-        return res.json();
-      })
-      .then((data: string[]) => {
-        const ordered = ordenarOnePagersPorChave(data);
-        setOnePagers(ordered);
-        setBannerIndex(0);
-      })
-      .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
+        const dataRaw: string[] = await res.json();
+
+        // mapa normalizado -> nome original
+        const mapOrig = new Map<string, string>();
+        for (const name of dataRaw) mapOrig.set(norm(name), name);
+
+        // ordem desejada (FÁBRICA → G1 → G2 → G3)
+        const ordemDesejada = [
+          "one pager fabrica.PNG",
+          "one pager G1.PNG",
+          "one pager G2.PNG",
+          "one pager G3.PNG",
+        ];
+
+        // reconstroi em ordem usando o nome original presente no JSON
+        const ordered: string[] = [];
+        for (const wanted of ordemDesejada) {
+          const hit = mapOrig.get(norm(wanted));
+          if (hit) ordered.push(hit);
+        }
+
+        // extras permanecem após os 4
+        const setOrdered = new Set(ordered);
+        const extras = dataRaw.filter((n) => !setOrdered.has(n));
+
+        const finalList = [...ordered, ...extras];
+
+        setOnePagers(finalList);
+        setBannerErro(null);
+        setBannerIndex(0); // garante que começa no primeiro (Fábrica)
+      } catch {
+        setBannerErro("Não foi possível carregar o carrossel.");
+      }
+    };
+    load();
   }, []);
 
   // sem automático
@@ -413,10 +422,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onePagers]);
 
-  const currentOnePager = onePagers.length
-    ? `/banners_media/${encodeURI(onePagers[bannerIndex])}?v=3`
-    : null;
-
+  const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
   return (
@@ -455,7 +461,15 @@ export default function App() {
         .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
         .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
         .drawer-ico{color:#cc0000;display:grid;place-items:center;}
-        .banner-arrow{ position:absolute; top:50%; transform:translateY(-50%); width:42px;height:42px; border:none;border-radius:999px; background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25); transition:background .15s ease, transform .15s ease; user-select:none; }
+
+        /* Setas laterais (desktop) */
+        .banner-arrow{
+          position:absolute; top:50%; transform:translateY(-50%);
+          width:42px;height:42px; border:none;border-radius:999px;
+          background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
+          cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
+          transition:background .15s ease, transform .15s ease; user-select:none;
+        }
         .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
         .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
         .banner-arrow.left{ left:10px; }
@@ -525,6 +539,7 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
+              {/* Setas (somente desktop) */}
               {onePagers.length > 1 && !isNarrow && (
                 <>
                   <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior">
@@ -564,3 +579,5 @@ export default function App() {
     </div>
   );
 }
+
+          
