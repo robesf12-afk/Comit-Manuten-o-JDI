@@ -1,7 +1,98 @@
 // src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
-import { readDiagnostics, activatePush } from "./push";
 
+/* ========= Helpers de PUSH (integrados aqui p/ não depender de push.ts) ========= */
+type PushDiag = {
+  permission: NotificationPermission | "default" | "denied" | "granted" | "loading";
+  enabled: boolean;
+  isSupported: boolean;
+  subscriptionId?: string | null;
+  lastError?: string | null;
+};
+
+// aguarda OneSignal v16 ficar pronto
+function whenOneSignal(): Promise<any> {
+  return new Promise((resolve) => {
+    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+    (window as any).OneSignalDeferred.push((OneSignal: any) => resolve(OneSignal));
+    // se já estiver pronto
+    if ((window as any).OneSignal) resolve((window as any).OneSignal);
+  });
+}
+
+async function readDiagnostics(): Promise<PushDiag> {
+  try {
+    const isSupported =
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      "serviceWorker" in navigator;
+
+    let permission: NotificationPermission | "loading" =
+      typeof Notification !== "undefined" ? Notification.permission : "default";
+
+    let enabled = false;
+    let subscriptionId: string | null = null;
+
+    try {
+      const OneSignal = await whenOneSignal();
+      // v16
+      enabled = !!OneSignal?.User?.PushSubscription?.optedIn;
+      subscriptionId = OneSignal?.User?.PushSubscription?.id ?? null;
+      // caso o permission do browser não reflita ainda:
+      permission = (Notification?.permission as NotificationPermission) ?? permission;
+    } catch {
+      /* segue com best-effort */
+    }
+
+    return { permission, enabled, isSupported, subscriptionId, lastError: null };
+  } catch (e: any) {
+    return {
+      permission: "default",
+      enabled: false,
+      isSupported: true,
+      subscriptionId: null,
+      lastError: String(e?.message || e),
+    };
+  }
+}
+
+async function activatePush(): Promise<PushDiag> {
+  try {
+    const OneSignal = await whenOneSignal();
+    // Solicita permissão (v16)
+    await OneSignal?.Notifications?.requestPermission?.();
+
+    // Se a permissão já for concedida, garante opt-in
+    if (Notification.permission === "granted") {
+      try {
+        await OneSignal?.User?.PushSubscription?.optIn?.();
+      } catch {
+        /* Alguns ambientes já ficam optedIn automaticamente */
+      }
+    }
+
+    const enabled = !!OneSignal?.User?.PushSubscription?.optedIn;
+    const subscriptionId = OneSignal?.User?.PushSubscription?.id ?? null;
+
+    return {
+      permission: Notification.permission,
+      enabled,
+      isSupported: true,
+      subscriptionId,
+      lastError: null,
+    };
+  } catch (e: any) {
+    return {
+      permission: typeof Notification !== "undefined" ? Notification.permission : "default",
+      enabled: false,
+      isSupported: true,
+      subscriptionId: null,
+      lastError: String(e?.message || e),
+    };
+  }
+}
+
+/* ========================= Ícones e imports locais ========================= */
 import {
   IconOKR,
   IconDDM,
@@ -13,7 +104,7 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* Ícones locais extras */
+/* Ícones extras simples */
 const IconHelp: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
@@ -63,9 +154,11 @@ const LINKS = {
   duvidas: "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
   custo: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
 
-  // Novos links:
-  backlog: "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
-  aprovOrdens: "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
+  // Novos
+  backlog:
+    "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
+  aprovOrdens:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 } as const;
 
 /* Menu */
@@ -75,14 +168,14 @@ const MENU = [
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
 
-  // Novo item logo abaixo do Painel:
+  // novo abaixo de Painel
   { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua área", url: LINKS.backlog, Icon: IconChecklist },
 
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
 
-  // Novo item logo abaixo de Custo:
+  // novo abaixo de Custo
   { id: "aprov", title: "Controle de Aprovação de Ordens", url: LINKS.aprovOrdens, Icon: IconOKR },
 
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
@@ -111,7 +204,6 @@ const NotifyCTA: React.FC = () => {
   const [lastError, setLastError] = useState<string | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
 
-  // chave p/ "não mostrar de novo"
   const DISMISS_KEY = "pushCTA:dismissed";
 
   const computeShouldShow = (opts: {
@@ -123,20 +215,15 @@ const NotifyCTA: React.FC = () => {
     const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
     if (dismissed) return false;
     if (!opts.isSupported) return false;
-
-    // Se já está inscrito, some
     if (opts.enabled) return false;
-
-    // Se já tem permissão "granted" OU já tem subId registrado, some
     if (opts.perm === "granted") return false;
     if (opts.subId) return false;
 
-    // Caso iOS PWA: só mostra quando em standalone (para não confundir com falta de suporte)
     const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isStandalone =
       (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
       // @ts-ignore
-      window.navigator?.standalone === true;
+      (window.navigator as any)?.standalone === true;
 
     return isiOS ? isStandalone : true;
   };
@@ -157,8 +244,7 @@ const NotifyCTA: React.FC = () => {
         subId: d.subscriptionId ?? null,
       });
       setShow(should);
-    } catch (e) {
-      // Em caso de erro, não travar a UI
+    } catch {
       setIsSupported(true);
       setShow(true);
     }
@@ -166,18 +252,15 @@ const NotifyCTA: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
-
     const init = async () => {
       await refreshDiag();
 
-      // Eventos do OneSignal (v16)
       (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
       (window as any).OneSignalDeferred.push((OneSignal: any) => {
         OneSignal.on?.("subscriptionChange", async (sub: boolean) => {
           if (!mounted) return;
           setEnabled(sub);
           if (sub) {
-            // Marca como não mostrar mais e esconde
             localStorage.setItem(DISMISS_KEY, "1");
             setShow(false);
           }
@@ -189,23 +272,19 @@ const NotifyCTA: React.FC = () => {
         });
       });
 
-      // Revalida quando a aba volta pro foco
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") refreshDiag();
       });
 
-      // ?debugPush=1 abre o painel
       try {
         const u = new URL(window.location.href);
         if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
       } catch {}
     };
-
     init();
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onActivate = async () => {
@@ -216,12 +295,10 @@ const NotifyCTA: React.FC = () => {
     setSubId(d.subscriptionId ?? null);
     setLastError(d.lastError ?? null);
 
-    // Se já habilitou ou permissão ficou granted, não mostrar mais
     if (d.enabled || d.permission === "granted" || d.subscriptionId) {
       localStorage.setItem(DISMISS_KEY, "1");
       setShow(false);
     } else {
-      // Mesmo que não tenha inscrito, reavalia regra (pega granted atrasado)
       const should = computeShouldShow({
         enabled: !!d.enabled,
         perm: d.permission as NotificationPermission,
@@ -284,6 +361,7 @@ const NotifyCTA: React.FC = () => {
   );
 };
 
+/* ============================== App ============================== */
 export default function App() {
   const [open, setOpen] = useState(false);
   const [onePagers, setOnePagers] = useState<string[]>([]);
@@ -296,7 +374,7 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // Aviso iPhone: só quando NÃO estiver instalado
+  // iPhone: mostra aviso só quando NÃO instalado
   useEffect(() => {
     if (typeof window !== "undefined") {
       const ua = window.navigator.userAgent;
@@ -333,7 +411,7 @@ export default function App() {
   // ===== helper: ordenar nomes ignorando acentos/caso/extensão
   const normalizeBase = (s: string) =>
     s
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // sem acento
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       .toLowerCase()
       .replace(/\.(png|jpg|jpeg|webp)$/i, "")
       .trim();
@@ -348,12 +426,11 @@ export default function App() {
       const hit = pick(want);
       if (hit && !used.has(hit)) { ordered.push(hit); used.add(hit); }
     }
-    // extras (qualquer outro arquivo)
     const extras = arr.filter(n => !used.has(n));
     return [...ordered, ...extras];
   };
 
-  // Carregar lista e ordenar
+  // Carrega lista e ordena
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -368,9 +445,14 @@ export default function App() {
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
   }, []);
 
-  // *** Sem auto-rotação ***
+  // *** sem auto-rotação ***
 
-  // Gestos toque (mobile)
+  const prevSlide = () =>
+    setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+  const nextSlide = () =>
+    setBannerIndex((p) => (p + 1) % onePagers.length);
+
+  // Gestos touch (mobile)
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -386,10 +468,6 @@ export default function App() {
     touchStartX.current = null;
     touchEndX.current = null;
   };
-
-  // Navegação
-  const prevSlide = () => setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
-  const nextSlide = () => setBannerIndex((p) => (p + 1) % onePagers.length);
 
   // Teclado (desktop)
   useEffect(() => {
@@ -507,7 +585,7 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* Setas no desktop */}
+              {/* setas desktop */}
               {!isNarrow && (
                 <>
                   <button className="banner-arrow left" aria-label="Anterior" onClick={prevSlide}>‹</button>
