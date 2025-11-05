@@ -13,7 +13,7 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* Ícones locais */
+/* Ícones locais extras */
 const IconHelp: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
@@ -99,7 +99,7 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-/* Banners estáticos */
+/* banners estáticos */
 const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ASSERTIVIDADE.png" },
   { img: "/banners_media/quebra diaria.PNG" },
@@ -107,7 +107,7 @@ const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ÁREAS.jpeg" },
 ];
 
-/* ===== CTA de Notificações ===== */
+/* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
   const [perm, setPerm] = useState<NotificationPermission | "loading">("loading");
@@ -197,7 +197,9 @@ const NotifyCTA: React.FC = () => {
     };
 
     init();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const onActivate = async () => {
@@ -286,7 +288,7 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // Aviso iPhone quando NÃO instalado
+  // Aviso iPhone só quando NÃO estiver instalado
   useEffect(() => {
     if (typeof window !== "undefined") {
       const ua = window.navigator.userAgent;
@@ -320,7 +322,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // ===== Carrossel: força ordem fábrica → G1 → G2 → G3 =====
+  // ===== Carregar e ORDENAR: fábrica (0) → G1 (1) → G2 (2) → G3 (3) =====
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -332,23 +334,25 @@ export default function App() {
           s
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/\s+/g, " ")
+            .replace(/[\u0300-\u036f]/g, "")     // tira acentos
+            .replace(/[_-]+/g, " ")              // underscores/hífens viram espaço
+            .replace(/\s*\.\s*/g, ".")           // remove espaços antes/depois do ponto
+            .replace(/\s+/g, " ")                // colapsa espaços
             .trim();
 
-        const RANK: Record<string, number> = {
-          "one pager fabrica.png": 0,
-          "one pager g1.png": 1,
-          "one pager g2.png": 2,
-          "one pager g3.png": 3,
+        const rank = (name: string) => {
+          const n = normalize(name).replace(/\.png$/i, "");
+          if (/\bfabrica\b/.test(n)) return 0;
+          if (/\bg1\b/.test(n)) return 1;
+          if (/\bg2\b/.test(n)) return 2;
+          if (/\bg3\b/.test(n)) return 3;
+          return 1000; // outros vão para o fim
         };
 
-        // ordena por ranking; o que não estiver no mapa vai para o final
         const ordered = [...data].sort((a, b) => {
-          const ra = RANK[normalize(a)] ?? 1000;
-          const rb = RANK[normalize(b)] ?? 1000;
+          const ra = rank(a);
+          const rb = rank(b);
           if (ra !== rb) return ra - rb;
-          // está fora do ranking? preserva estabilidade por nome
           return a.localeCompare(b, undefined, { sensitivity: "base" });
         });
 
@@ -389,7 +393,7 @@ export default function App() {
     touchEndX.current = null;
   };
 
-  // Atalhos teclado (desktop)
+  // ⌨️ Atalhos de teclado (desktop)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (window.innerWidth < 701) return;
@@ -533,6 +537,7 @@ export default function App() {
                   </button>
                 </>
               )}
+
               <img src={currentOnePager} alt={onePagers[bannerIndex]} />
             </div>
             {onePagers.length > 1 && (
