@@ -1,98 +1,7 @@
-// src/App.tsx
+  // src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
+import { readDiagnostics, activatePush } from "./push";
 
-/* ========= Helpers de PUSH (integrados aqui p/ não depender de push.ts) ========= */
-type PushDiag = {
-  permission: NotificationPermission | "default" | "denied" | "granted" | "loading";
-  enabled: boolean;
-  isSupported: boolean;
-  subscriptionId?: string | null;
-  lastError?: string | null;
-};
-
-// aguarda OneSignal v16 ficar pronto
-function whenOneSignal(): Promise<any> {
-  return new Promise((resolve) => {
-    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
-    (window as any).OneSignalDeferred.push((OneSignal: any) => resolve(OneSignal));
-    // se já estiver pronto
-    if ((window as any).OneSignal) resolve((window as any).OneSignal);
-  });
-}
-
-async function readDiagnostics(): Promise<PushDiag> {
-  try {
-    const isSupported =
-      typeof window !== "undefined" &&
-      "Notification" in window &&
-      "serviceWorker" in navigator;
-
-    let permission: NotificationPermission | "loading" =
-      typeof Notification !== "undefined" ? Notification.permission : "default";
-
-    let enabled = false;
-    let subscriptionId: string | null = null;
-
-    try {
-      const OneSignal = await whenOneSignal();
-      // v16
-      enabled = !!OneSignal?.User?.PushSubscription?.optedIn;
-      subscriptionId = OneSignal?.User?.PushSubscription?.id ?? null;
-      // caso o permission do browser não reflita ainda:
-      permission = (Notification?.permission as NotificationPermission) ?? permission;
-    } catch {
-      /* segue com best-effort */
-    }
-
-    return { permission, enabled, isSupported, subscriptionId, lastError: null };
-  } catch (e: any) {
-    return {
-      permission: "default",
-      enabled: false,
-      isSupported: true,
-      subscriptionId: null,
-      lastError: String(e?.message || e),
-    };
-  }
-}
-
-async function activatePush(): Promise<PushDiag> {
-  try {
-    const OneSignal = await whenOneSignal();
-    // Solicita permissão (v16)
-    await OneSignal?.Notifications?.requestPermission?.();
-
-    // Se a permissão já for concedida, garante opt-in
-    if (Notification.permission === "granted") {
-      try {
-        await OneSignal?.User?.PushSubscription?.optIn?.();
-      } catch {
-        /* Alguns ambientes já ficam optedIn automaticamente */
-      }
-    }
-
-    const enabled = !!OneSignal?.User?.PushSubscription?.optedIn;
-    const subscriptionId = OneSignal?.User?.PushSubscription?.id ?? null;
-
-    return {
-      permission: Notification.permission,
-      enabled,
-      isSupported: true,
-      subscriptionId,
-      lastError: null,
-    };
-  } catch (e: any) {
-    return {
-      permission: typeof Notification !== "undefined" ? Notification.permission : "default",
-      enabled: false,
-      isSupported: true,
-      subscriptionId: null,
-      lastError: String(e?.message || e),
-    };
-  }
-}
-
-/* ========================= Ícones e imports locais ========================= */
 import {
   IconOKR,
   IconDDM,
@@ -104,7 +13,7 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* Ícones extras simples */
+/* Ícones locais extras */
 const IconHelp: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
@@ -155,10 +64,8 @@ const LINKS = {
   custo: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
 
   // Novos
-  backlog:
-    "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
-  aprovOrdens:
-    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
+  backlog: "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
+  controleOrdens: "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 } as const;
 
 /* Menu */
@@ -168,15 +75,16 @@ const MENU = [
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
 
-  // novo abaixo de Painel
-  { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua área", url: LINKS.backlog, Icon: IconChecklist },
+  // NOVO: BACKLOG (logo abaixo de Painel)
+  { id: "backlog", title: "BACKLOG - Consulte aqui o backlog da sua área", url: LINKS.backlog, Icon: IconChecklist },
 
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
+
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
 
-  // novo abaixo de Custo
-  { id: "aprov", title: "Controle de Aprovação de Ordens", url: LINKS.aprovOrdens, Icon: IconOKR },
+  // NOVO: CONTROLE DE APROVAÇÃO (logo abaixo de Custo)
+  { id: "controle", title: "Controle de Aprovação de Ordens", url: LINKS.controleOrdens, Icon: IconOKR },
 
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
@@ -193,6 +101,14 @@ const STATIC_FROM_FOLDER = [
   { img: "/banners_media/quebra por linha.PNG" },
   { img: "/banners_media/ÁREAS.jpeg" },
 ];
+
+/* ===== util p/ ordenar onepagers ===== */
+function sortOnePagers(list: string[]) {
+  const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
+  const inOrder = ordem.filter((n) => list.includes(n));
+  const extras = list.filter((n) => !ordem.includes(n));
+  return [...inOrder, ...extras];
+}
 
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
@@ -223,7 +139,7 @@ const NotifyCTA: React.FC = () => {
     const isStandalone =
       (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
       // @ts-ignore
-      (window.navigator as any)?.standalone === true;
+      window.navigator?.standalone === true;
 
     return isiOS ? isStandalone : true;
   };
@@ -252,6 +168,7 @@ const NotifyCTA: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
+
     const init = async () => {
       await refreshDiag();
 
@@ -281,6 +198,7 @@ const NotifyCTA: React.FC = () => {
         if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
       } catch {}
     };
+
     init();
     return () => {
       mounted = false;
@@ -361,7 +279,6 @@ const NotifyCTA: React.FC = () => {
   );
 };
 
-/* ============================== App ============================== */
 export default function App() {
   const [open, setOpen] = useState(false);
   const [onePagers, setOnePagers] = useState<string[]>([]);
@@ -374,7 +291,7 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // iPhone: mostra aviso só quando NÃO instalado
+  // Mostrar aviso iPhone só quando NÃO estiver instalado
   useEffect(() => {
     if (typeof window !== "undefined") {
       const ua = window.navigator.userAgent;
@@ -402,57 +319,39 @@ export default function App() {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+  // Navegação por teclado no desktop
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+      if (!onePagers.length) return;
+      if (e.key === "ArrowRight") setBannerIndex((p) => (p + 1) % onePagers.length);
+      if (e.key === "ArrowLeft") setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [onePagers.length]);
 
-  // ===== helper: ordenar nomes ignorando acentos/caso/extensão
-  const normalizeBase = (s: string) =>
-    s
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/\.(png|jpg|jpeg|webp)$/i, "")
-      .trim();
-
-  const orderDesired = ["one pager fabrica", "one pager g1", "one pager g2", "one pager g3"];
-
-  const sortOnePagers = (arr: string[]) => {
-    const used = new Set<string>();
-    const pick = (label: string) => arr.find(n => normalizeBase(n).includes(label));
-    const ordered: string[] = [];
-    for (const want of orderDesired) {
-      const hit = pick(want);
-      if (hit && !used.has(hit)) { ordered.push(hit); used.add(hit); }
-    }
-    const extras = arr.filter(n => !used.has(n));
-    return [...ordered, ...extras];
-  };
-
-  // Carrega lista e ordena
+  // Carregar lista de One Pagers (sem auto-troca)
   useEffect(() => {
-    fetch("/banners_media/onepagers.json")
+    const url = `/banners_media/onepagers.json?v=${Date.now()}`; // cache-bust
+    fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("não achei onepagers.json");
         return res.json();
       })
       .then((data: string[]) => {
-        const ordenados = sortOnePagers(data);
+        const ordenados = sortOnePagers(Array.isArray(data) ? data : []);
         setOnePagers(ordenados);
         setBannerIndex(0);
+        setBannerErro(null);
       })
-      .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
+      .catch(() => {
+        setOnePagers([]);
+        setBannerErro(null); // não “assusta”; seguimos com banners estáticos
+      });
   }, []);
 
-  // *** sem auto-rotação ***
-
-  const prevSlide = () =>
-    setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
-  const nextSlide = () =>
-    setBannerIndex((p) => (p + 1) % onePagers.length);
-
-  // Gestos touch (mobile)
+  // Swipe no mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -463,21 +362,21 @@ export default function App() {
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
     const min = 40;
-    if (diff > min) nextSlide();
-    else if (diff < -min) prevSlide();
+    if (!onePagers.length) return;
+    if (diff > min) setBannerIndex((p) => (p + 1) % onePagers.length);
+    else if (diff < -min) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
-  // Teclado (desktop)
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") prevSlide();
-      if (e.key === "ArrowRight") nextSlide();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onePagers.length]);
+  const goPrev = () => {
+    if (!onePagers.length) return;
+    setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+  };
+  const goNext = () => {
+    if (!onePagers.length) return;
+    setBannerIndex((p) => (p + 1) % onePagers.length);
+  };
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
@@ -505,14 +404,10 @@ export default function App() {
         .notify-btn{ background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
         .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
         .banner-dinamico{ position:relative; width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; }
-        .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; user-select:none; }
+        .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; }
         .banner-dots{ display:flex; gap:6px; justify-content:center; }
         .banner-dot{ width:9px;height:9px;border-radius:999px;background:#ddd;border:none; }
         .banner-dot.active{ background:#cc0000;width:28px; }
-        .banner-arrow{ display:none; position:absolute; top:50%; transform:translateY(-50%); border:none; background:rgba(255,255,255,.9); box-shadow:0 4px 10px rgba(0,0,0,.15); width:42px; height:42px; border-radius:999px; font-size:20px; font-weight:700; cursor:pointer; }
-        .banner-arrow.left{ left:10px; }
-        .banner-arrow.right{ right:10px; }
-        @media (min-width:601px){ .banner-arrow{ display:block; } }
         .static-banner{ width:100%; max-width:980px; border-radius:14px; box-shadow:0 4px 10px rgba(0,0,0,.08); display:block; }
         .ios-hint{ background:#fff7d9; border:1px solid rgba(204,0,0,.35); color:#492100; margin:0 auto; max-width:1200px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; font-size:14px; }
         .ios-hint strong{ display:block; font-size:14px; }
@@ -522,6 +417,12 @@ export default function App() {
         .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
         .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
         .drawer-ico{color:#cc0000;display:grid;place-items:center;}
+        /* setas desktop */
+        .nav-arrow{ position:absolute; top:50%; transform:translateY(-50%); border:none; background:rgba(0,0,0,.45); color:#fff; width:42px; height:42px; border-radius:999px; display:grid; place-items:center; cursor:pointer; }
+        .nav-arrow:hover{ background:rgba(0,0,0,.6); }
+        .nav-left{ left:10px; }
+        .nav-right{ right:10px; }
+        @media (max-width:650px){ .nav-arrow{ display:none; } }
       `}</style>
 
       {/* Topbar */}
@@ -544,7 +445,7 @@ export default function App() {
         <div className="ios-hint">
           <div>
             <strong>iPhone detectado 📱</strong>
-            Para instalar: no Safari → **compartilhar** → **Adicionar à Tela de Início**.
+            Para instalar: no Safari → **Compartilhar** → **Adicionar à Tela de Início**.
           </div>
           <button onClick={() => setShowIosBanner(false)} aria-label="Fechar aviso">×</button>
         </div>
@@ -570,8 +471,8 @@ export default function App() {
       {/* Conteúdo */}
       <main className="banners-container" style={{ paddingTop: mobilePaddingTop }}>
         {bannerErro ? (
-          <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
-            {bannerErro}
+          <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
+            Carrossel não disponível no momento.
           </div>
         ) : !currentOnePager ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
@@ -585,16 +486,12 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* setas desktop */}
-              {!isNarrow && (
-                <>
-                  <button className="banner-arrow left" aria-label="Anterior" onClick={prevSlide}>‹</button>
-                  <button className="banner-arrow right" aria-label="Próximo" onClick={nextSlide}>›</button>
-                </>
-              )}
-              <img src={currentOnePager} alt={onePagers[bannerIndex]} />
-            </div>
+              {/* Setas (desktop) */}
+              <button className="nav-arrow nav-left" aria-label="Anterior" onClick={goPrev}>❮</button>
+              <button className="nav-arrow nav-right" aria-label="Próximo" onClick={goNext}>❯</button>
 
+              <img src={currentOnePager ? encodeURI(currentOnePager) : ""} alt={onePagers[bannerIndex]} />
+            </div>
             {onePagers.length > 1 && (
               <div className="banner-dots">
                 {onePagers.map((_, i) => (
@@ -611,7 +508,7 @@ export default function App() {
         )}
 
         {STATIC_FROM_FOLDER.map((b, i) => (
-          <img key={i} src={b.img} alt={`banner-${i}`} className="static-banner" />
+          <img key={i} src={encodeURI(b.img)} alt={`banner-${i}`} className="static-banner" />
         ))}
       </main>
     </div>
