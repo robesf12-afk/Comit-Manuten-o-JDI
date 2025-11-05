@@ -322,7 +322,31 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // ===== Carregar JSON e impor ORDEM fixa: fábrica → G1 → G2 → G3 =====
+  // ===== Util: ordena por palavras-chave (fabrica, g1, g2, g3) =====
+  function ordenarOnePagersPorChave(lista: string[]) {
+    const norm = (s: string) =>
+      s
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // remove acentos
+        .toLowerCase()
+        .trim();
+
+    const by = (token: string) => lista.find((n) => norm(n).includes(token));
+
+    const fabrica = by("fabrica"); // pega qualquer coisa com "fabrica"
+    const g1 = by("g1");
+    const g2 = by("g2");
+    const g3 = by("g3");
+
+    const escolhidos = [fabrica, g1, g2, g3].filter(Boolean) as string[];
+
+    // adiciona os demais (que não foram escolhidos), sem duplicar
+    const resto = lista.filter((n) => !escolhidos.includes(n));
+
+    return [...escolhidos, ...resto];
+  }
+
+  // ===== Carregar JSON e impor ORDEM fixa por chave =====
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -330,27 +354,7 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        const norm = (s: string) => s.toLowerCase().trim();
-
-        const ordemFixa = [
-          "one pager fabrica.PNG",
-          "one pager G1.PNG",
-          "one pager G2.PNG",
-          "one pager G3.PNG",
-        ];
-
-        // 1) pega na ordem fixa, ignorando maiúsculas/minúsculas e espaços
-        const inicio = ordemFixa.filter((name) =>
-          data.some((d) => norm(d) === norm(name))
-        );
-
-        // 2) inclui quaisquer outros do JSON que não estão na ordem fixa
-        const extras = data.filter(
-          (d) => !ordemFixa.some((name) => norm(name) === norm(d))
-        );
-
-        const ordered = [...inicio, ...extras];
-
+        const ordered = ordenarOnePagersPorChave(data);
         setOnePagers(ordered);
         setBannerIndex(0);
       })
@@ -410,7 +414,7 @@ export default function App() {
   }, [open, onePagers]);
 
   const currentOnePager = onePagers.length
-    ? `/banners_media/${encodeURI(onePagers[bannerIndex])}?v=2`
+    ? `/banners_media/${encodeURI(onePagers[bannerIndex])}?v=3`
     : null;
 
   const mobilePaddingTop = isNarrow ? 33 : 28;
