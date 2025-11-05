@@ -58,10 +58,20 @@ const LINKS = {
   checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
   registro: "https://forms.office.com/r/mt0JTBJiK6?origin=lprLink",
   reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-  programacao: "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
-  painel: "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
-  duvidas: "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
-  custo: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
+  programacao:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
+  painel:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
+  duvidas:
+    "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
+  custo:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
+
+  /* Novos: */
+  backlog:
+    "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
+  controleAprov:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 } as const;
 
 /* Menu */
@@ -70,9 +80,17 @@ const MENU = [
   { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
+
+  /* Novo item abaixo do Painel */
+  { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua", url: LINKS.backlog, Icon: IconChecklist },
+
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
+
+  /* Novo item abaixo de Custo de Manutenção */
+  { id: "controle-aprov", title: "CONTROLE DE APROVAÇÃO DE ORDENS", url: LINKS.controleAprov, Icon: IconDoc },
+
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
@@ -147,7 +165,6 @@ const NotifyCTA: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
-
     const init = async () => {
       await refreshDiag();
 
@@ -310,7 +327,13 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
+        // ORDEM solicitada: fábrica → G1 → G3 → G3
+        const ordem = [
+          "one pager fabrica.PNG",
+          "one pager G1.PNG",
+          "one pager G3.PNG",
+          "one pager G3.PNG",
+        ];
         const ordenados = ordem.filter((n) => data.includes(n));
         const extras = data.filter((n) => !ordem.includes(n));
         setOnePagers([...ordenados, ...extras]);
@@ -353,14 +376,10 @@ export default function App() {
   // ⌨️ Atalhos de teclado (desktop)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // só em telas largas
       if (window.innerWidth < 701) return;
-      // se drawer está aberto, ignora
       if (open) return;
-      // se está digitando em algum campo, ignora
       const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
       if (["input", "textarea", "select"].includes(tag)) return;
-      // se há seleção de texto grande, ignora para não atrapalhar
       if (window.getSelection && String(window.getSelection()).length > 0) return;
 
       if (e.key === "ArrowRight") {
@@ -376,6 +395,7 @@ export default function App() {
   }, [open, onePagers]);
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
+  const isNarrow = window.innerWidth <= 650;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
   return (
@@ -475,7 +495,7 @@ export default function App() {
       </aside>
 
       {/* Conteúdo */}
-      <main className="banners-container" style={{ paddingTop: mobilePaddingTop }}>
+      <main className="banners-container" style={{ paddingTop: isNarrow ? 33 : 28 }}>
         {bannerErro ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
             {bannerErro}
