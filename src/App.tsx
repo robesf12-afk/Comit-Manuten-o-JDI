@@ -330,19 +330,26 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        // lista de prioridade fixa
-        const ordem = [
+        const norm = (s: string) => s.toLowerCase().trim();
+
+        const ordemFixa = [
           "one pager fabrica.PNG",
           "one pager G1.PNG",
           "one pager G2.PNG",
           "one pager G3.PNG",
         ];
 
-        // 1) pega na ordem fixa os que existem no JSON
-        const inicio = ordem.filter((n) => data.includes(n));
-        // 2) acrescenta quaisquer outros que vierem no JSON
-        const resto = data.filter((n) => !ordem.includes(n));
-        const ordered = [...inicio, ...resto];
+        // 1) pega na ordem fixa, ignorando maiúsculas/minúsculas e espaços
+        const inicio = ordemFixa.filter((name) =>
+          data.some((d) => norm(d) === norm(name))
+        );
+
+        // 2) inclui quaisquer outros do JSON que não estão na ordem fixa
+        const extras = data.filter(
+          (d) => !ordemFixa.some((name) => norm(name) === norm(d))
+        );
+
+        const ordered = [...inicio, ...extras];
 
         setOnePagers(ordered);
         setBannerIndex(0);
@@ -402,7 +409,10 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onePagers]);
 
-  const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
+  const currentOnePager = onePagers.length
+    ? `/banners_media/${encodeURI(onePagers[bannerIndex])}?v=2`
+    : null;
+
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
   return (
