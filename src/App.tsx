@@ -1,4 +1,4 @@
-  // src/App.tsx
+// src/App.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { readDiagnostics, activatePush } from "./push";
 
@@ -112,14 +112,10 @@ const NotifyCTA: React.FC = () => {
     if (dismissed) return false;
     if (!opts.isSupported) return false;
 
-    // Se já está inscrito, some
     if (opts.enabled) return false;
-
-    // Se já tem permissão "granted" OU já tem subId registrado, some
     if (opts.perm === "granted") return false;
     if (opts.subId) return false;
 
-    // Caso iOS PWA: só mostra quando em standalone (para não confundir com falta de suporte)
     const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const isStandalone =
       (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
@@ -146,7 +142,6 @@ const NotifyCTA: React.FC = () => {
       });
       setShow(should);
     } catch (e) {
-      // Em caso de erro, não travar a UI
       setIsSupported(true);
       setShow(true);
     }
@@ -158,14 +153,12 @@ const NotifyCTA: React.FC = () => {
     const init = async () => {
       await refreshDiag();
 
-      // Eventos do OneSignal (v16)
       (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
       (window as any).OneSignalDeferred.push((OneSignal: any) => {
         OneSignal.on?.("subscriptionChange", async (sub: boolean) => {
           if (!mounted) return;
           setEnabled(sub);
           if (sub) {
-            // Marca como não mostrar mais e esconde
             localStorage.setItem(DISMISS_KEY, "1");
             setShow(false);
           }
@@ -177,12 +170,10 @@ const NotifyCTA: React.FC = () => {
         });
       });
 
-      // Revalida quando a aba volta pro foco
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") refreshDiag();
       });
 
-      // ?debugPush=1 abre o painel
       try {
         const u = new URL(window.location.href);
         if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
@@ -204,12 +195,10 @@ const NotifyCTA: React.FC = () => {
     setSubId(d.subscriptionId ?? null);
     setLastError(d.lastError ?? null);
 
-    // Se já habilitou ou permissão ficou granted, não mostrar mais
     if (d.enabled || d.permission === "granted" || d.subscriptionId) {
       localStorage.setItem(DISMISS_KEY, "1");
       setShow(false);
     } else {
-      // Mesmo que não tenha inscrito, reavalia regra (pega granted atrasado)
       const should = computeShouldShow({
         enabled: !!d.enabled,
         perm: d.permission as NotificationPermission,
@@ -284,7 +273,7 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // ⚠️ ÚNICA MUDANÇA: mostrar o aviso do iPhone só quando NÃO estiver instalado
+  // Mostrar aviso do iPhone só quando NÃO estiver instalado
   useEffect(() => {
     if (typeof window !== "undefined") {
       const ua = window.navigator.userAgent;
@@ -325,7 +314,12 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
+        const ordem = [
+          "one pager fabrica.PNG",
+          "one pager G1.PNG",
+          "one pager G2.PNG",
+          "one pager G3.PNG",
+        ];
         const ordenados = ordem.filter((n) => data.includes(n));
         const extras = data.filter((n) => !ordem.includes(n));
         setOnePagers([...ordenados, ...extras]);
@@ -334,11 +328,21 @@ export default function App() {
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
   }, []);
 
+  // Sem carrossel automático — mudança só manual
   useEffect(() => {
-    if (onePagers.length <= 1) return;
-    const t = setInterval(() => setBannerIndex((p) => (p + 1) % onePagers.length), 5000);
-    return () => clearInterval(t);
+    if (onePagers.length > 0) setBannerIndex(0);
   }, [onePagers]);
+
+  const nextSlide = () => {
+    if (onePagers.length > 0) {
+      setBannerIndex((p) => (p + 1) % onePagers.length);
+    }
+  };
+  const prevSlide = () => {
+    if (onePagers.length > 0) {
+      setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+    }
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -350,8 +354,10 @@ export default function App() {
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
     const min = 40;
-    if (diff > min) setBannerIndex((p) => (p + 1) % onePagers.length);
-    else if (diff < -min) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+    if (onePagers.length > 0) {
+      if (diff > min) nextSlide();
+      else if (diff < -min) prevSlide();
+    }
     touchStartX.current = null;
     touchEndX.current = null;
   };
@@ -381,10 +387,10 @@ export default function App() {
         .notify-text{ font-size:13px; color:#333; }
         .notify-btn{ background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
         .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
-        .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; }
-        .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; }
+        .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; position:relative; }
+        .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; user-select:none; }
         .banner-dots{ display:flex; gap:6px; justify-content:center; }
-        .banner-dot{ width:9px;height:9px;border-radius:999px;background:#ddd;border:none; }
+        .banner-dot{ width:9px;height:9px;border-radius:999px;background:#ddd;border:none; cursor:pointer; }
         .banner-dot.active{ background:#cc0000;width:28px; }
         .static-banner{ width:100%; max-width:980px; border-radius:14px; box-shadow:0 4px 10px rgba(0,0,0,.08); display:block; }
         .ios-hint{ background:#fff7d9; border:1px solid rgba(204,0,0,.35); color:#492100; margin:0 auto; max-width:1200px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; font-size:14px; }
@@ -395,6 +401,32 @@ export default function App() {
         .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
         .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
         .drawer-ico{color:#cc0000;display:grid;place-items:center;}
+
+        /* ===== Setas laterais (desktop) ===== */
+        .banner-arrow{
+          position:absolute;
+          top:50%;
+          transform:translateY(-50%);
+          width:42px;height:42px;
+          border:none;border-radius:999px;
+          background:rgba(0,0,0,.35);
+          backdrop-filter:saturate(120%) blur(2px);
+          color:#fff; display:grid; place-items:center;
+          cursor:pointer;
+          box-shadow:0 4px 10px rgba(0,0,0,.25);
+          transition:background .15s ease, transform .15s ease;
+          user-select:none;
+        }
+        .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
+        .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
+        .banner-arrow.left{ left:10px; }
+        .banner-arrow.right{ right:10px; }
+        .banner-arrow svg{ width:20px;height:20px; }
+
+        /* Esconde setas em telas menores (mobile) */
+        @media (max-width: 700px){
+          .banner-arrow{ display:none; }
+        }
       `}</style>
 
       {/* Topbar */}
@@ -452,13 +484,39 @@ export default function App() {
           </div>
         ) : (
           <>
-            <div className="banner-dinamico" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+            <div
+              className="banner-dinamico"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {/* Setas (somente desktop) */}
+              {onePagers.length > 1 && !isNarrow && (
+                <>
+                  <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <button className="banner-arrow right" onClick={nextSlide} aria-label="Próximo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </>
+              )}
+
               <img src={currentOnePager} alt={onePagers[bannerIndex]} />
             </div>
             {onePagers.length > 1 && (
               <div className="banner-dots">
                 {onePagers.map((_, i) => (
-                  <button key={i} className={`banner-dot ${i === bannerIndex ? "active" : ""}`} onClick={() => setBannerIndex(i)} aria-label={`Ver banner ${i + 1}`} />
+                  <button
+                    key={i}
+                    className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
+                    onClick={() => setBannerIndex(i)}
+                    aria-label={`Ver banner ${i + 1}`}
+                  />
                 ))}
               </div>
             )}
@@ -472,4 +530,3 @@ export default function App() {
     </div>
   );
 }
-         
