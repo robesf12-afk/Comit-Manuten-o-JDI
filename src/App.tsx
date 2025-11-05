@@ -67,7 +67,7 @@ const LINKS = {
   custo:
     "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
 
-  /* Novos: */
+  /* Novos */
   backlog:
     "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
   controleAprov:
@@ -165,6 +165,7 @@ const NotifyCTA: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
+
     const init = async () => {
       await refreshDiag();
 
@@ -196,7 +197,9 @@ const NotifyCTA: React.FC = () => {
     };
 
     init();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -395,7 +398,6 @@ export default function App() {
   }, [open, onePagers]);
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
-  const isNarrow = window.innerWidth <= 650;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
   return (
@@ -495,7 +497,7 @@ export default function App() {
       </aside>
 
       {/* Conteúdo */}
-      <main className="banners-container" style={{ paddingTop: isNarrow ? 33 : 28 }}>
+      <main className="banners-container" style={{ paddingTop: mobilePaddingTop }}>
         {bannerErro ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
             {bannerErro}
