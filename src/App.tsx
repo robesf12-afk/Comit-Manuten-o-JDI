@@ -13,7 +13,7 @@ import {
   IconReconhecimentos,
 } from "./icons";
 
-/* Ícones locais extras */
+/* Ícones locais */
 const IconHelp: React.FC = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
@@ -99,7 +99,7 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-// banners estáticos
+/* Banners estáticos */
 const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ASSERTIVIDADE.png" },
   { img: "/banners_media/quebra diaria.PNG" },
@@ -107,7 +107,7 @@ const STATIC_FROM_FOLDER = [
   { img: "/banners_media/ÁREAS.jpeg" },
 ];
 
-/* ===== CTA de Notificações com diagnóstico ===== */
+/* ===== CTA de Notificações ===== */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
   const [perm, setPerm] = useState<NotificationPermission | "loading">("loading");
@@ -175,7 +175,7 @@ const NotifyCTA: React.FC = () => {
           if (!mounted) return;
           setEnabled(sub);
           if (sub) {
-            localStorage.setItem(DISMISSKEY, "1" as any);
+            localStorage.setItem(DISMISS_KEY, "1");
             setShow(false);
           }
           await refreshDiag();
@@ -197,10 +197,7 @@ const NotifyCTA: React.FC = () => {
     };
 
     init();
-    return () => {
-      mounted = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { mounted = false; };
   }, []);
 
   const onActivate = async () => {
@@ -289,7 +286,7 @@ export default function App() {
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
-  // Aviso iPhone só quando NÃO estiver instalado
+  // Aviso iPhone quando NÃO instalado
   useEffect(() => {
     if (typeof window !== "undefined") {
       const ua = window.navigator.userAgent;
@@ -323,6 +320,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // ===== Carrossel: força ordem fábrica → G1 → G2 → G3 =====
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -330,16 +328,31 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        // ORDEM correta: fábrica → G1 → G2 → G3
-        const ordem = [
-          "one pager fabrica.PNG",
-          "one pager G1.PNG",
-          "one pager G2.PNG",
-          "one pager G3.PNG",
-        ];
-        const primeiros = ordem.filter((n) => data.includes(n));
-        const extras = data.filter((n) => !ordem.includes(n));
-        setOnePagers([...primeiros, ...extras]);
+        const normalize = (s: string) =>
+          s
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const RANK: Record<string, number> = {
+          "one pager fabrica.png": 0,
+          "one pager g1.png": 1,
+          "one pager g2.png": 2,
+          "one pager g3.png": 3,
+        };
+
+        // ordena por ranking; o que não estiver no mapa vai para o final
+        const ordered = [...data].sort((a, b) => {
+          const ra = RANK[normalize(a)] ?? 1000;
+          const rb = RANK[normalize(b)] ?? 1000;
+          if (ra !== rb) return ra - rb;
+          // está fora do ranking? preserva estabilidade por nome
+          return a.localeCompare(b, undefined, { sensitivity: "base" });
+        });
+
+        setOnePagers(ordered);
         setBannerIndex(0);
       })
       .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
@@ -376,7 +389,7 @@ export default function App() {
     touchEndX.current = null;
   };
 
-  // ⌨️ Atalhos de teclado (desktop)
+  // Atalhos teclado (desktop)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (window.innerWidth < 701) return;
@@ -397,7 +410,6 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onePagers]);
 
-  // **IMPORTANTE**: usar variáveis derivadas dentro do render
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
@@ -437,15 +449,7 @@ export default function App() {
         .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
         .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
         .drawer-ico{color:#cc0000;display:grid;place-items:center;}
-
-        /* Setas laterais (desktop) */
-        .banner-arrow{
-          position:absolute; top:50%; transform:translateY(-50%);
-          width:42px;height:42px; border:none;border-radius:999px;
-          background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
-          cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
-          transition:background .15s ease, transform .15s ease; user-select:none;
-        }
+        .banner-arrow{ position:absolute; top:50%; transform:translateY(-50%); width:42px;height:42px; border:none;border-radius:999px; background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25); transition:background .15s ease, transform .15s ease; user-select:none; }
         .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
         .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
         .banner-arrow.left{ left:10px; }
@@ -515,7 +519,6 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* Setas (somente desktop) */}
               {onePagers.length > 1 && !isNarrow && (
                 <>
                   <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior">
@@ -530,7 +533,6 @@ export default function App() {
                   </button>
                 </>
               )}
-
               <img src={currentOnePager} alt={onePagers[bannerIndex]} />
             </div>
             {onePagers.length > 1 && (
