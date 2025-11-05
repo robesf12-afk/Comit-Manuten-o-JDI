@@ -82,14 +82,14 @@ const MENU = [
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
 
   /* Novo item abaixo do Painel */
-  { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua", url: LINKS.backlog, Icon: IconChecklist },
+  { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua linha/área", url: LINKS.backlog, Icon: IconChecklist },
 
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
 
   /* Novo item abaixo de Custo de Manutenção */
-  { id: "controle-aprov", title: "CONTROLE DE APROVAÇÃO DE ORDENS", url: LINKS.controleAprov, Icon: IconDoc },
+  { id: "controle-aprov", title: "Controle de aprovação de ordens", url: LINKS.controleAprov, Icon: IconDoc },
 
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
