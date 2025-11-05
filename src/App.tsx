@@ -58,10 +58,20 @@ const LINKS = {
   checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
   registro: "https://forms.office.com/r/mt0JTBJiK6?origin=lprLink",
   reconhecimentos: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-  programacao: "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
-  painel: "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
-  duvidas: "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
-  custo: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
+  programacao:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
+  painel:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
+  duvidas:
+    "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
+  custo:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=S0gfpV",
+
+  /* Novos */
+  backlog:
+    "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
+  controleAprov:
+    "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 } as const;
 
 /* Menu */
@@ -70,9 +80,17 @@ const MENU = [
   { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
+
+  /* Novo item abaixo do Painel */
+  { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua linha/área", url: LINKS.backlog, Icon: IconChecklist },
+
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
+
+  /* Novo item abaixo de Custo de Manutenção */
+  { id: "controle-aprov", title: "Controle de aprovação de ordens", url: LINKS.controleAprov, Icon: IconDoc },
+
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
@@ -179,8 +197,9 @@ const NotifyCTA: React.FC = () => {
     };
 
     init();
-    return () => { mounted = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const onActivate = async () => {
@@ -303,20 +322,52 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // ===== util de normalização para casar nomes de arquivos com tolerância
+  const norm = (s: string) =>
+    s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
+
+  // carrega JSON com cache-busting e ordena de forma determinística
   useEffect(() => {
-    fetch("/banners_media/onepagers.json")
-      .then((res) => {
+    const load = async () => {
+      try {
+        // cache-buster para furar SW/CDN/navegador
+        const res = await fetch(`/banners_media/onepagers.json?v=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) throw new Error("não achei onepagers.json");
-        return res.json();
-      })
-      .then((data: string[]) => {
-        const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
-        const ordenados = ordem.filter((n) => data.includes(n));
-        const extras = data.filter((n) => !ordem.includes(n));
-        setOnePagers([...ordenados, ...extras]);
-        setBannerIndex(0);
-      })
-      .catch(() => setBannerErro("Não foi possível carregar o carrossel."));
+        const dataRaw: string[] = await res.json();
+
+        // mapa normalizado -> nome original
+        const mapOrig = new Map<string, string>();
+        for (const name of dataRaw) mapOrig.set(norm(name), name);
+
+        // ordem desejada (FÁBRICA → G1 → G2 → G3)
+        const ordemDesejada = [
+          "one pager fabrica.PNG",
+          "one pager G1.PNG",
+          "one pager G2.PNG",
+          "one pager G3.PNG",
+        ];
+
+        // reconstroi em ordem usando o nome original presente no JSON
+        const ordered: string[] = [];
+        for (const wanted of ordemDesejada) {
+          const hit = mapOrig.get(norm(wanted));
+          if (hit) ordered.push(hit);
+        }
+
+        // extras permanecem após os 4
+        const setOrdered = new Set(ordered);
+        const extras = dataRaw.filter((n) => !setOrdered.has(n));
+
+        const finalList = [...ordered, ...extras];
+
+        setOnePagers(finalList);
+        setBannerErro(null);
+        setBannerIndex(0); // garante que começa no primeiro (Fábrica)
+      } catch {
+        setBannerErro("Não foi possível carregar o carrossel.");
+      }
+    };
+    load();
   }, []);
 
   // sem automático
@@ -353,14 +404,10 @@ export default function App() {
   // ⌨️ Atalhos de teclado (desktop)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // só em telas largas
       if (window.innerWidth < 701) return;
-      // se drawer está aberto, ignora
       if (open) return;
-      // se está digitando em algum campo, ignora
       const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
       if (["input", "textarea", "select"].includes(tag)) return;
-      // se há seleção de texto grande, ignora para não atrapalhar
       if (window.getSelection && String(window.getSelection()).length > 0) return;
 
       if (e.key === "ArrowRight") {
