@@ -322,7 +322,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // ===== Carregar e ORDENAR: fábrica (0) → G1 (1) → G2 (2) → G3 (3) =====
+  // ===== Carregar JSON e impor ORDEM fixa: fábrica → G1 → G2 → G3 =====
   useEffect(() => {
     fetch("/banners_media/onepagers.json")
       .then((res) => {
@@ -330,31 +330,19 @@ export default function App() {
         return res.json();
       })
       .then((data: string[]) => {
-        const normalize = (s: string) =>
-          s
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")     // tira acentos
-            .replace(/[_-]+/g, " ")              // underscores/hífens viram espaço
-            .replace(/\s*\.\s*/g, ".")           // remove espaços antes/depois do ponto
-            .replace(/\s+/g, " ")                // colapsa espaços
-            .trim();
+        // lista de prioridade fixa
+        const ordem = [
+          "one pager fabrica.PNG",
+          "one pager G1.PNG",
+          "one pager G2.PNG",
+          "one pager G3.PNG",
+        ];
 
-        const rank = (name: string) => {
-          const n = normalize(name).replace(/\.png$/i, "");
-          if (/\bfabrica\b/.test(n)) return 0;
-          if (/\bg1\b/.test(n)) return 1;
-          if (/\bg2\b/.test(n)) return 2;
-          if (/\bg3\b/.test(n)) return 3;
-          return 1000; // outros vão para o fim
-        };
-
-        const ordered = [...data].sort((a, b) => {
-          const ra = rank(a);
-          const rb = rank(b);
-          if (ra !== rb) return ra - rb;
-          return a.localeCompare(b, undefined, { sensitivity: "base" });
-        });
+        // 1) pega na ordem fixa os que existem no JSON
+        const inicio = ordem.filter((n) => data.includes(n));
+        // 2) acrescenta quaisquer outros que vierem no JSON
+        const resto = data.filter((n) => !ordem.includes(n));
+        const ordered = [...inicio, ...resto];
 
         setOnePagers(ordered);
         setBannerIndex(0);
