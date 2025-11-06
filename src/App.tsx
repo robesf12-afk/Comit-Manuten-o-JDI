@@ -264,26 +264,35 @@ const NotifyCTA: React.FC = () => {
         </div>
       </div>
 
-      {debugOpen && (
-        <div style={{ margin: "8px 12px", padding: "8px 12px", border: "1px dashed #bbb", borderRadius: 8, fontSize: 12, background: "#fafafa" }}>
-          <b>Debug Push</b> | permissão: <code>{perm}</code> | inscrito: <code>{String(enabled)}</code> | suportado: <code>{String(isSupported)}</code>
-          {subId ? <> | subId: <code>{subId}</code></> : null}
-          {lastError ? <> | erro: <code>{lastError}</code></> : null}
-          <button style={{ marginLeft: 8 }} onClick={onActivate}>Forçar Prompt</button>
-        </div>
-      )}
+      <div style={{ margin: "8px 12px", padding: "8px 12px", border: "1px dashed #bbb", borderRadius: 8, fontSize: 12, background: "#fafafa" }}>
+        <b>Debug Push</b> | permissão: <code>{perm}</code> | inscrito: <code>{String(enabled)}</code> | suportado: <code>{String(isSupported)}</code>
+        {subId ? <> | subId: <code>{subId}</code></> : null}
+        {lastError ? <> | erro: <code>{lastError}</code></> : null}
+        <button style={{ marginLeft: 8 }} onClick={onActivate}>Forçar Prompt</button>
+      </div>
     </>
   );
 };
 
 export default function App() {
   const [open, setOpen] = useState(false);
+
+  // One Pagers
   const [onePagers, setOnePagers] = useState<string[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [bannerErro, setBannerErro] = useState<string | null>(null);
 
+  // Novos carrosséis
+  const [qdImgs, setQdImgs] = useState<string[]>([]);        // quebra diária
+  const [qdIndex, setQdIndex] = useState(0);
+  const [qdlImgs, setQdlImgs] = useState<string[]>([]);      // quebra por linha
+  const [qdlIndex, setQdlIndex] = useState(0);
+
   const [isNarrow, setIsNarrow] = useState(true);
   const [showIosBanner, setShowIosBanner] = useState(false);
+
+  // util de normalização
+  const norm = (s: string) => s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
 
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
@@ -322,52 +331,86 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // ===== util de normalização para casar nomes de arquivos com tolerância
-  const norm = (s: string) =>
-    s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
-
-  // carrega JSON com cache-busting e ordena de forma determinística
+  /* ===== Carregar ONE PAGERS (ordem fixa: Fábrica → G1 → G2 → G3) ===== */
   useEffect(() => {
     const load = async () => {
       try {
-        // cache-buster para furar SW/CDN/navegador
         const res = await fetch(`/banners_media/onepagers.json?v=${Date.now()}`, { cache: "no-store" });
-        if (!res.ok) throw new Error("não achei onepagers.json");
+        if (!res.ok) throw new Error();
         const dataRaw: string[] = await res.json();
 
-        // mapa normalizado -> nome original
         const mapOrig = new Map<string, string>();
-        for (const name of dataRaw) mapOrig.set(norm(name), name);
+        for (const n of dataRaw) mapOrig.set(norm(n), n);
 
-        // ordem desejada (FÁBRICA → G1 → G2 → G3)
-        const ordemDesejada = [
-          "one pager fabrica.PNG",
-          "one pager G1.PNG",
-          "one pager G2.PNG",
-          "one pager G3.PNG",
-        ];
-
-        // reconstroi em ordem usando o nome original presente no JSON
+        const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
         const ordered: string[] = [];
-        for (const wanted of ordemDesejada) {
+        for (const wanted of ordem) {
           const hit = mapOrig.get(norm(wanted));
           if (hit) ordered.push(hit);
         }
-
-        // extras permanecem após os 4
-        const setOrdered = new Set(ordered);
-        const extras = dataRaw.filter((n) => !setOrdered.has(n));
-
-        const finalList = [...ordered, ...extras];
-
-        setOnePagers(finalList);
+        const extras = dataRaw.filter((n) => !ordered.includes(n));
+        setOnePagers([...ordered, ...extras]);
+        setBannerIndex(0);
         setBannerErro(null);
-        setBannerIndex(0); // garante que começa no primeiro (Fábrica)
       } catch {
         setBannerErro("Não foi possível carregar o carrossel.");
       }
     };
     load();
+  }, []);
+
+  /* ===== Carregar Quebra diária ===== */
+  useEffect(() => {
+    const loadQD = async () => {
+      try {
+        const r = await fetch(`/banners_media/quebra_diaria.json?v=${Date.now()}`, { cache: "no-store" });
+        if (!r.ok) throw new Error();
+        const data: string[] = await r.json();
+
+        const map = new Map<string, string>();
+        for (const n of data) map.set(norm(n), n);
+
+        const ordem = ["quebra diaria - atual.png", "quebra diaria - mês anterior.PNG"];
+        const ordered: string[] = [];
+        for (const want of ordem) {
+          const hit = map.get(norm(want));
+          if (hit) ordered.push(hit);
+        }
+        const extras = data.filter((n) => !ordered.includes(n));
+        setQdImgs([...ordered, ...extras]);
+        setQdIndex(0);
+      } catch {
+        setQdImgs([]);
+      }
+    };
+    loadQD();
+  }, []);
+
+  /* ===== Carregar Quebra por linha ===== */
+  useEffect(() => {
+    const loadQDL = async () => {
+      try {
+        const r = await fetch(`/banners_media/quebra_por_linha.json?v=${Date.now()}`, { cache: "no-store" });
+        if (!r.ok) throw new Error();
+        const data: string[] = await r.json();
+
+        const map = new Map<string, string>();
+        for (const n of data) map.set(norm(n), n);
+
+        const ordem = ["quebra por linha - atual.PNG", "quebra por linha - mês anterior.PNG"];
+        const ordered: string[] = [];
+        for (const want of ordem) {
+          const hit = map.get(norm(want));
+          if (hit) ordered.push(hit);
+        }
+        const extras = data.filter((n) => !ordered.includes(n));
+        setQdlImgs([...ordered, ...extras]);
+        setQdlIndex(0);
+      } catch {
+        setQdlImgs([]);
+      }
+    };
+    loadQDL();
   }, []);
 
   // sem automático
@@ -382,7 +425,7 @@ export default function App() {
     if (onePagers.length > 0) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
   };
 
-  // Swipe no mobile
+  // Swipe no mobile (somente para o carrossel de One Pagers)
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -401,7 +444,7 @@ export default function App() {
     touchEndX.current = null;
   };
 
-  // ⌨️ Atalhos de teclado (desktop)
+  // ⌨️ Atalhos de teclado (desktop) — só para One Pagers
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (window.innerWidth < 701) return;
@@ -425,6 +468,10 @@ export default function App() {
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
+  // helpers para os novos carrosséis
+  const qdCurrent = qdImgs.length ? `/banners_media/${qdImgs[qdIndex]}` : null;
+  const qdlCurrent = qdlImgs.length ? `/banners_media/${qdlImgs[qdlIndex]}` : null;
+
   return (
     <div className="app">
       <style>{`
@@ -447,6 +494,7 @@ export default function App() {
         .notify-text{ font-size:13px; color:#333; }
         .notify-btn{ background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
         .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
+        .section-title{ width:100%; max-width:980px; font-weight:900; font-size:14px; color:#444; margin:6px 0 4px 2px; }
         .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; position:relative; }
         .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; user-select:none; }
         .banner-dots{ display:flex; gap:6px; justify-content:center; }
@@ -523,6 +571,8 @@ export default function App() {
 
       {/* Conteúdo */}
       <main className="banners-container" style={{ paddingTop: mobilePaddingTop }}>
+        {/* ONE PAGERS */}
+        <div className="section-title">ONE PAGER</div>
         {bannerErro ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
             {bannerErro}
@@ -547,7 +597,7 @@ export default function App() {
                       <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
-                  <button className="banner-arrow right" onClick={nextSlide} aria-label="Próximo">
+                  <button className="banner-arrow right" onClick={() => setBannerIndex((p) => (p + 1) % onePagers.length)} aria-label="Próximo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -572,6 +622,87 @@ export default function App() {
           </>
         )}
 
+        {/* QUEBRA DIÁRIA */}
+        <div className="section-title">QUEBRA DIÁRIA</div>
+        {!qdCurrent ? (
+          <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
+            Carregando Quebra Diária...
+          </div>
+        ) : (
+          <>
+            <div className="banner-dinamico">
+              {!isNarrow && qdImgs.length > 1 && (
+                <>
+                  <button className="banner-arrow left" onClick={() => setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length)} aria-label="Anterior">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <button className="banner-arrow right" onClick={() => setQdIndex((p) => (p + 1) % qdImgs.length)} aria-label="Próximo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </>
+              )}
+              <img src={qdCurrent} alt={qdImgs[qdIndex]} />
+            </div>
+            {qdImgs.length > 1 && (
+              <div className="banner-dots">
+                {qdImgs.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`banner-dot ${i === qdIndex ? "active" : ""}`}
+                    onClick={() => setQdIndex(i)}
+                    aria-label={`Ver quadro ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* QUEBRA POR LINHA */}
+        <div className="section-title">QUEBRA POR LINHA</div>
+        {!qdlCurrent ? (
+          <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
+            Carregando Quebra por Linha...
+          </div>
+        ) : (
+          <>
+            <div className="banner-dinamico">
+              {!isNarrow && qdlImgs.length > 1 && (
+                <>
+                  <button className="banner-arrow left" onClick={() => setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length)} aria-label="Anterior">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <button className="banner-arrow right" onClick={() => setQdlIndex((p) => (p + 1) % qdlImgs.length)} aria-label="Próximo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </>
+              )}
+              <img src={qdlCurrent} alt={qdlImgs[qdlIndex]} />
+            </div>
+            {qdlImgs.length > 1 && (
+              <div className="banner-dots">
+                {qdlImgs.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`banner-dot ${i === qdlIndex ? "active" : ""}`}
+                    onClick={() => setQdlIndex(i)}
+                    aria-label={`Ver quadro ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Demais banners estáticos existentes */}
         {STATIC_FROM_FOLDER.map((b, i) => (
           <img key={i} src={b.img} alt={`banner-${i}`} className="static-banner" />
         ))}
@@ -579,3 +710,5 @@ export default function App() {
     </div>
   );
 }
+
+    
