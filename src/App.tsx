@@ -11,7 +11,7 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
-  IconEscola, // novo ícone
+  IconEscola, // precisa existir em ./icons
 } from "./icons";
 
 /* Ícones locais extras */
@@ -74,7 +74,7 @@ const LINKS = {
   controleAprov:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 
-  /* Link novo (Escola Técnica) */
+  /* Escola Técnica */
   escolaDiagnostico:
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89NQvr1f1E89KpsqePqDJsJ9UNzlGS0JOWkVPQjdGUEE4NTRMN1YxUDhaNC4u&origin=Invitation&channel=0",
 } as const;
@@ -108,7 +108,7 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-/* ===== banners estáticos — mantemos os fixos importantes ===== */
+/* ===== banners estáticos — fixos importantes ===== */
 const STATIC_FROM_FOLDER: { img: string }[] = [
   { img: "/banners_media/ASSERTIVIDADE.png" }, // Reconhecimento
   { img: "/banners_media/ÁREAS.jpeg" },        // ÁREAS
@@ -338,7 +338,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  /* ===== Carregar ONE PAGERS (ordem: Fábrica → G1 → G2 → G3) ===== */
+  /* ===== Carregar ONE PAGERS (ordem fixa) ===== */
   useEffect(() => {
     const load = async () => {
       try {
@@ -432,45 +432,31 @@ export default function App() {
     if (onePagers.length > 0) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
   };
 
-  // Swipe no mobile (somente One Pagers)
+  /* ===== Swipe universal (OnePagers, QD, QDL) ===== */
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndX.current = e.touches[0].clientX;
   };
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (type: "onepager" | "qd" | "qdl") => {
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
     const min = 40;
-    if (onePagers.length > 0) {
-      if (diff > min) nextSlide();
-      else if (diff < -min) prevSlide();
+
+    if (diff > min) {
+      if (type === "onepager" && onePagers.length > 0) nextSlide();
+      if (type === "qd" && qdImgs.length > 0) setQdIndex((p) => (p + 1) % qdImgs.length);
+      if (type === "qdl" && qdlImgs.length > 0) setQdlIndex((p) => (p + 1) % qdlImgs.length);
+    } else if (diff < -min) {
+      if (type === "onepager" && onePagers.length > 0) prevSlide();
+      if (type === "qd" && qdImgs.length > 0) setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length);
+      if (type === "qdl" && qdlImgs.length > 0) setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length);
     }
+
     touchStartX.current = null;
     touchEndX.current = null;
   };
-
-  // ⌨️ Atalhos de teclado (desktop)
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (window.innerWidth < 701) return;
-      if (open) return;
-      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      if (["input", "textarea", "select"].includes(tag)) return;
-      if (window.getSelection && String(window.getSelection()).length > 0) return;
-
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        nextSlide();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        prevSlide();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onePagers]);
 
   const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
@@ -511,18 +497,29 @@ export default function App() {
         .ios-hint{ background:#fff7d9; border:1px solid rgba(204,0,0,.35); color:#492100; margin:0 auto; max-width:1200px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; font-size:14px; }
         .ios-hint strong{ display:block; font-size:14px; }
         .ios-hint button{ background:transparent; border:none; font-size:16px; cursor:pointer; margin-left:auto; }
-        .drawer-overlay{ position:fixed;inset:0;background:rgba(0,0,0,.35); transition:opacity .2s ease;z-index:100; }
-        .drawer{ position:fixed;top:0;left:0;height:100dvh;width:320px;max-width:86vw; background:#fff;box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102;display:flex;flex-direction:column; transition:transform .22s ease-out; }
-        .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
-        .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
-        .drawer-ico{color:#cc0000;display:grid;place-items:center;}
-        .banner-arrow{ position:absolute; top:50%; transform:translateY(-50%); width:42px;height:42px; border:none;border-radius:999px; background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25); transition:background .15s ease, transform .15s ease; user-select:none; }
+
+        /* Setas laterais – AGORA visíveis no mobile também */
+        .banner-arrow{
+          position:absolute; top:50%; transform:translateY(-50%);
+          width:42px;height:42px; border:none;border-radius:999px;
+          background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
+          cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
+          transition:background .15s ease, transform .15s ease; user-select:none;
+        }
         .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
         .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
         .banner-arrow.left{ left:10px; }
         .banner-arrow.right{ right:10px; }
         .banner-arrow svg{ width:20px;height:20px; }
-        @media (max-width: 700px){ .banner-arrow{ display:none; } }
+        @media (max-width:700px){
+          .banner-arrow{ width:36px; height:36px; background:rgba(0,0,0,.4); }
+        }
+
+        .drawer-overlay{ position:fixed;inset:0;background:rgba(0,0,0,.35); transition:opacity .2s ease;z-index:100; }
+        .drawer{ position:fixed;top:0;left:0;height:100dvh;width:320px;max-width:86vw; background:#fff;box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102;display:flex;flex-direction:column; transition:transform .22s ease-out; }
+        .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
+        .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
+        .drawer-ico{color:#cc0000;display:grid;place-items:center;}
       `}</style>
 
       {/* Topbar */}
@@ -586,9 +583,9 @@ export default function App() {
               className="banner-dinamico"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
+              onTouchEnd={() => handleTouchEnd("onepager")}
             >
-              {onePagers.length > 1 && !isNarrow && (
+              {onePagers.length > 1 && (
                 <>
                   <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -628,8 +625,13 @@ export default function App() {
           </div>
         ) : (
           <>
-            <div className="banner-dinamico">
-              {!isNarrow && qdImgs.length > 1 && (
+            <div
+              className="banner-dinamico"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={() => handleTouchEnd("qd")}
+            >
+              {qdImgs.length > 1 && (
                 <>
                   <button className="banner-arrow left" onClick={() => setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length)} aria-label="Anterior">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -668,8 +670,13 @@ export default function App() {
           </div>
         ) : (
           <>
-            <div className="banner-dinamico">
-              {!isNarrow && qdlImgs.length > 1 && (
+            <div
+              className="banner-dinamico"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={() => handleTouchEnd("qdl")}
+            >
+              {qdlImgs.length > 1 && (
                 <>
                   <button className="banner-arrow left" onClick={() => setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length)} aria-label="Anterior">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -714,5 +721,3 @@ export default function App() {
     </div>
   );
 }
-
-      
