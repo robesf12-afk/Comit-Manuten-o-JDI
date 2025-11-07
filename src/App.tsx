@@ -11,6 +11,7 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
+  IconEscola, // 👈 NOVO
 } from "./icons";
 
 /* Ícones locais extras */
@@ -72,6 +73,10 @@ const LINKS = {
     "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
   controleAprov:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
+
+  /* 👇 NOVO link pedido */
+  escolaDiagnostico:
+    "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89NQvr1f1E89KpsqePqDJsJ9UNzlGS0JOWkVPQjdGUEE4NTRMN1YxUDhaNC4u&origin=Invitation&channel=0",
 } as const;
 
 /* Menu */
@@ -93,6 +98,10 @@ const MENU = [
 
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
+
+  /* 👇 NOVO item exatamente abaixo de Treinamentos */
+  { id: "escola-tecnica", title: "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento", url: LINKS.escolaDiagnostico, Icon: IconEscola },
+
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
   { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
   { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconDoc },
@@ -710,5 +719,3 @@ export default function App() {
     </div>
   );
 }
-
-    
