@@ -154,4 +154,227 @@ export function IconDDM({ size, ...rest }: Props) {
         stroke={STROKE}
         strokeWidth={1.8}
         strokeLinecap="round"
-        strokeLinej
+        strokeLinejoin="round"
+      />
+      <circle cx="7.7" cy="11" r={0.9} fill={ACCENT} />
+      <circle cx="10.3" cy="11" r={0.9} fill={ACCENT} />
+    </SvgBase>
+  );
+}
+
+/** Informativos (ícone i) */
+export function IconInfo({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      <rect
+        x="4"
+        y="3.5"
+        width="16"
+        height="17"
+        rx="3.5"
+        fill={FILL_SOFT}
+      />
+      <rect
+        x="4"
+        y="3.5"
+        width="16"
+        height="17"
+        rx="3.5"
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.8}
+      />
+      <circle cx="12" cy="8" r={1.1} fill={ACCENT} />
+      <path
+        d="M11 11.5h2V17h-2"
+        stroke={STROKE}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+      />
+    </SvgBase>
+  );
+}
+
+/** One Pager (documento simples) */
+export function IconOnePager({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      <path
+        d="M7 3.5h6l4 4V20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z"
+        fill={FILL_SOFT}
+      />
+      <path
+        d="M13 3.5v4h4"
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.5 12h7M8.5 15h5"
+        stroke={STROKE}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+      />
+    </SvgBase>
+  );
+}
+
+/** Papéis & Responsabilidades (bússola) */
+export function IconPapeis({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      <circle cx="12" cy="12" r="9" fill={FILL_SOFT} />
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.8}
+      />
+      <path d="M12 7l3 5-5 3 2-8Z" fill={ACCENT} opacity={0.9} />
+      <circle cx="12" cy="12" r={1} fill="#fff" />
+    </SvgBase>
+  );
+}
+
+/** Treinamentos (alvo) */
+export function IconTreinamentos({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      <circle cx="12" cy="12" r="9" fill={FILL_SOFT} />
+      <circle
+        cx="12"
+        cy="12"
+        r="6"
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.8}
+      />
+      <circle cx="12" cy="12" r="3" fill={ACCENT} />
+      <path d="M18 6l-3 3" stroke={STROKE} strokeWidth={1.8} strokeLinecap="round" />
+    </SvgBase>
+  );
+}
+
+/** Registro PCM / Pastas (pasta) */
+export function IconRegistroPCM({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      <path
+        d="M4 8.5h6l1.8-1.8H20a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7.5a2 2 0 0 1 2-2Z"
+        fill={FILL_SOFT}
+      />
+      <path
+        d="M4 8.5h6l1.8-1.8H20a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7.5a2 2 0 0 1 2-2Z"
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.8}
+        strokeLinejoin="round"
+      />
+      <path d="M7.5 14h9" stroke={ACCENT} strokeWidth={1.8} strokeLinecap="round" />
+    </SvgBase>
+  );
+}
+
+/** Reconhecimentos (medalha) */
+export function IconReconhecimentos({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      <path d="M8 3h8l-2 4H10L8 3Z" fill={ACCENT} />
+      <circle cx="12" cy="13" r="5" fill={FILL_SOFT} />
+      <circle
+        cx="12"
+        cy="13"
+        r="5"
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.8}
+      />
+      <path
+        d="M12 10.8v2.2l1.6.9"
+        stroke={STROKE}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </SvgBase>
+  );
+}
+
+/* ===========================
+   NOVOS ÍCONES SOLICITADOS
+   =========================== */
+
+/** Programação de PCM (calendário + engrenagem) */
+export function IconProgPCM({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      {/* base do calendário */}
+      <rect x="3" y="5" width="18" height="16" rx="3" fill={FILL_SOFT} />
+      <rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke={STROKE} strokeWidth={1.8} />
+      <path d="M3 9h18M8 4v3M16 4v3" stroke={STROKE} strokeWidth={1.8} strokeLinecap="round" />
+      {/* engrenagem pequena à direita */}
+      <g transform="translate(12.5,12.5)">
+        <circle r="3.2" fill="none" stroke={ACCENT} strokeWidth={1.8} />
+        <path d="M0 -4.4v2.1M0 4.4v-2.1M-4.4 0h2.1M4.4 0h-2.1" stroke={ACCENT} strokeWidth={1.6} strokeLinecap="round" />
+        <path d="M-2.8 -2.8l1.2 1.2M2.8 2.8l-1.2-1.2M-2.8 2.8l1.2-1.2M2.8 -2.8l-1.2 1.2" stroke={ACCENT} strokeWidth={1.6} strokeLinecap="round" />
+        <circle r="1.1" fill={ACCENT} />
+      </g>
+    </SvgBase>
+  );
+}
+
+/** Painel de Distribuição de Horas (relógio/gráfico) */
+export function IconPainelHoras({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      <circle cx="12" cy="12" r="9" fill={FILL_SOFT} />
+      <circle cx="12" cy="12" r="9" fill="none" stroke={STROKE} strokeWidth={1.8} />
+      {/* marcações do relógio */}
+      <path d="M12 4.5v2M12 17.5v2M4.5 12h2M17.5 12h2" stroke={STROKE} strokeWidth={1.6} strokeLinecap="round" />
+      {/* ponteiros */}
+      <path d="M12 8v4l2.6 1.6" stroke={ACCENT} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" />
+      {/* setor em destaque (gráfico) */}
+      <path d="M12 12l5 -1.2A6 6 0 0 0 12 6v6Z" fill={ACCENT} opacity={0.25} />
+    </SvgBase>
+  );
+}
+
+/** Escola Técnica KOF (chapéu de formatura) */
+export function IconEscola({ size, ...rest }: Props) {
+  return (
+    <SvgBase size={size} {...rest}>
+      {/* base suave */}
+      <rect x="3" y="5" width="18" height="14" rx="3" fill={FILL_SOFT} />
+      <rect x="3" y="5" width="18" height="14" rx="3" fill="none" stroke={STROKE} strokeWidth={1.8} />
+      {/* chapéu */}
+      <path
+        d="M12 7 4 10.2l8 3.2 8-3.2L12 7Z"
+        fill="#fff"
+        stroke={STROKE}
+        strokeWidth={1.6}
+        strokeLinejoin="round"
+      />
+      {/* franja/tassel */}
+      <path
+        d="M20 10.2v3.2"
+        stroke={ACCENT}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+      />
+      <circle cx="20" cy="13.9" r="0.9" fill={ACCENT} />
+      {/* base (livro/apoio) */}
+      <path
+        d="M6 15.2c0 1.4 3 2.6 6 2.6s6-1.2 6-2.6"
+        stroke={STROKE}
+        strokeWidth={1.6}
+        fill="none"
+        strokeLinecap="round"
+      />
+    </SvgBase>
+  );
+}
+
