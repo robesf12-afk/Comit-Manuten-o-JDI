@@ -11,7 +11,7 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
-  IconEscola, // precisa existir em ./icons
+  IconEscola, // precisa existir em ./icons (enviei antes)
 } from "./icons";
 
 /* Ícones locais extras */
@@ -113,6 +113,18 @@ const STATIC_FROM_FOLDER: { img: string }[] = [
   { img: "/banners_media/ASSERTIVIDADE.png" }, // Reconhecimento
   { img: "/banners_media/ÁREAS.jpeg" },        // ÁREAS
 ];
+
+/* ====== PRELOAD util ====== */
+const loadedImages = new Set<string>();
+function preloadImage(url: string | null) {
+  if (!url || loadedImages.has(url)) return;
+  const img = new Image();
+  img.src = url;
+  img.onload = () => loadedImages.add(url);
+}
+function buildUrl(file?: string) {
+  return file ? `/banners_media/${file}` : null;
+}
 
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
@@ -298,6 +310,11 @@ export default function App() {
   const [isNarrow, setIsNarrow] = useState(true);
   const [showIosBanner, setShowIosBanner] = useState(false);
 
+  // Estados de "imagem atual carregou?" para skeleton
+  const [readyOne, setReadyOne] = useState(false);
+  const [readyQD, setReadyQD] = useState(false);
+  const [readyQDL, setReadyQDL] = useState(false);
+
   // util de normalização
   const norm = (s: string) => s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
 
@@ -356,9 +373,18 @@ export default function App() {
           if (hit) ordered.push(hit);
         }
         const extras = dataRaw.filter((n) => !ordered.includes(n));
-        setOnePagers([...ordered, ...extras]);
+        const final = [...ordered, ...extras];
+        setOnePagers(final);
         setBannerIndex(0);
         setBannerErro(null);
+
+        // PRELOAD primeiros (atual, prox, anterior)
+        const u0 = buildUrl(final[0]);
+        const u1 = buildUrl(final[1]);
+        const uPrev = buildUrl(final[final.length - 1]);
+        preloadImage(u0);
+        preloadImage(u1);
+        preloadImage(uPrev);
       } catch {
         setBannerErro("Não foi possível carregar o carrossel.");
       }
@@ -384,8 +410,12 @@ export default function App() {
           if (hit) ordered.push(hit);
         }
         const extras = data.filter((n) => !ordered.includes(n));
-        setQdImgs([...ordered, ...extras]);
+        const final = [...ordered, ...extras];
+        setQdImgs(final);
         setQdIndex(0);
+
+        preloadImage(buildUrl(final[0]));
+        preloadImage(buildUrl(final[1]));
       } catch {
         setQdImgs([]);
       }
@@ -411,14 +441,52 @@ export default function App() {
           if (hit) ordered.push(hit);
         }
         const extras = data.filter((n) => !ordered.includes(n));
-        setQdlImgs([...ordered, ...extras]);
+        const final = [...ordered, ...extras];
+        setQdlImgs(final);
         setQdlIndex(0);
+
+        preloadImage(buildUrl(final[0]));
+        preloadImage(buildUrl(final[1]));
       } catch {
         setQdlImgs([]);
       }
     };
     loadQDL();
   }, []);
+
+  // quando muda o índice, pré-carrega prox e anterior
+  useEffect(() => {
+    if (!onePagers.length) return;
+    const cur = buildUrl(onePagers[bannerIndex]);
+    const next = buildUrl(onePagers[(bannerIndex + 1) % onePagers.length]);
+    const prev = buildUrl(onePagers[(bannerIndex - 1 + onePagers.length) % onePagers.length]);
+    preloadImage(cur);
+    preloadImage(next);
+    preloadImage(prev);
+    setReadyOne(loadedImages.has(cur!));
+  }, [bannerIndex, onePagers]);
+
+  useEffect(() => {
+    if (!qdImgs.length) return;
+    const cur = buildUrl(qdImgs[qdIndex]);
+    const next = buildUrl(qdImgs[(qdIndex + 1) % qdImgs.length]);
+    const prev = buildUrl(qdImgs[(qdIndex - 1 + qdImgs.length) % qdImgs.length]);
+    preloadImage(cur);
+    preloadImage(next);
+    preloadImage(prev);
+    setReadyQD(loadedImages.has(cur!));
+  }, [qdIndex, qdImgs]);
+
+  useEffect(() => {
+    if (!qdlImgs.length) return;
+    const cur = buildUrl(qdlImgs[qdlIndex]);
+    const next = buildUrl(qdlImgs[(qdlIndex + 1) % qdlImgs.length]);
+    const prev = buildUrl(qdlImgs[(qdlIndex - 1 + qdlImgs.length) % qdlImgs.length]);
+    preloadImage(cur);
+    preloadImage(next);
+    preloadImage(prev);
+    setReadyQDL(loadedImages.has(cur!));
+  }, [qdlIndex, qdlImgs]);
 
   // sem automático
   useEffect(() => {
@@ -458,12 +526,12 @@ export default function App() {
     touchEndX.current = null;
   };
 
-  const currentOnePager = onePagers.length ? `/banners_media/${onePagers[bannerIndex]}` : null;
+  const currentOnePager = onePagers.length ? buildUrl(onePagers[bannerIndex]) : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
   // helpers para os novos carrosséis
-  const qdCurrent = qdImgs.length ? `/banners_media/${qdImgs[qdIndex]}` : null;
-  const qdlCurrent = qdlImgs.length ? `/banners_media/${qdlImgs[qdlIndex]}` : null;
+  const qdCurrent = qdImgs.length ? buildUrl(qdImgs[qdIndex]) : null;
+  const qdlCurrent = qdlImgs.length ? buildUrl(qdlImgs[qdlIndex]) : null;
 
   return (
     <div className="app">
@@ -488,8 +556,21 @@ export default function App() {
         .notify-btn{ background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
         .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
         .section-title{ width:100%; max-width:980px; font-weight:900; font-size:14px; color:#444; margin:6px 0 4px 2px; }
-        .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; position:relative; }
-        .banner-dinamico img{ width:100%; height:auto; display:block; touch-action:auto; user-select:none; }
+
+        /* Mantém proporção enquanto carrega para evitar "pulo" de layout */
+        .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; position:relative; aspect-ratio: 16 / 9; }
+        .banner-dinamico img{ width:100%; height:100%; object-fit:contain; display:block; touch-action:auto; user-select:none; pointer-events:none; }
+
+        /* Skeleton shimmer enquanto a imagem não estiver ready */
+        .loading-overlay{
+          position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+          background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.05) 100%);
+          background-size: 200% 100%;
+          animation: shimmer 1.2s infinite linear;
+          color:#fff; font-weight:700; letter-spacing:.3px;
+        }
+        @keyframes shimmer{ 0%{ background-position:200% 0 } 100%{ background-position:-200% 0 } }
+
         .banner-dots{ display:flex; gap:6px; justify-content:center; }
         .banner-dot{ width:9px;height:9px;border-radius:999px;background:#ddd;border:none; cursor:pointer; }
         .banner-dot.active{ background:#cc0000;width:28px; }
@@ -498,13 +579,14 @@ export default function App() {
         .ios-hint strong{ display:block; font-size:14px; }
         .ios-hint button{ background:transparent; border:none; font-size:16px; cursor:pointer; margin-left:auto; }
 
-        /* Setas laterais – AGORA visíveis no mobile também */
+        /* Setas laterais – visíveis no mobile e acima da imagem */
         .banner-arrow{
           position:absolute; top:50%; transform:translateY(-50%);
           width:42px;height:42px; border:none;border-radius:999px;
           background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
           cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
           transition:background .15s ease, transform .15s ease; user-select:none;
+          z-index:5;
         }
         .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
         .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
@@ -566,7 +648,7 @@ export default function App() {
       </aside>
 
       {/* Conteúdo */}
-      <main className="banners-container" style={{ paddingTop: mobilePaddingTop }}>
+      <main className="banners-container" style={{ paddingTop: isNarrow ? 33 : 28 }}>
         {/* ONE PAGER */}
         <div className="section-title">ONE PAGER</div>
         {bannerErro ? (
@@ -587,12 +669,12 @@ export default function App() {
             >
               {onePagers.length > 1 && (
                 <>
-                  <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior">
+                  <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior" type="button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
-                  <button className="banner-arrow right" onClick={() => setBannerIndex((p) => (p + 1) % onePagers.length)} aria-label="Próximo">
+                  <button className="banner-arrow right" onClick={() => setBannerIndex((p) => (p + 1) % onePagers.length)} aria-label="Próximo" type="button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -600,7 +682,16 @@ export default function App() {
                 </>
               )}
 
-              <img src={currentOnePager} alt={onePagers[bannerIndex]} />
+              {/* skeleton até carregar */}
+              {!readyOne && <div className="loading-overlay">Carregando…</div>}
+              <img
+                src={currentOnePager}
+                alt={onePagers[bannerIndex]}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                onLoad={() => setReadyOne(true)}
+              />
             </div>
             {onePagers.length > 1 && (
               <div className="banner-dots">
@@ -610,6 +701,7 @@ export default function App() {
                     className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
                     onClick={() => setBannerIndex(i)}
                     aria-label={`Ver banner ${i + 1}`}
+                    type="button"
                   />
                 ))}
               </div>
@@ -633,19 +725,27 @@ export default function App() {
             >
               {qdImgs.length > 1 && (
                 <>
-                  <button className="banner-arrow left" onClick={() => setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length)} aria-label="Anterior">
+                  <button className="banner-arrow left" onClick={() => setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length)} aria-label="Anterior" type="button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
-                  <button className="banner-arrow right" onClick={() => setQdIndex((p) => (p + 1) % qdImgs.length)} aria-label="Próximo">
+                  <button className="banner-arrow right" onClick={() => setQdIndex((p) => (p + 1) % qdImgs.length)} aria-label="Próximo" type="button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
                 </>
               )}
-              <img src={qdCurrent} alt={qdImgs[qdIndex]} />
+              {!readyQD && <div className="loading-overlay">Carregando…</div>}
+              <img
+                src={qdCurrent!}
+                alt={qdImgs[qdIndex]}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                onLoad={() => setReadyQD(true)}
+              />
             </div>
             {qdImgs.length > 1 && (
               <div className="banner-dots">
@@ -655,6 +755,7 @@ export default function App() {
                     className={`banner-dot ${i === qdIndex ? "active" : ""}`}
                     onClick={() => setQdIndex(i)}
                     aria-label={`Ver quadro ${i + 1}`}
+                    type="button"
                   />
                 ))}
               </div>
@@ -678,19 +779,27 @@ export default function App() {
             >
               {qdlImgs.length > 1 && (
                 <>
-                  <button className="banner-arrow left" onClick={() => setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length)} aria-label="Anterior">
+                  <button className="banner-arrow left" onClick={() => setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length)} aria-label="Anterior" type="button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
-                  <button className="banner-arrow right" onClick={() => setQdlIndex((p) => (p + 1) % qdlImgs.length)} aria-label="Próximo">
+                  <button className="banner-arrow right" onClick={() => setQdlIndex((p) => (p + 1) % qdlImgs.length)} aria-label="Próximo" type="button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
                 </>
               )}
-              <img src={qdlCurrent} alt={qdlImgs[qdlIndex]} />
+              {!readyQDL && <div className="loading-overlay">Carregando…</div>}
+              <img
+                src={qdlCurrent!}
+                alt={qdlImgs[qdlIndex]}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                onLoad={() => setReadyQDL(true)}
+              />
             </div>
             {qdlImgs.length > 1 && (
               <div className="banner-dots">
@@ -700,6 +809,7 @@ export default function App() {
                     className={`banner-dot ${i === qdlIndex ? "active" : ""}`}
                     onClick={() => setQdlIndex(i)}
                     aria-label={`Ver quadro ${i + 1}`}
+                    type="button"
                   />
                 ))}
               </div>
@@ -715,9 +825,13 @@ export default function App() {
             alt=""
             className="static-banner"
             onError={(e) => (e.currentTarget.style.display = "none")}
+            loading="lazy"
+            decoding="async"
           />
         ))}
       </main>
     </div>
   );
 }
+
+
