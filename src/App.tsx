@@ -122,8 +122,9 @@ function preloadImage(url: string | null) {
   img.src = url;
   img.onload = () => loadedImages.add(url);
 }
-function buildUrl(file?: string) {
-  return file ? `/banners_media/${file}` : null;
+/** Monta a URL da imagem com cache-busting (?v=assetV) */
+function buildUrl(file?: string, v?: number) {
+  return file ? `/banners_media/${file}?v=${v ?? ""}` : null;
 }
 
 /* ===== CTA de Notificações com diagnóstico ===== */
@@ -315,6 +316,9 @@ export default function App() {
   const [readyQD, setReadyQD] = useState(false);
   const [readyQDL, setReadyQDL] = useState(false);
 
+  // Versão dos assets para cache-busting
+  const [assetV, setAssetV] = useState<number>(Date.now());
+
   // util de normalização
   const norm = (s: string) => s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
 
@@ -379,17 +383,21 @@ export default function App() {
         setBannerErro(null);
 
         // PRELOAD primeiros (atual, prox, anterior)
-        const u0 = buildUrl(final[0]);
-        const u1 = buildUrl(final[1]);
-        const uPrev = buildUrl(final[final.length - 1]);
+        const u0 = buildUrl(final[0], assetV);
+        const u1 = buildUrl(final[1], assetV);
+        const uPrev = buildUrl(final[final.length - 1], assetV);
         preloadImage(u0);
         preloadImage(u1);
         preloadImage(uPrev);
+
+        // Atualiza versão para bustar cache de imagens novas
+        setAssetV(Date.now());
       } catch {
         setBannerErro("Não foi possível carregar o carrossel.");
       }
     };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ===== Carregar Quebra diária ===== */
@@ -414,13 +422,17 @@ export default function App() {
         setQdImgs(final);
         setQdIndex(0);
 
-        preloadImage(buildUrl(final[0]));
-        preloadImage(buildUrl(final[1]));
+        preloadImage(buildUrl(final[0], assetV));
+        preloadImage(buildUrl(final[1], assetV));
+
+        // força nova versão
+        setAssetV(Date.now());
       } catch {
         setQdImgs([]);
       }
     };
     loadQD();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ===== Carregar Quebra por linha ===== */
@@ -445,48 +457,52 @@ export default function App() {
         setQdlImgs(final);
         setQdlIndex(0);
 
-        preloadImage(buildUrl(final[0]));
-        preloadImage(buildUrl(final[1]));
+        preloadImage(buildUrl(final[0], assetV));
+        preloadImage(buildUrl(final[1], assetV));
+
+        // força nova versão
+        setAssetV(Date.now());
       } catch {
         setQdlImgs([]);
       }
     };
     loadQDL();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // quando muda o índice, pré-carrega prox e anterior
+  // quando muda o índice, pré-carrega prox e anterior (inclui assetV)
   useEffect(() => {
     if (!onePagers.length) return;
-    const cur = buildUrl(onePagers[bannerIndex]);
-    const next = buildUrl(onePagers[(bannerIndex + 1) % onePagers.length]);
-    const prev = buildUrl(onePagers[(bannerIndex - 1 + onePagers.length) % onePagers.length]);
+    const cur = buildUrl(onePagers[bannerIndex], assetV);
+    const next = buildUrl(onePagers[(bannerIndex + 1) % onePagers.length], assetV);
+    const prev = buildUrl(onePagers[(bannerIndex - 1 + onePagers.length) % onePagers.length], assetV);
     preloadImage(cur);
     preloadImage(next);
     preloadImage(prev);
-    setReadyOne(loadedImages.has(cur!));
-  }, [bannerIndex, onePagers]);
+    setReadyOne(!!cur && loadedImages.has(cur));
+  }, [bannerIndex, onePagers, assetV]);
 
   useEffect(() => {
     if (!qdImgs.length) return;
-    const cur = buildUrl(qdImgs[qdIndex]);
-    const next = buildUrl(qdImgs[(qdIndex + 1) % qdImgs.length]);
-    const prev = buildUrl(qdImgs[(qdIndex - 1 + qdImgs.length) % qdImgs.length]);
+    const cur = buildUrl(qdImgs[qdIndex], assetV);
+    const next = buildUrl(qdImgs[(qdIndex + 1) % qdImgs.length], assetV);
+    const prev = buildUrl(qdImgs[(qdIndex - 1 + qdImgs.length) % qdImgs.length], assetV);
     preloadImage(cur);
     preloadImage(next);
     preloadImage(prev);
-    setReadyQD(loadedImages.has(cur!));
-  }, [qdIndex, qdImgs]);
+    setReadyQD(!!cur && loadedImages.has(cur));
+  }, [qdIndex, qdImgs, assetV]);
 
   useEffect(() => {
     if (!qdlImgs.length) return;
-    const cur = buildUrl(qdlImgs[qdlIndex]);
-    const next = buildUrl(qdlImgs[(qdlIndex + 1) % qdlImgs.length]);
-    const prev = buildUrl(qdlImgs[(qdlIndex - 1 + qdlImgs.length) % qdlImgs.length]);
+    const cur = buildUrl(qdlImgs[qdlIndex], assetV);
+    const next = buildUrl(qdlImgs[(qdlIndex + 1) % qdlImgs.length], assetV);
+    const prev = buildUrl(qdlImgs[(qdlIndex - 1 + qdlImgs.length) % qdlImgs.length], assetV);
     preloadImage(cur);
     preloadImage(next);
     preloadImage(prev);
-    setReadyQDL(loadedImages.has(cur!));
-  }, [qdlIndex, qdlImgs]);
+    setReadyQDL(!!cur && loadedImages.has(cur));
+  }, [qdlIndex, qdlImgs, assetV]);
 
   // sem automático
   useEffect(() => {
@@ -526,12 +542,12 @@ export default function App() {
     touchEndX.current = null;
   };
 
-  const currentOnePager = onePagers.length ? buildUrl(onePagers[bannerIndex]) : null;
+  const currentOnePager = onePagers.length ? buildUrl(onePagers[bannerIndex], assetV) : null;
   const mobilePaddingTop = isNarrow ? 33 : 28;
 
   // helpers para os novos carrosséis
-  const qdCurrent = qdImgs.length ? buildUrl(qdImgs[qdIndex]) : null;
-  const qdlCurrent = qdlImgs.length ? buildUrl(qdlImgs[qdlIndex]) : null;
+  const qdCurrent = qdImgs.length ? buildUrl(qdImgs[qdIndex], assetV) : null;
+  const qdlCurrent = qdlImgs.length ? buildUrl(qdlImgs[qdlIndex], assetV) : null;
 
   return (
     <div className="app">
@@ -685,7 +701,7 @@ export default function App() {
               {/* skeleton até carregar */}
               {!readyOne && <div className="loading-overlay">Carregando…</div>}
               <img
-                src={currentOnePager}
+                src={currentOnePager!}
                 alt={onePagers[bannerIndex]}
                 loading="eager"
                 decoding="async"
@@ -833,5 +849,3 @@ export default function App() {
     </div>
   );
 }
-
-
