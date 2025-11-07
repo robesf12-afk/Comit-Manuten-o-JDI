@@ -11,7 +11,7 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
-  IconEscola, // 👈 novo ícone
+  IconEscola, // novo ícone
 } from "./icons";
 
 /* Ícones locais extras */
@@ -74,7 +74,7 @@ const LINKS = {
   controleAprov:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 
-  /* 👇 link novo (Escola Técnica) */
+  /* Link novo (Escola Técnica) */
   escolaDiagnostico:
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89NQvr1f1E89KpsqePqDJsJ9UNzlGS0JOWkVPQjdGUEE4NTRMN1YxUDhaNC4u&origin=Invitation&channel=0",
 } as const;
@@ -99,7 +99,7 @@ const MENU = [
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
 
-  /* 👇 novo item exatamente abaixo de Treinamentos */
+  /* NOVO: abaixo de Treinamentos */
   { id: "escola-tecnica", title: "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento", url: LINKS.escolaDiagnostico, Icon: IconEscola },
 
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
@@ -108,8 +108,11 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-/* ===== banners estáticos: ESVAZIADO para sumir os “banner-1/2” ===== */
-const STATIC_FROM_FOLDER: { img: string }[] = [];
+/* ===== banners estáticos — mantemos os fixos importantes ===== */
+const STATIC_FROM_FOLDER: { img: string }[] = [
+  { img: "/banners_media/ASSERTIVIDADE.png" }, // Reconhecimento
+  { img: "/banners_media/ÁREAS.jpeg" },        // ÁREAS
+];
 
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
@@ -335,7 +338,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  /* ===== Carregar ONE PAGERS (ordem fixa: Fábrica → G1 → G2 → G3) ===== */
+  /* ===== Carregar ONE PAGERS (ordem: Fábrica → G1 → G2 → G3) ===== */
   useEffect(() => {
     const load = async () => {
       try {
@@ -429,7 +432,7 @@ export default function App() {
     if (onePagers.length > 0) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
   };
 
-  // Swipe no mobile (somente para o carrossel de One Pagers)
+  // Swipe no mobile (somente One Pagers)
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -448,7 +451,7 @@ export default function App() {
     touchEndX.current = null;
   };
 
-  // ⌨️ Atalhos de teclado (desktop) — só para One Pagers
+  // ⌨️ Atalhos de teclado (desktop)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (window.innerWidth < 701) return;
@@ -567,7 +570,7 @@ export default function App() {
 
       {/* Conteúdo */}
       <main className="banners-container" style={{ paddingTop: mobilePaddingTop }}>
-        {/* ONE PAGERS */}
+        {/* ONE PAGER */}
         <div className="section-title">ONE PAGER</div>
         {bannerErro ? (
           <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
@@ -697,12 +700,19 @@ export default function App() {
           </>
         )}
 
-        {/* (sem banners estáticos) */}
+        {/* Banners estáticos fixos (Reconhecimento + ÁREAS) */}
         {STATIC_FROM_FOLDER.map((b, i) => (
-          <img key={i} src={b.img} alt="" className="static-banner" />
+          <img
+            key={i}
+            src={b.img}
+            alt=""
+            className="static-banner"
+            onError={(e) => (e.currentTarget.style.display = "none")}
+          />
         ))}
       </main>
     </div>
   );
 }
 
+      
