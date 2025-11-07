@@ -11,7 +11,7 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
-  IconEscola, // precisa existir em ./icons (enviei antes)
+  IconEscola, // precisa existir em ./icons
 } from "./icons";
 
 /* Ícones locais extras */
@@ -86,20 +86,16 @@ const MENU = [
   { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
   { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
 
-  /* Novo item abaixo do Painel */
   { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua linha/área", url: LINKS.backlog, Icon: IconChecklist },
 
   { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
   { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
   { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
 
-  /* Novo item abaixo de Custo de Manutenção */
   { id: "controle-aprov", title: "Controle de aprovação de ordens", url: LINKS.controleAprov, Icon: IconDoc },
 
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
-
-  /* NOVO: abaixo de Treinamentos */
   { id: "escola-tecnica", title: "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento", url: LINKS.escolaDiagnostico, Icon: IconEscola },
 
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
@@ -110,8 +106,8 @@ const MENU = [
 
 /* ===== banners estáticos — fixos importantes ===== */
 const STATIC_FROM_FOLDER: { img: string }[] = [
-  { img: "/banners_media/ASSERTIVIDADE.png" }, // Reconhecimento
-  { img: "/banners_media/ÁREAS.jpeg" },        // ÁREAS
+  { img: "/banners_media/ASSERTIVIDADE.png" },
+  { img: "/banners_media/ÁREAS.jpeg" },
 ];
 
 /* ====== PRELOAD util ====== */
@@ -122,10 +118,91 @@ function preloadImage(url: string | null) {
   img.src = url;
   img.onload = () => loadedImages.add(url);
 }
+
 /** Monta a URL da imagem com cache-busting (?v=assetV) */
 function buildUrl(file?: string, v?: number) {
   return file ? `/banners_media/${file}?v=${v ?? ""}` : null;
 }
+
+/** Componente que tenta variações de extensão (png/PNG/jpg/JPG/jpeg/JPEG) caso a primeira falhe */
+const SmartImg: React.FC<{
+  src: string;
+  alt: string;
+  className?: string;
+  onLoad?: () => void;
+  loading?: "eager" | "lazy";
+  decoding?: "auto" | "sync" | "async";
+  fetchPriority?: "high" | "low" | "auto";
+  onErrorHide?: boolean; // para estáticos opcionais
+}> = ({ src, alt, className, onLoad, loading, decoding, fetchPriority, onErrorHide }) => {
+  const [current, setCurrent] = useState(src);
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    setCurrent(src);
+    setIdx(0);
+  }, [src]);
+
+  const makeVariants = (u: string) => {
+    const [base, query = ""] = u.split("?");
+    const q = query ? "?" + query : "";
+    const dot = base.lastIndexOf(".");
+    if (dot < 0) return [u];
+
+    const name = base.substring(0, dot);
+    const ext = base.substring(dot + 1);
+    const extLower = ext.toLowerCase();
+
+    const variants = new Set<string>();
+    variants.add(`${name}.${ext}${q}`);
+
+    if (extLower === "png") {
+      variants.add(`${name}.PNG${q}`);
+      variants.add(`${name}.png${q}`);
+    } else if (extLower === "jpg") {
+      variants.add(`${name}.JPG${q}`);
+      variants.add(`${name}.jpg${q}`);
+      variants.add(`${name}.jpeg${q}`);
+      variants.add(`${name}.JPEG${q}`);
+    } else if (extLower === "jpeg") {
+      variants.add(`${name}.JPEG${q}`);
+      variants.add(`${name}.jpeg${q}`);
+      variants.add(`${name}.jpg${q}`);
+      variants.add(`${name}.JPG${q}`);
+    } else {
+      // fallback básico: tentar uppercase/lowercase
+      variants.add(`${name}.${ext.toUpperCase()}${q}`);
+      variants.add(`${name}.${ext.toLowerCase()}${q}`);
+    }
+    return Array.from(variants);
+  };
+
+  const variants = makeVariants(src);
+
+  return (
+    <img
+      src={current}
+      alt={alt}
+      className={className}
+      loading={loading}
+      decoding={decoding}
+      fetchPriority={fetchPriority}
+      onLoad={() => {
+        loadedImages.add(current);
+        onLoad?.();
+      }}
+      onError={(e) => {
+        const next = idx + 1;
+        if (next < variants.length) {
+          setIdx(next);
+          setCurrent(variants[next]);
+        } else if (onErrorHide) {
+          (e.currentTarget as HTMLImageElement).style.display = "none";
+        }
+      }}
+    />
+  );
+};
 
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
@@ -383,14 +460,11 @@ export default function App() {
         setBannerErro(null);
 
         // PRELOAD primeiros (atual, prox, anterior)
-        const u0 = buildUrl(final[0], assetV);
-        const u1 = buildUrl(final[1], assetV);
-        const uPrev = buildUrl(final[final.length - 1], assetV);
-        preloadImage(u0);
-        preloadImage(u1);
-        preloadImage(uPrev);
+        preloadImage(buildUrl(final[0], assetV));
+        preloadImage(buildUrl(final[1], assetV));
+        preloadImage(buildUrl(final[final.length - 1], assetV));
 
-        // Atualiza versão para bustar cache de imagens novas
+        // quebra cache pós-carregamento
         setAssetV(Date.now());
       } catch {
         setBannerErro("Não foi possível carregar o carrossel.");
@@ -425,7 +499,6 @@ export default function App() {
         preloadImage(buildUrl(final[0], assetV));
         preloadImage(buildUrl(final[1], assetV));
 
-        // força nova versão
         setAssetV(Date.now());
       } catch {
         setQdImgs([]);
@@ -460,7 +533,6 @@ export default function App() {
         preloadImage(buildUrl(final[0], assetV));
         preloadImage(buildUrl(final[1], assetV));
 
-        // força nova versão
         setAssetV(Date.now());
       } catch {
         setQdlImgs([]);
@@ -473,35 +545,29 @@ export default function App() {
   // quando muda o índice, pré-carrega prox e anterior (inclui assetV)
   useEffect(() => {
     if (!onePagers.length) return;
-    const cur = buildUrl(onePagers[bannerIndex], assetV);
-    const next = buildUrl(onePagers[(bannerIndex + 1) % onePagers.length], assetV);
-    const prev = buildUrl(onePagers[(bannerIndex - 1 + onePagers.length) % onePagers.length], assetV);
-    preloadImage(cur);
-    preloadImage(next);
-    preloadImage(prev);
-    setReadyOne(!!cur && loadedImages.has(cur));
+    preloadImage(buildUrl(onePagers[bannerIndex], assetV));
+    preloadImage(buildUrl(onePagers[(bannerIndex + 1) % onePagers.length], assetV));
+    preloadImage(buildUrl(onePagers[(bannerIndex - 1 + onePagers.length) % onePagers.length], assetV));
+    const cur = buildUrl(onePagers[bannerIndex], assetV)!;
+    setReadyOne(loadedImages.has(cur));
   }, [bannerIndex, onePagers, assetV]);
 
   useEffect(() => {
     if (!qdImgs.length) return;
-    const cur = buildUrl(qdImgs[qdIndex], assetV);
-    const next = buildUrl(qdImgs[(qdIndex + 1) % qdImgs.length], assetV);
-    const prev = buildUrl(qdImgs[(qdIndex - 1 + qdImgs.length) % qdImgs.length], assetV);
-    preloadImage(cur);
-    preloadImage(next);
-    preloadImage(prev);
-    setReadyQD(!!cur && loadedImages.has(cur));
+    preloadImage(buildUrl(qdImgs[qdIndex], assetV));
+    preloadImage(buildUrl(qdImgs[(qdIndex + 1) % qdImgs.length], assetV));
+    preloadImage(buildUrl(qdImgs[(qdIndex - 1 + qdImgs.length) % qdImgs.length], assetV));
+    const cur = buildUrl(qdImgs[qdIndex], assetV)!;
+    setReadyQD(loadedImages.has(cur));
   }, [qdIndex, qdImgs, assetV]);
 
   useEffect(() => {
     if (!qdlImgs.length) return;
-    const cur = buildUrl(qdlImgs[qdlIndex], assetV);
-    const next = buildUrl(qdlImgs[(qdlIndex + 1) % qdlImgs.length], assetV);
-    const prev = buildUrl(qdlImgs[(qdlIndex - 1 + qdlImgs.length) % qdlImgs.length], assetV);
-    preloadImage(cur);
-    preloadImage(next);
-    preloadImage(prev);
-    setReadyQDL(!!cur && loadedImages.has(cur));
+    preloadImage(buildUrl(qdlImgs[qdlIndex], assetV));
+    preloadImage(buildUrl(qdlImgs[(qdlIndex + 1) % qdlImgs.length], assetV));
+    preloadImage(buildUrl(qdlImgs[(qdlIndex - 1 + qdlImgs.length) % qdlImgs.length], assetV));
+    const cur = buildUrl(qdlImgs[qdlIndex], assetV)!;
+    setReadyQDL(loadedImages.has(cur));
   }, [qdlIndex, qdlImgs, assetV]);
 
   // sem automático
@@ -517,17 +583,12 @@ export default function App() {
   };
 
   /* ===== Swipe universal (OnePagers, QD, QDL) ===== */
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
+  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchMove = (e: React.TouchEvent) => { touchEndX.current = e.touches[0].clientX; };
   const handleTouchEnd = (type: "onepager" | "qd" | "qdl") => {
     if (touchStartX.current === null || touchEndX.current === null) return;
     const diff = touchStartX.current - touchEndX.current;
     const min = 40;
-
     if (diff > min) {
       if (type === "onepager" && onePagers.length > 0) nextSlide();
       if (type === "qd" && qdImgs.length > 0) setQdIndex((p) => (p + 1) % qdImgs.length);
@@ -537,17 +598,13 @@ export default function App() {
       if (type === "qd" && qdImgs.length > 0) setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length);
       if (type === "qdl" && qdlImgs.length > 0) setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length);
     }
-
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
-  const currentOnePager = onePagers.length ? buildUrl(onePagers[bannerIndex], assetV) : null;
-  const mobilePaddingTop = isNarrow ? 33 : 28;
-
-  // helpers para os novos carrosséis
-  const qdCurrent = qdImgs.length ? buildUrl(qdImgs[qdIndex], assetV) : null;
-  const qdlCurrent = qdlImgs.length ? buildUrl(qdlImgs[qdlIndex], assetV) : null;
+  const currentOnePager = onePagers.length ? buildUrl(onePagers[bannerIndex], assetV)! : null;
+  const qdCurrent = qdImgs.length ? buildUrl(qdImgs[qdIndex], assetV)! : null;
+  const qdlCurrent = qdlImgs.length ? buildUrl(qdlImgs[qdlIndex], assetV)! : null;
 
   return (
     <div className="app">
@@ -573,11 +630,9 @@ export default function App() {
         .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
         .section-title{ width:100%; max-width:980px; font-weight:900; font-size:14px; color:#444; margin:6px 0 4px 2px; }
 
-        /* Mantém proporção enquanto carrega para evitar "pulo" de layout */
         .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; position:relative; aspect-ratio: 16 / 9; }
         .banner-dinamico img{ width:100%; height:100%; object-fit:contain; display:block; touch-action:auto; user-select:none; pointer-events:none; }
 
-        /* Skeleton shimmer enquanto a imagem não estiver ready */
         .loading-overlay{
           position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
           background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.05) 100%);
@@ -595,7 +650,6 @@ export default function App() {
         .ios-hint strong{ display:block; font-size:14px; }
         .ios-hint button{ background:transparent; border:none; font-size:16px; cursor:pointer; margin-left:auto; }
 
-        /* Setas laterais – visíveis no mobile e acima da imagem */
         .banner-arrow{
           position:absolute; top:50%; transform:translateY(-50%);
           width:42px;height:42px; border:none;border-radius:999px;
@@ -679,9 +733,15 @@ export default function App() {
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={() => handleTouchEnd("onepager")}
+              onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+              onTouchMove={(e) => { touchEndX.current = e.touches[0].clientX; }}
+              onTouchEnd={() => {
+                const diff = (touchStartX.current ?? 0) - (touchEndX.current ?? 0);
+                const min = 40;
+                if (diff > min) nextSlide();
+                else if (diff < -min) prevSlide();
+                touchStartX.current = null; touchEndX.current = null;
+              }}
             >
               {onePagers.length > 1 && (
                 <>
@@ -698,11 +758,11 @@ export default function App() {
                 </>
               )}
 
-              {/* skeleton até carregar */}
               {!readyOne && <div className="loading-overlay">Carregando…</div>}
-              <img
-                src={currentOnePager!}
+              <SmartImg
+                src={currentOnePager}
                 alt={onePagers[bannerIndex]}
+                className=""
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -735,8 +795,8 @@ export default function App() {
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
+              onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+              onTouchMove={(e) => { touchEndX.current = e.touches[0].clientX; }}
               onTouchEnd={() => handleTouchEnd("qd")}
             >
               {qdImgs.length > 1 && (
@@ -754,8 +814,8 @@ export default function App() {
                 </>
               )}
               {!readyQD && <div className="loading-overlay">Carregando…</div>}
-              <img
-                src={qdCurrent!}
+              <SmartImg
+                src={qdCurrent}
                 alt={qdImgs[qdIndex]}
                 loading="eager"
                 decoding="async"
@@ -789,8 +849,8 @@ export default function App() {
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
+              onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+              onTouchMove={(e) => { touchEndX.current = e.touches[0].clientX; }}
               onTouchEnd={() => handleTouchEnd("qdl")}
             >
               {qdlImgs.length > 1 && (
@@ -808,8 +868,8 @@ export default function App() {
                 </>
               )}
               {!readyQDL && <div className="loading-overlay">Carregando…</div>}
-              <img
-                src={qdlCurrent!}
+              <SmartImg
+                src={qdlCurrent}
                 alt={qdlImgs[qdlIndex]}
                 loading="eager"
                 decoding="async"
@@ -835,17 +895,20 @@ export default function App() {
 
         {/* Banners estáticos fixos (Reconhecimento + ÁREAS) */}
         {STATIC_FROM_FOLDER.map((b, i) => (
-          <img
+          <SmartImg
             key={i}
             src={b.img}
             alt=""
             className="static-banner"
-            onError={(e) => (e.currentTarget.style.display = "none")}
             loading="lazy"
             decoding="async"
+            onErrorHide
           />
         ))}
       </main>
     </div>
   );
 }
+
+         
+           
