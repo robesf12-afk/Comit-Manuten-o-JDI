@@ -11,7 +11,7 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
-  IconEscola, // 👈 NOVO
+  IconEscola, // 👈 novo ícone
 } from "./icons";
 
 /* Ícones locais extras */
@@ -74,7 +74,7 @@ const LINKS = {
   controleAprov:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 
-  /* 👇 NOVO link pedido */
+  /* 👇 link novo (Escola Técnica) */
   escolaDiagnostico:
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89NQvr1f1E89KpsqePqDJsJ9UNzlGS0JOWkVPQjdGUEE4NTRMN1YxUDhaNC4u&origin=Invitation&channel=0",
 } as const;
@@ -99,7 +99,7 @@ const MENU = [
   { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
   { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
 
-  /* 👇 NOVO item exatamente abaixo de Treinamentos */
+  /* 👇 novo item exatamente abaixo de Treinamentos */
   { id: "escola-tecnica", title: "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento", url: LINKS.escolaDiagnostico, Icon: IconEscola },
 
   { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
@@ -108,13 +108,8 @@ const MENU = [
   { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
 ];
 
-// banners estáticos
-const STATIC_FROM_FOLDER = [
-  { img: "/banners_media/ASSERTIVIDADE.png" },
-  { img: "/banners_media/quebra diaria.PNG" },
-  { img: "/banners_media/quebra por linha.PNG" },
-  { img: "/banners_media/ÁREAS.jpeg" },
-];
+/* ===== banners estáticos: ESVAZIADO para sumir os “banner-1/2” ===== */
+const STATIC_FROM_FOLDER: { img: string }[] = [];
 
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
@@ -145,7 +140,7 @@ const NotifyCTA: React.FC = () => {
     const isStandalone =
       (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
       // @ts-ignore
-      window.navigator?.standalone === true;
+      (window.navigator as any)?.standalone === true;
 
     return isiOS ? isStandalone : true;
   };
@@ -518,15 +513,7 @@ export default function App() {
         .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
         .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
         .drawer-ico{color:#cc0000;display:grid;place-items:center;}
-
-        /* Setas laterais (desktop) */
-        .banner-arrow{
-          position:absolute; top:50%; transform:translateY(-50%);
-          width:42px;height:42px; border:none;border-radius:999px;
-          background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
-          cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
-          transition:background .15s ease, transform .15s ease; user-select:none;
-        }
+        .banner-arrow{ position:absolute; top:50%; transform:translateY(-50%); width:42px;height:42px; border:none;border-radius:999px; background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25); transition:background .15s ease, transform .15s ease; user-select:none; }
         .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
         .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
         .banner-arrow.left{ left:10px; }
@@ -598,7 +585,6 @@ export default function App() {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* Setas (somente desktop) */}
               {onePagers.length > 1 && !isNarrow && (
                 <>
                   <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior">
@@ -711,11 +697,12 @@ export default function App() {
           </>
         )}
 
-        {/* Demais banners estáticos existentes */}
+        {/* (sem banners estáticos) */}
         {STATIC_FROM_FOLDER.map((b, i) => (
-          <img key={i} src={b.img} alt={`banner-${i}`} className="static-banner" />
+          <img key={i} src={b.img} alt="" className="static-banner" />
         ))}
       </main>
     </div>
   );
 }
+
