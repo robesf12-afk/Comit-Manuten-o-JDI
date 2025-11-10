@@ -204,6 +204,69 @@ const SmartImg: React.FC<{
   );
 };
 
+/* ===== Botão de navegação com toque garantido no mobile ===== */
+type ArrowBtnProps = {
+  side: "left" | "right";
+  title: string;
+  onClick: () => void;
+};
+const ArrowButton: React.FC<ArrowBtnProps> = ({ side, title, onClick }) => {
+  const styleBtn: React.CSSProperties = {
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    [side]: 10,
+    width: 42,
+    height: 42,
+    border: "none",
+    borderRadius: 9999,
+    background: "rgba(0,0,0,.35)",
+    color: "#fff",
+    display: "grid",
+    placeItems: "center",
+    cursor: "pointer",
+    boxShadow: "0 4px 10px rgba(0,0,0,.25)",
+    userSelect: "none",
+    // chave: ficar acima de qualquer overlay e receber o toque
+    zIndex: 50,
+    pointerEvents: "auto",
+    touchAction: "manipulation",
+    WebkitTapHighlightColor: "transparent",
+  };
+
+  const stop = (e: React.SyntheticEvent) => {
+    // impede que o container interprete como swipe
+    e.stopPropagation();
+    // e.preventDefault(); // habilite se algum navegador específico insistir
+  };
+
+  return (
+    <button
+      type="button"
+      aria-label={title}
+      title={title}
+      style={styleBtn}
+      onClick={onClick}
+      onTouchStart={stop}
+      onPointerDown={stop}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        style={{ width: 20, height: 20, pointerEvents: "none" }} // SVG não rouba o toque
+      >
+        {side === "left" ? (
+          <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+        ) : (
+          <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+        )}
+      </svg>
+    </button>
+  );
+};
+
 /* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
@@ -639,6 +702,7 @@ export default function App() {
           background-size: 200% 100%;
           animation: shimmer 1.2s infinite linear;
           color:#fff; font-weight:700; letter-spacing:.3px;
+          pointer-events: none; /* <— não bloqueia as setas */
         }
         @keyframes shimmer{ 0%{ background-position:200% 0 } 100%{ background-position:-200% 0 } }
 
@@ -650,19 +714,20 @@ export default function App() {
         .ios-hint strong{ display:block; font-size:14px; }
         .ios-hint button{ background:transparent; border:none; font-size:16px; cursor:pointer; margin-left:auto; }
 
+        /* Setas (fallback: mantemos as classes; mas o ArrowButton já aplica z-index alto) */
         .banner-arrow{
           position:absolute; top:50%; transform:translateY(-50%);
           width:42px;height:42px; border:none;border-radius:999px;
           background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
           cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
           transition:background .15s ease, transform .15s ease; user-select:none;
-          z-index:5;
+          z-index:50; /* <— alto para ficar acima de overlays */
         }
         .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
         .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
         .banner-arrow.left{ left:10px; }
         .banner-arrow.right{ right:10px; }
-        .banner-arrow svg{ width:20px;height:20px; }
+        .banner-arrow svg{ width:20px;height:20px; pointer-events:none; }
         @media (max-width:700px){
           .banner-arrow{ width:36px; height:36px; background:rgba(0,0,0,.4); }
         }
@@ -745,16 +810,8 @@ export default function App() {
             >
               {onePagers.length > 1 && (
                 <>
-                  <button className="banner-arrow left" onClick={prevSlide} aria-label="Anterior" type="button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <button className="banner-arrow right" onClick={() => setBannerIndex((p) => (p + 1) % onePagers.length)} aria-label="Próximo" type="button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
+                  <ArrowButton side="left" title="Anterior" onClick={prevSlide} />
+                  <ArrowButton side="right" title="Próximo" onClick={() => setBannerIndex((p) => (p + 1) % onePagers.length)} />
                 </>
               )}
 
@@ -801,16 +858,8 @@ export default function App() {
             >
               {qdImgs.length > 1 && (
                 <>
-                  <button className="banner-arrow left" onClick={() => setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length)} aria-label="Anterior" type="button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <button className="banner-arrow right" onClick={() => setQdIndex((p) => (p + 1) % qdImgs.length)} aria-label="Próximo" type="button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
+                  <ArrowButton side="left" title="Anterior" onClick={() => setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length)} />
+                  <ArrowButton side="right" title="Próximo" onClick={() => setQdIndex((p) => (p + 1) % qdImgs.length)} />
                 </>
               )}
               {!readyQD && <div className="loading-overlay">Carregando…</div>}
@@ -855,16 +904,8 @@ export default function App() {
             >
               {qdlImgs.length > 1 && (
                 <>
-                  <button className="banner-arrow left" onClick={() => setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length)} aria-label="Anterior" type="button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <button className="banner-arrow right" onClick={() => setQdlIndex((p) => (p + 1) % qdlImgs.length)} aria-label="Próximo" type="button">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
+                  <ArrowButton side="left" title="Anterior" onClick={() => setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length)} />
+                  <ArrowButton side="right" title="Próximo" onClick={() => setQdlIndex((p) => (p + 1) % qdlImgs.length)} />
                 </>
               )}
               {!readyQDL && <div className="loading-overlay">Carregando…</div>}
@@ -909,6 +950,3 @@ export default function App() {
     </div>
   );
 }
-
-         
-           
