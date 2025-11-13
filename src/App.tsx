@@ -106,9 +106,9 @@ const MENU = [
 
 /* ===== banners estáticos — fixos importantes ===== */
 const STATIC_FROM_FOLDER: { img: string; title?: string }[] = [
-  { img: "/banners_media/ASSERTIVIDADE.png",      title: "ASSERTIVIDADE" },
-  { img: "/banners_media/OKR_DE_MANUTENCAO.png",  title: "OKR DE MANUTENÇÃO" },
-  { img: "/banners_media/ÁREAS.jpeg",             title: "ÁREAS" }, // se não quiser o título, é só remover o `title`
+  { img: "/banners_media/ASSERTIVIDADE.png",       title: "ASSERTIVIDADE" },
+  { img: "/banners_media/OKR DE MANUTENÇÃO.png",   title: "OKR DE MANUTENÇÃO" },
+  { img: "/banners_media/ÁREAS.jpeg",              title: "RECONHECIMENTO" },
 ];
 
 /* ====== PRELOAD util ====== */
@@ -935,7 +935,7 @@ export default function App() {
           </>
         )}
 
-        {/* Banners estáticos fixos: ASSERTIVIDADE, OKR de Manutenção, ÁREAS */}
+        {/* Banners estáticos fixos */}
         {STATIC_FROM_FOLDER.map((b, i) => (
           <React.Fragment key={i}>
             {b.title && <div className="section-title">{b.title}</div>}
@@ -953,5 +953,3 @@ export default function App() {
     </div>
   );
 }
-
-           
