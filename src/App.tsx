@@ -105,9 +105,10 @@ const MENU = [
 ];
 
 /* ===== banners estáticos — fixos importantes ===== */
-const STATIC_FROM_FOLDER: { img: string }[] = [
-  { img: "/banners_media/ASSERTIVIDADE.png" },
-  { img: "/banners_media/ÁREAS.jpeg" },
+const STATIC_FROM_FOLDER: { img: string; title?: string }[] = [
+  { img: "/banners_media/ASSERTIVIDADE.png",      title: "ASSERTIVIDADE" },
+  { img: "/banners_media/OKR_DE_MANUTENCAO.png",  title: "OKR DE MANUTENÇÃO" },
+  { img: "/banners_media/ÁREAS.jpeg",             title: "ÁREAS" }, // se não quiser o título, é só remover o `title`
 ];
 
 /* ====== PRELOAD util ====== */
@@ -934,19 +935,23 @@ export default function App() {
           </>
         )}
 
-        {/* Banners estáticos fixos (Reconhecimento + ÁREAS) */}
+        {/* Banners estáticos fixos: ASSERTIVIDADE, OKR de Manutenção, ÁREAS */}
         {STATIC_FROM_FOLDER.map((b, i) => (
-          <SmartImg
-            key={i}
-            src={b.img}
-            alt=""
-            className="static-banner"
-            loading="lazy"
-            decoding="async"
-            onErrorHide
-          />
+          <React.Fragment key={i}>
+            {b.title && <div className="section-title">{b.title}</div>}
+            <SmartImg
+              src={b.img}
+              alt={b.title ?? ""}
+              className="static-banner"
+              loading="lazy"
+              decoding="async"
+              onErrorHide
+            />
+          </React.Fragment>
         ))}
       </main>
     </div>
   );
 }
+
+           
