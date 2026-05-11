@@ -57,7 +57,7 @@ const LINKS = {
   papeis: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=C529Nu",
   informativos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y",
   checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-  registro: "https://forms.office.com/r/mt0JTBJiK6?origin=lprLink",
+  registro: "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UMFE4RVhON1daSklPQ0s2QVIxMTk1RDFGTS4u",
   reconhecimentos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=ujB2BW",
   programacao:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
