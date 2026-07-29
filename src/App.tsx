@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { readDiagnostics, activatePush } from "./push";
 
 import {
@@ -11,31 +11,123 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
-  IconEscola, // precisa existir em ./icons
+  IconEscola,
 } from "./icons";
 
-/* Ícones locais extras */
+/* =========================================================
+   ÍCONES LOCAIS
+========================================================= */
+
 const IconHelp: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-    <path d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <circle cx="12" cy="18" r="1.25" fill="currentColor" />
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+
+    <path
+      d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+
+    <circle
+      cx="12"
+      cy="18"
+      r="1.25"
+      fill="currentColor"
+    />
   </svg>
 );
+
 const IconDoc: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="2" />
-    <path d="M14 3v5h5" stroke="currentColor" strokeWidth="2" />
-    <path d="M9.5 12h5M9.5 15.5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+
+    <path
+      d="M14 3v5h5"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+
+    <path
+      d="M9.5 12h5M9.5 15.5h5"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
   </svg>
 );
+
 const IconCost: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="8" cy="14" r="4.5" stroke="currentColor" strokeWidth="2" />
-    <line x1="6.2" y1="13.2" x2="9.8" y2="13.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <line x1="6.2" y1="15.6" x2="9.8" y2="15.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    <circle cx="17" cy="7" r="2" stroke="currentColor" strokeWidth="2" />
-    <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle
+      cx="8"
+      cy="14"
+      r="4.5"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+
+    <line
+      x1="6.2"
+      y1="13.2"
+      x2="9.8"
+      y2="13.2"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+
+    <line
+      x1="6.2"
+      y1="15.6"
+      x2="9.8"
+      y2="15.6"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+
+    <circle
+      cx="17"
+      cy="7"
+      r="2"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+
+    <g
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
       <line x1="17" y1="2.6" x2="17" y2="1.6" />
       <line x1="17" y1="12.4" x2="17" y2="13.4" />
       <line x1="12.6" y1="7" x2="11.6" y2="7" />
@@ -48,85 +140,223 @@ const IconCost: React.FC = () => (
   </svg>
 );
 
-/* Links */
+/* =========================================================
+   LINKS
+========================================================= */
+
 const LINKS = {
-  okr: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
-  ddm: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/DDM%C2%B4S?csf=1&web=1&e=bi46ug",
-  onepager: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1",
-  treinamentos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/TREINAMENTOS?csf=1&web=1&e=saAQe5",
-  papeis: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=96jRRw",
-  informativos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y",
-  checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-  registro: "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UMFE4RVhON1daSklPQ0s2QVIxMTk1RDFGTS4u",
-  reconhecimentos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=ujB2BW",
+  okr:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
+
+  ddm:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/DDM%C2%B4S?csf=1&web=1&e=bi46ug",
+
+  onepager:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1",
+
+  treinamentos:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/TREINAMENTOS?csf=1&web=1&e=saAQe5",
+
+  papeis:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=96jRRw",
+
+  informativos:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y",
+
+  checklist:
+    "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
+
+  registro:
+    "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UMFE4RVhON1daSklPQ0s2QVIxMTk1RDFGTS4u",
+
+  reconhecimentos:
+    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=ujB2BW",
+
   programacao:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
+
   painel:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PAINEL%20DISTRIBUI%C3%87%C3%83O%20DE%20HORAS?csf=1&web=1&e=VWusRL",
+
   duvidas:
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UQ0RMMlM0MVZKWFdVN01IMzlUSjBMWVZBSS4u",
+
   custo:
     "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=hb8HSo",
 
-  /* Novos */
   backlog:
     "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
+
   controleAprov:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 
-  /* Escola Técnica */
   escolaDiagnostico:
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89NQvr1f1E89KpsqePqDJsJ9UNzlGS0JOWkVPQjdGUEE4NTRMN1YxUDhaNC4u&origin=Invitation&channel=0",
 } as const;
 
-/* Menu */
+/* =========================================================
+   MENU
+========================================================= */
+
 const MENU = [
-  { id: "registro", title: "Registro de reuniões Abertura de PCM e Prestação de Contas", url: LINKS.registro, Icon: IconRegistroPCM },
-  { id: "checklist", title: "Registro Check List Pós Partida de PCM", url: LINKS.checklist, Icon: IconChecklist },
-  { id: "programacao", title: "Programação de PCM", url: LINKS.programacao, Icon: IconChecklist },
-  { id: "painel", title: "Painel de Distribuição de Horas", url: LINKS.painel, Icon: IconOKR },
-
-  { id: "backlog", title: "BACKLOG – Consulte aqui o backlog da sua linha/área", url: LINKS.backlog, Icon: IconChecklist },
-
-  { id: "ddms", title: "DDM's", url: LINKS.ddm, Icon: IconDDM },
-  { id: "okr", title: "OKR de Manutenção (Fechamentos)", url: LINKS.okr, Icon: IconOKR },
-  { id: "custo", title: "Custo de Manutenção", url: LINKS.custo, Icon: IconCost },
-
-  { id: "controle-aprov", title: "Controle de aprovação de ordens", url: LINKS.controleAprov, Icon: IconDoc },
-
-  { id: "onepager", title: "One Pager", url: LINKS.onepager, Icon: IconOnePager },
-  { id: "treinamentos", title: "Treinamentos", url: LINKS.treinamentos, Icon: IconTreinamentos },
-  { id: "escola-tecnica", title: "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento", url: LINKS.escolaDiagnostico, Icon: IconEscola },
-
-  { id: "papeis", title: "Papéis e Responsabilidades", url: LINKS.papeis, Icon: IconPapeis },
-  { id: "reconhecimentos", title: "Reconhecimentos", url: LINKS.reconhecimentos, Icon: IconReconhecimentos },
-  { id: "informativos", title: "Informativos", url: LINKS.informativos, Icon: IconDoc },
-  { id: "duvidas", title: "Dúvidas e Sugestões sobre os processos de Manutenção", url: LINKS.duvidas, Icon: IconHelp },
+  {
+    id: "registro",
+    title:
+      "Registro de reuniões Abertura de PCM e Prestação de Contas",
+    url: LINKS.registro,
+    Icon: IconRegistroPCM,
+  },
+  {
+    id: "checklist",
+    title: "Registro Check List Pós Partida de PCM",
+    url: LINKS.checklist,
+    Icon: IconChecklist,
+  },
+  {
+    id: "programacao",
+    title: "Programação de PCM",
+    url: LINKS.programacao,
+    Icon: IconChecklist,
+  },
+  {
+    id: "painel",
+    title: "Painel de Distribuição de Horas",
+    url: LINKS.painel,
+    Icon: IconOKR,
+  },
+  {
+    id: "backlog",
+    title: "BACKLOG – Consulte aqui o backlog da sua linha/área",
+    url: LINKS.backlog,
+    Icon: IconChecklist,
+  },
+  {
+    id: "ddms",
+    title: "DDM's",
+    url: LINKS.ddm,
+    Icon: IconDDM,
+  },
+  {
+    id: "okr",
+    title: "OKR de Manutenção (Fechamentos)",
+    url: LINKS.okr,
+    Icon: IconOKR,
+  },
+  {
+    id: "custo",
+    title: "Custo de Manutenção",
+    url: LINKS.custo,
+    Icon: IconCost,
+  },
+  {
+    id: "controle-aprov",
+    title: "Controle de aprovação de ordens",
+    url: LINKS.controleAprov,
+    Icon: IconDoc,
+  },
+  {
+    id: "onepager",
+    title: "One Pager",
+    url: LINKS.onepager,
+    Icon: IconOnePager,
+  },
+  {
+    id: "treinamentos",
+    title: "Treinamentos",
+    url: LINKS.treinamentos,
+    Icon: IconTreinamentos,
+  },
+  {
+    id: "escola-tecnica",
+    title:
+      "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento",
+    url: LINKS.escolaDiagnostico,
+    Icon: IconEscola,
+  },
+  {
+    id: "papeis",
+    title: "Papéis e Responsabilidades",
+    url: LINKS.papeis,
+    Icon: IconPapeis,
+  },
+  {
+    id: "reconhecimentos",
+    title: "Reconhecimentos",
+    url: LINKS.reconhecimentos,
+    Icon: IconReconhecimentos,
+  },
+  {
+    id: "informativos",
+    title: "Informativos",
+    url: LINKS.informativos,
+    Icon: IconDoc,
+  },
+  {
+    id: "duvidas",
+    title: "Dúvidas e Sugestões sobre os processos de Manutenção",
+    url: LINKS.duvidas,
+    Icon: IconHelp,
+  },
 ];
 
-/* ===== banners estáticos — fixos importantes ===== */
-const STATIC_FROM_FOLDER: { img: string; title?: string }[] = [
-  { img: "/banners_media/ASSERTIVIDADE.png",       title: "ASSERTIVIDADE" },
-  { img: "/banners_media/OKR DE MANUTENÇÃO.png",   title: "OKR DE MANUTENÇÃO" },
-  { img: "/banners_media/ÁREAS.jpeg",              title: "RECONHECIMENTO" },
+/* =========================================================
+   BANNERS ESTÁTICOS
+
+   O banner estático antigo de OKR foi retirado daqui,
+   porque o OKR agora será exibido no novo carrossel.
+========================================================= */
+
+const STATIC_FROM_FOLDER: {
+  img: string;
+  title?: string;
+}[] = [
+  {
+    img: "/banners_media/ASSERTIVIDADE.png",
+    title: "ASSERTIVIDADE",
+  },
+  {
+    img: "/banners_media/ÁREAS.jpeg",
+    title: "RECONHECIMENTO",
+  },
 ];
 
-/* ====== PRELOAD util ====== */
+/* =========================================================
+   FUNÇÕES DE IMAGEM
+========================================================= */
+
 const loadedImages = new Set<string>();
+
 function preloadImage(url: string | null) {
   if (!url || loadedImages.has(url)) return;
+
   const img = new Image();
+
   img.src = url;
-  img.onload = () => loadedImages.add(url);
+
+  img.onload = () => {
+    loadedImages.add(url);
+  };
 }
 
-/** Monta a URL da imagem com cache-busting (?v=assetV) */
-function buildUrl(file?: string, v?: number) {
-  return file ? `/banners_media/${file}?v=${v ?? ""}` : null;
+function buildUrl(file?: string, version?: number) {
+  if (!file) return null;
+
+  return `/banners_media/${file}?v=${version ?? ""}`;
 }
 
-/** Componente que tenta variações de extensão (png/PNG/jpg/JPG/jpeg/JPEG) caso a primeira falhe */
-const SmartImg: React.FC<{
+function normalizeName(value: string) {
+  return value
+    .normalize("NFC")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/* =========================================================
+   SMART IMAGE
+========================================================= */
+
+type SmartImgProps = {
   src: string;
   alt: string;
   className?: string;
@@ -134,51 +364,72 @@ const SmartImg: React.FC<{
   loading?: "eager" | "lazy";
   decoding?: "auto" | "sync" | "async";
   fetchPriority?: "high" | "low" | "auto";
-  onErrorHide?: boolean; // para estáticos opcionais
-}> = ({ src, alt, className, onLoad, loading, decoding, fetchPriority, onErrorHide }) => {
+  onErrorHide?: boolean;
+};
+
+const SmartImg: React.FC<SmartImgProps> = ({
+  src,
+  alt,
+  className,
+  onLoad,
+  loading,
+  decoding,
+  fetchPriority,
+  onErrorHide,
+}) => {
   const [current, setCurrent] = useState(src);
-  const [idx, setIdx] = useState(0);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     setCurrent(src);
-    setIdx(0);
+    setIndex(0);
   }, [src]);
 
-  const makeVariants = (u: string) => {
-    const [base, query = ""] = u.split("?");
-    const q = query ? "?" + query : "";
-    const dot = base.lastIndexOf(".");
-    if (dot < 0) return [u];
+  const createVariants = (url: string) => {
+    const [base, query = ""] = url.split("?");
+    const queryString = query ? `?${query}` : "";
 
-    const name = base.substring(0, dot);
-    const ext = base.substring(dot + 1);
-    const extLower = ext.toLowerCase();
+    const dotPosition = base.lastIndexOf(".");
+
+    if (dotPosition < 0) {
+      return [url];
+    }
+
+    const fileName = base.substring(0, dotPosition);
+    const extension = base.substring(dotPosition + 1);
+    const extensionLower = extension.toLowerCase();
 
     const variants = new Set<string>();
-    variants.add(`${name}.${ext}${q}`);
 
-    if (extLower === "png") {
-      variants.add(`${name}.PNG${q}`);
-      variants.add(`${name}.png${q}`);
-    } else if (extLower === "jpg") {
-      variants.add(`${name}.JPG${q}`);
-      variants.add(`${name}.jpg${q}`);
-      variants.add(`${name}.jpeg${q}`);
-      variants.add(`${name}.JPEG${q}`);
-    } else if (extLower === "jpeg") {
-      variants.add(`${name}.JPEG${q}`);
-      variants.add(`${name}.jpeg${q}`);
-      variants.add(`${name}.jpg${q}`);
-      variants.add(`${name}.JPG${q}`);
+    variants.add(`${fileName}.${extension}${queryString}`);
+
+    if (extensionLower === "png") {
+      variants.add(`${fileName}.PNG${queryString}`);
+      variants.add(`${fileName}.png${queryString}`);
+    } else if (extensionLower === "jpg") {
+      variants.add(`${fileName}.JPG${queryString}`);
+      variants.add(`${fileName}.jpg${queryString}`);
+      variants.add(`${fileName}.jpeg${queryString}`);
+      variants.add(`${fileName}.JPEG${queryString}`);
+    } else if (extensionLower === "jpeg") {
+      variants.add(`${fileName}.JPEG${queryString}`);
+      variants.add(`${fileName}.jpeg${queryString}`);
+      variants.add(`${fileName}.jpg${queryString}`);
+      variants.add(`${fileName}.JPG${queryString}`);
     } else {
-      // fallback básico: tentar uppercase/lowercase
-      variants.add(`${name}.${ext.toUpperCase()}${q}`);
-      variants.add(`${name}.${ext.toLowerCase()}${q}`);
+      variants.add(
+        `${fileName}.${extension.toUpperCase()}${queryString}`
+      );
+
+      variants.add(
+        `${fileName}.${extension.toLowerCase()}${queryString}`
+      );
     }
+
     return Array.from(variants);
   };
 
-  const variants = makeVariants(src);
+  const variants = createVariants(src);
 
   return (
     <img
@@ -192,27 +443,39 @@ const SmartImg: React.FC<{
         loadedImages.add(current);
         onLoad?.();
       }}
-      onError={(e) => {
-        const next = idx + 1;
-        if (next < variants.length) {
-          setIdx(next);
-          setCurrent(variants[next]);
-        } else if (onErrorHide) {
-          (e.currentTarget as HTMLImageElement).style.display = "none";
+      onError={(event) => {
+        const nextIndex = index + 1;
+
+        if (nextIndex < variants.length) {
+          setIndex(nextIndex);
+          setCurrent(variants[nextIndex]);
+          return;
+        }
+
+        if (onErrorHide) {
+          event.currentTarget.style.display = "none";
         }
       }}
     />
   );
 };
 
-/* ===== Botão de navegação com toque garantido no mobile ===== */
-type ArrowBtnProps = {
+/* =========================================================
+   BOTÃO DAS SETAS
+========================================================= */
+
+type ArrowButtonProps = {
   side: "left" | "right";
   title: string;
   onClick: () => void;
 };
-const ArrowButton: React.FC<ArrowBtnProps> = ({ side, title, onClick }) => {
-  const styleBtn: React.CSSProperties = {
+
+const ArrowButton: React.FC<ArrowButtonProps> = ({
+  side,
+  title,
+  onClick,
+}) => {
+  const buttonStyle: React.CSSProperties = {
     position: "absolute",
     top: "50%",
     transform: "translateY(-50%)",
@@ -228,17 +491,16 @@ const ArrowButton: React.FC<ArrowBtnProps> = ({ side, title, onClick }) => {
     cursor: "pointer",
     boxShadow: "0 4px 10px rgba(0,0,0,.25)",
     userSelect: "none",
-    // chave: ficar acima de qualquer overlay e receber o toque
     zIndex: 50,
     pointerEvents: "auto",
     touchAction: "manipulation",
     WebkitTapHighlightColor: "transparent",
   };
 
-  const stop = (e: React.SyntheticEvent) => {
-    // impede que o container interprete como swipe
-    e.stopPropagation();
-    // e.preventDefault(); // habilite se algum navegador específico insistir
+  const stopEvent = (
+    event: React.SyntheticEvent
+  ) => {
+    event.stopPropagation();
   };
 
   return (
@@ -246,80 +508,117 @@ const ArrowButton: React.FC<ArrowBtnProps> = ({ side, title, onClick }) => {
       type="button"
       aria-label={title}
       title={title}
-      style={styleBtn}
+      style={buttonStyle}
       onClick={onClick}
-      onTouchStart={stop}
-      onPointerDown={stop}
+      onTouchStart={stopEvent}
+      onPointerDown={stopEvent}
     >
       <svg
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
-        style={{ width: 20, height: 20, pointerEvents: "none" }} // SVG não rouba o toque
+        style={{
+          width: 20,
+          height: 20,
+          pointerEvents: "none",
+        }}
       >
         {side === "left" ? (
-          <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M15 18l-6-6 6-6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         ) : (
-          <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M9 6l6 6-6 6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         )}
       </svg>
     </button>
   );
 };
 
-/* ===== CTA de Notificações com diagnóstico ===== */
+/* =========================================================
+   CTA DE NOTIFICAÇÕES
+========================================================= */
+
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
-  const [perm, setPerm] = useState<NotificationPermission | "loading">("loading");
+
+  const [permission, setPermission] = useState<
+    NotificationPermission | "loading"
+  >("loading");
+
   const [enabled, setEnabled] = useState(false);
-  const [isSupported, setIsSupported] = useState(true);
-  const [subId, setSubId] = useState<string | null>(null);
+  const [supported, setSupported] = useState(true);
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
 
   const DISMISS_KEY = "pushCTA:dismissed";
 
-  const computeShouldShow = (opts: {
+  const shouldShow = (options: {
     enabled: boolean;
-    perm: NotificationPermission | "loading";
-    isSupported: boolean;
-    subId?: string | null;
+    permission: NotificationPermission | "loading";
+    supported: boolean;
+    subscriptionId?: string | null;
   }) => {
-    const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
-    if (dismissed) return false;
-    if (!opts.isSupported) return false;
-    if (opts.enabled) return false;
-    if (opts.perm === "granted") return false;
-    if (opts.subId) return false;
+    const dismissed =
+      localStorage.getItem(DISMISS_KEY) === "1";
 
-    const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (dismissed) return false;
+    if (!options.supported) return false;
+    if (options.enabled) return false;
+    if (options.permission === "granted") return false;
+    if (options.subscriptionId) return false;
+
+    const isiOS =
+      /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
     const isStandalone =
-      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-      // @ts-ignore
+      (window.matchMedia &&
+        window.matchMedia("(display-mode: standalone)")
+          .matches) ||
       (window.navigator as any)?.standalone === true;
 
     return isiOS ? isStandalone : true;
   };
 
-  const refreshDiag = async () => {
+  const refreshDiagnostics = async () => {
     try {
-      const d = await readDiagnostics();
-      setPerm(d.permission as NotificationPermission);
-      setEnabled(!!d.enabled);
-      setIsSupported(!!d.isSupported);
-      setSubId(d.subscriptionId ?? null);
-      setLastError(d.lastError ?? null);
+      const diagnostics = await readDiagnostics();
 
-      const should = computeShouldShow({
-        enabled: !!d.enabled,
-        perm: d.permission as NotificationPermission,
-        isSupported: !!d.isSupported,
-        subId: d.subscriptionId ?? null,
-      });
-      setShow(should);
+      setPermission(
+        diagnostics.permission as NotificationPermission
+      );
+
+      setEnabled(Boolean(diagnostics.enabled));
+      setSupported(Boolean(diagnostics.isSupported));
+
+      setSubscriptionId(
+        diagnostics.subscriptionId ?? null
+      );
+
+      setLastError(
+        diagnostics.lastError ?? null
+      );
+
+      setShow(
+        shouldShow({
+          enabled: Boolean(diagnostics.enabled),
+          permission:
+            diagnostics.permission as NotificationPermission,
+          supported: Boolean(diagnostics.isSupported),
+          subscriptionId:
+            diagnostics.subscriptionId ?? null,
+        })
+      );
     } catch {
-      setIsSupported(true);
+      setSupported(true);
       setShow(true);
     }
   };
@@ -327,65 +626,116 @@ const NotifyCTA: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
-    const init = async () => {
-      await refreshDiag();
+    const initialize = async () => {
+      await refreshDiagnostics();
 
-      (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
-      (window as any).OneSignalDeferred.push((OneSignal: any) => {
-        OneSignal.on?.("subscriptionChange", async (sub: boolean) => {
-          if (!mounted) return;
-          setEnabled(sub);
-          if (sub) {
-            localStorage.setItem(DISMISS_KEY, "1");
-            setShow(false);
+      (window as any).OneSignalDeferred =
+        (window as any).OneSignalDeferred || [];
+
+      (window as any).OneSignalDeferred.push(
+        (OneSignal: any) => {
+          OneSignal.on?.(
+            "subscriptionChange",
+            async (subscribed: boolean) => {
+              if (!mounted) return;
+
+              setEnabled(subscribed);
+
+              if (subscribed) {
+                localStorage.setItem(
+                  DISMISS_KEY,
+                  "1"
+                );
+
+                setShow(false);
+              }
+
+              await refreshDiagnostics();
+            }
+          );
+
+          OneSignal.on?.(
+            "notificationPermissionChange",
+            async () => {
+              if (!mounted) return;
+
+              await refreshDiagnostics();
+            }
+          );
+        }
+      );
+
+      document.addEventListener(
+        "visibilitychange",
+        () => {
+          if (
+            document.visibilityState === "visible"
+          ) {
+            refreshDiagnostics();
           }
-          await refreshDiag();
-        });
-        OneSignal.on?.("notificationPermissionChange", async () => {
-          if (!mounted) return;
-          await refreshDiag();
-        });
-      });
-
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") refreshDiag();
-      });
+        }
+      );
 
       try {
-        const u = new URL(window.location.href);
-        if (u.searchParams.get("debugPush") === "1") setDebugOpen(true);
-      } catch {}
+        const url = new URL(window.location.href);
+
+        if (
+          url.searchParams.get("debugPush") === "1"
+        ) {
+          setDebugOpen(true);
+        }
+      } catch {
+        // Sem ação
+      }
     };
 
-    init();
+    initialize();
+
     return () => {
       mounted = false;
     };
   }, []);
 
-  const onActivate = async () => {
-    const d = await activatePush();
-    setPerm(d.permission as NotificationPermission);
-    setEnabled(!!d.enabled);
-    setIsSupported(!!d.isSupported);
-    setSubId(d.subscriptionId ?? null);
-    setLastError(d.lastError ?? null);
+  const activateNotifications = async () => {
+    const diagnostics = await activatePush();
 
-    if (d.enabled || d.permission === "granted" || d.subscriptionId) {
+    setPermission(
+      diagnostics.permission as NotificationPermission
+    );
+
+    setEnabled(Boolean(diagnostics.enabled));
+    setSupported(Boolean(diagnostics.isSupported));
+
+    setSubscriptionId(
+      diagnostics.subscriptionId ?? null
+    );
+
+    setLastError(
+      diagnostics.lastError ?? null
+    );
+
+    if (
+      diagnostics.enabled ||
+      diagnostics.permission === "granted" ||
+      diagnostics.subscriptionId
+    ) {
       localStorage.setItem(DISMISS_KEY, "1");
       setShow(false);
     } else {
-      const should = computeShouldShow({
-        enabled: !!d.enabled,
-        perm: d.permission as NotificationPermission,
-        isSupported: !!d.isSupported,
-        subId: d.subscriptionId ?? null,
-      });
-      setShow(should);
+      setShow(
+        shouldShow({
+          enabled: Boolean(diagnostics.enabled),
+          permission:
+            diagnostics.permission as NotificationPermission,
+          supported: Boolean(diagnostics.isSupported),
+          subscriptionId:
+            diagnostics.subscriptionId ?? null,
+        })
+      );
     }
   };
 
-  const dismiss = () => {
+  const dismissNotifications = () => {
     localStorage.setItem(DISMISS_KEY, "1");
     setShow(false);
   };
@@ -394,561 +744,2040 @@ const NotifyCTA: React.FC = () => {
     return (
       <>
         {debugOpen && (
-          <div style={{ margin: "8px 12px", padding: "8px 12px", border: "1px dashed #bbb", borderRadius: 8, fontSize: 12, background: "#fafafa" }}>
-            <b>Debug Push</b> | permissão: <code>{perm}</code> | inscrito: <code>{String(enabled)}</code> | suportado: <code>{String(isSupported)}</code>
-            {subId ? <> | subId: <code>{subId}</code></> : null}
-            {lastError ? <> | erro: <code>{lastError}</code></> : null}
-            <button style={{ marginLeft: 8 }} onClick={onActivate}>Forçar Prompt</button>
+          <div
+            style={{
+              margin: "8px 12px",
+              padding: "8px 12px",
+              border: "1px dashed #bbb",
+              borderRadius: 8,
+              fontSize: 12,
+              background: "#fafafa",
+            }}
+          >
+            <b>Debug Push</b>
+
+            {" | "}
+
+            permissão: <code>{permission}</code>
+
+            {" | "}
+
+            inscrito: <code>{String(enabled)}</code>
+
+            {" | "}
+
+            suportado: <code>{String(supported)}</code>
+
+            {subscriptionId ? (
+              <>
+                {" | "}
+                subId: <code>{subscriptionId}</code>
+              </>
+            ) : null}
+
+            {lastError ? (
+              <>
+                {" | "}
+                erro: <code>{lastError}</code>
+              </>
+            ) : null}
+
+            <button
+              style={{ marginLeft: 8 }}
+              onClick={activateNotifications}
+            >
+              Forçar Prompt
+            </button>
           </div>
         )}
       </>
     );
   }
 
-  const denied = perm === "denied";
+  const denied = permission === "denied";
+
   return (
     <>
-      <div className="notify-cta" role="region" aria-label="Ativar notificações">
-        <span className="notify-title">🔔 Notificações</span>
-        {!isSupported ? (
-          <span className="notify-text">Este navegador não suporta notificações push.</span>
+      <div
+        className="notify-cta"
+        role="region"
+        aria-label="Ativar notificações"
+      >
+        <span className="notify-title">
+          🔔 Notificações
+        </span>
+
+        {!supported ? (
+          <span className="notify-text">
+            Este navegador não suporta notificações push.
+          </span>
         ) : denied ? (
           <span className="notify-text">
-            Notificações estão <b>bloqueadas</b>. Clique no cadeado da barra de endereço → Permissões → <b>Notificações: Permitir</b>.
+            Notificações estão <b>bloqueadas</b>.
+            Clique no cadeado da barra de endereço →
+            Permissões → <b>Notificações: Permitir</b>.
           </span>
         ) : (
-          <span className="notify-text">Toque para permitir avisos do Comitê.</span>
+          <span className="notify-text">
+            Toque para permitir avisos do Comitê.
+          </span>
         )}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <button className="notify-btn" onClick={onActivate}>{denied ? "Como liberar" : "Ativar"}</button>
-          <button className="notify-btn" style={{ background: "#777" }} onClick={dismiss} aria-label="Não mostrar de novo">Não mostrar</button>
+
+        <div
+          style={{
+            marginLeft: "auto",
+            display: "flex",
+            gap: 8,
+          }}
+        >
+          <button
+            className="notify-btn"
+            onClick={activateNotifications}
+          >
+            {denied ? "Como liberar" : "Ativar"}
+          </button>
+
+          <button
+            className="notify-btn"
+            style={{ background: "#777" }}
+            onClick={dismissNotifications}
+            aria-label="Não mostrar de novo"
+          >
+            Não mostrar
+          </button>
         </div>
       </div>
 
-      <div style={{ margin: "8px 12px", padding: "8px 12px", border: "1px dashed #bbb", borderRadius: 8, fontSize: 12, background: "#fafafa" }}>
-        <b>Debug Push</b> | permissão: <code>{perm}</code> | inscrito: <code>{String(enabled)}</code> | suportado: <code>{String(isSupported)}</code>
-        {subId ? <> | subId: <code>{subId}</code></> : null}
-        {lastError ? <> | erro: <code>{lastError}</code></> : null}
-        <button style={{ marginLeft: 8 }} onClick={onActivate}>Forçar Prompt</button>
+      <div
+        style={{
+          margin: "8px 12px",
+          padding: "8px 12px",
+          border: "1px dashed #bbb",
+          borderRadius: 8,
+          fontSize: 12,
+          background: "#fafafa",
+        }}
+      >
+        <b>Debug Push</b>
+
+        {" | "}
+
+        permissão: <code>{permission}</code>
+
+        {" | "}
+
+        inscrito: <code>{String(enabled)}</code>
+
+        {" | "}
+
+        suportado: <code>{String(supported)}</code>
+
+        {subscriptionId ? (
+          <>
+            {" | "}
+            subId: <code>{subscriptionId}</code>
+          </>
+        ) : null}
+
+        {lastError ? (
+          <>
+            {" | "}
+            erro: <code>{lastError}</code>
+          </>
+        ) : null}
+
+        <button
+          style={{ marginLeft: 8 }}
+          onClick={activateNotifications}
+        >
+          Forçar Prompt
+        </button>
       </div>
     </>
   );
 };
 
+/* =========================================================
+   COMPONENTE PRINCIPAL
+========================================================= */
+
 export default function App() {
   const [open, setOpen] = useState(false);
 
-  // One Pagers
-  const [onePagers, setOnePagers] = useState<string[]>([]);
-  const [bannerIndex, setBannerIndex] = useState(0);
-  const [bannerErro, setBannerErro] = useState<string | null>(null);
+  /* One Pager */
 
-  // Novos carrosséis
-  const [qdImgs, setQdImgs] = useState<string[]>([]);        // quebra diária
-  const [qdIndex, setQdIndex] = useState(0);
-  const [qdlImgs, setQdlImgs] = useState<string[]>([]);      // quebra por linha
-  const [qdlIndex, setQdlIndex] = useState(0);
+  const [onePagers, setOnePagers] =
+    useState<string[]>([]);
 
-  const [isNarrow, setIsNarrow] = useState(true);
-  const [showIosBanner, setShowIosBanner] = useState(false);
+  const [bannerIndex, setBannerIndex] =
+    useState(0);
 
-  // Estados de "imagem atual carregou?" para skeleton
-  const [readyOne, setReadyOne] = useState(false);
-  const [readyQD, setReadyQD] = useState(false);
-  const [readyQDL, setReadyQDL] = useState(false);
+  const [bannerError, setBannerError] =
+    useState<string | null>(null);
 
-  // Versão dos assets para cache-busting
-  const [assetV, setAssetV] = useState<number>(Date.now());
+  /* OKR de Manutenção */
 
-  // util de normalização
-  const norm = (s: string) => s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
+  const [okrImages, setOkrImages] =
+    useState<string[]>([]);
 
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
+  const [okrIndex, setOkrIndex] =
+    useState(0);
 
-  // Aviso iPhone só quando NÃO estiver instalado
+  /* Quebra Diária */
+
+  const [dailyBreakImages, setDailyBreakImages] =
+    useState<string[]>([]);
+
+  const [dailyBreakIndex, setDailyBreakIndex] =
+    useState(0);
+
+  /* Quebra por Linha */
+
+  const [lineBreakImages, setLineBreakImages] =
+    useState<string[]>([]);
+
+  const [lineBreakIndex, setLineBreakIndex] =
+    useState(0);
+
+  /* Layout */
+
+  const [isNarrow, setIsNarrow] =
+    useState(true);
+
+  const [showIosBanner, setShowIosBanner] =
+    useState(false);
+
+  /* Controle do carregamento das imagens */
+
+  const [readyOnePager, setReadyOnePager] =
+    useState(false);
+
+  const [readyOKR, setReadyOKR] =
+    useState(false);
+
+  const [readyDailyBreak, setReadyDailyBreak] =
+    useState(false);
+
+  const [readyLineBreak, setReadyLineBreak] =
+    useState(false);
+
+  /* Versão para impedir cache antigo */
+
+  const [assetVersion, setAssetVersion] =
+    useState(Date.now());
+
+  /* Controle do movimento no celular */
+
+  const touchStartX =
+    useRef<number | null>(null);
+
+  const touchEndX =
+    useRef<number | null>(null);
+
+  /* =======================================================
+     AVISO DE INSTALAÇÃO NO IPHONE
+  ======================================================= */
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const ua = window.navigator.userAgent;
-      const isiOS = /iPhone|iPad|iPod/i.test(ua);
-      let isStandalone = false;
-      try {
-        isStandalone =
-          (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
-          (window.navigator && (window.navigator as any).standalone === true);
-      } catch {}
-      setShowIosBanner(isiOS && !isStandalone);
+    const userAgent =
+      window.navigator.userAgent;
+
+    const isiOS =
+      /iPhone|iPad|iPod/i.test(userAgent);
+
+    let isStandalone = false;
+
+    try {
+      isStandalone =
+        (window.matchMedia &&
+          window.matchMedia(
+            "(display-mode: standalone)"
+          ).matches) ||
+        (window.navigator as any)
+          .standalone === true;
+    } catch {
+      isStandalone = false;
     }
+
+    setShowIosBanner(
+      isiOS && !isStandalone
+    );
   }, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const check = () => setIsNarrow(window.innerWidth <= 650);
-      check();
-      window.addEventListener("resize", check);
-      return () => window.removeEventListener("resize", check);
-    }
-  }, []);
+  /* =======================================================
+     IDENTIFICAR TELA PEQUENA
+  ======================================================= */
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    const checkWidth = () => {
+      setIsNarrow(
+        window.innerWidth <= 650
+      );
+    };
+
+    checkWidth();
+
+    window.addEventListener(
+      "resize",
+      checkWidth
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        checkWidth
+      );
+    };
+  }, []);
+
+  /* =======================================================
+     BLOQUEAR ROLAGEM COM MENU ABERTO
+  ======================================================= */
+
+  useEffect(() => {
+    document.body.style.overflow =
+      open ? "hidden" : "";
   }, [open]);
 
+  /* =======================================================
+     FECHAR MENU COM ESC
+  ======================================================= */
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    const closeWithEscape = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener(
+      "keydown",
+      closeWithEscape
+    );
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        closeWithEscape
+      );
+    };
   }, []);
 
-  /* ===== Carregar ONE PAGERS (ordem fixa) ===== */
+  /* =======================================================
+     CARREGAR ONE PAGERS
+  ======================================================= */
+
   useEffect(() => {
-    const load = async () => {
+    const loadOnePagers = async () => {
       try {
-        const res = await fetch(`/banners_media/onepagers.json?v=${Date.now()}`, { cache: "no-store" });
-        if (!res.ok) throw new Error();
-        const dataRaw: string[] = await res.json();
+        const response = await fetch(
+          `/banners_media/onepagers.json?v=${Date.now()}`,
+          { cache: "no-store" }
+        );
 
-        const mapOrig = new Map<string, string>();
-        for (const n of dataRaw) mapOrig.set(norm(n), n);
-
-        const ordem = ["one pager fabrica.PNG", "one pager G1.PNG", "one pager G2.PNG", "one pager G3.PNG"];
-        const ordered: string[] = [];
-        for (const wanted of ordem) {
-          const hit = mapOrig.get(norm(wanted));
-          if (hit) ordered.push(hit);
+        if (!response.ok) {
+          throw new Error();
         }
-        const extras = dataRaw.filter((n) => !ordered.includes(n));
-        const final = [...ordered, ...extras];
-        setOnePagers(final);
+
+        const data: string[] =
+          await response.json();
+
+        const fileMap =
+          new Map<string, string>();
+
+        for (const fileName of data) {
+          fileMap.set(
+            normalizeName(fileName),
+            fileName
+          );
+        }
+
+        const order = [
+          "one pager fabrica.PNG",
+          "one pager G1.PNG",
+          "one pager G2.PNG",
+          "one pager G3.PNG",
+        ];
+
+        const ordered: string[] = [];
+
+        for (const expectedName of order) {
+          const found = fileMap.get(
+            normalizeName(expectedName)
+          );
+
+          if (found) {
+            ordered.push(found);
+          }
+        }
+
+        const extras = data.filter(
+          (fileName) =>
+            !ordered.includes(fileName)
+        );
+
+        const finalImages = [
+          ...ordered,
+          ...extras,
+        ];
+
+        setOnePagers(finalImages);
         setBannerIndex(0);
-        setBannerErro(null);
+        setBannerError(null);
 
-        // PRELOAD primeiros (atual, prox, anterior)
-        preloadImage(buildUrl(final[0], assetV));
-        preloadImage(buildUrl(final[1], assetV));
-        preloadImage(buildUrl(final[final.length - 1], assetV));
+        preloadImage(
+          buildUrl(
+            finalImages[0],
+            assetVersion
+          )
+        );
 
-        // quebra cache pós-carregamento
-        setAssetV(Date.now());
+        preloadImage(
+          buildUrl(
+            finalImages[1],
+            assetVersion
+          )
+        );
+
+        preloadImage(
+          buildUrl(
+            finalImages[
+              finalImages.length - 1
+            ],
+            assetVersion
+          )
+        );
+
+        setAssetVersion(Date.now());
       } catch {
-        setBannerErro("Não foi possível carregar o carrossel.");
+        setBannerError(
+          "Não foi possível carregar o carrossel."
+        );
       }
     };
-    load();
+
+    loadOnePagers();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ===== Carregar Quebra diária ===== */
+  /* =======================================================
+     CARREGAR OKR DE MANUTENÇÃO
+
+     ORDEM:
+     JULHO, JUNHO, MAIO, ABRIL, MARÇO,
+     FEVEREIRO E JANEIRO DE 2026.
+  ======================================================= */
+
   useEffect(() => {
-    const loadQD = async () => {
+    const loadOKR = async () => {
       try {
-        const r = await fetch(`/banners_media/quebra_diaria.json?v=${Date.now()}`, { cache: "no-store" });
-        if (!r.ok) throw new Error();
-        const data: string[] = await r.json();
+        const response = await fetch(
+          `/banners_media/okr_manutencao.json?v=${Date.now()}`,
+          { cache: "no-store" }
+        );
 
-        const map = new Map<string, string>();
-        for (const n of data) map.set(norm(n), n);
-
-        const ordem = ["quebra diaria - atual.png", "quebra diaria - mês anterior.PNG"];
-        const ordered: string[] = [];
-        for (const want of ordem) {
-          const hit = map.get(norm(want));
-          if (hit) ordered.push(hit);
+        if (!response.ok) {
+          throw new Error();
         }
-        const extras = data.filter((n) => !ordered.includes(n));
-        const final = [...ordered, ...extras];
-        setQdImgs(final);
-        setQdIndex(0);
 
-        preloadImage(buildUrl(final[0], assetV));
-        preloadImage(buildUrl(final[1], assetV));
+        const data: string[] =
+          await response.json();
 
-        setAssetV(Date.now());
+        const fileMap =
+          new Map<string, string>();
+
+        for (const fileName of data) {
+          fileMap.set(
+            normalizeName(fileName),
+            fileName
+          );
+        }
+
+        const order = [
+          "OKR DE MANUTENÇÃO JULHO DE 2026.png",
+          "OKR DE MANUTENÇÃO JUNHO DE 2026.png",
+          "OKR DE MANUTENÇÃO MAIO DE 2026.png",
+          "OKR DE MANUTENÇÃO ABRIL DE 2026.png",
+          "OKR DE MANUTENÇÃO MARÇO DE 2026.png",
+          "OKR DE MANUTENÇÃO FEVEREIRO DE 2026.png",
+          "OKR DE MANUTENÇÃO JANEIRO 2026.png",
+        ];
+
+        const ordered: string[] = [];
+
+        for (const expectedName of order) {
+          const found = fileMap.get(
+            normalizeName(expectedName)
+          );
+
+          if (found) {
+            ordered.push(found);
+          }
+        }
+
+        const extras = data.filter(
+          (fileName) =>
+            !ordered.includes(fileName)
+        );
+
+        const finalImages = [
+          ...ordered,
+          ...extras,
+        ];
+
+        setOkrImages(finalImages);
+        setOkrIndex(0);
+
+        preloadImage(
+          buildUrl(
+            finalImages[0],
+            assetVersion
+          )
+        );
+
+        preloadImage(
+          buildUrl(
+            finalImages[1],
+            assetVersion
+          )
+        );
+
+        setAssetVersion(Date.now());
       } catch {
-        setQdImgs([]);
+        setOkrImages([]);
       }
     };
-    loadQD();
+
+    loadOKR();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ===== Carregar Quebra por linha ===== */
+  /* =======================================================
+     CARREGAR QUEBRA DIÁRIA
+  ======================================================= */
+
   useEffect(() => {
-    const loadQDL = async () => {
+    const loadDailyBreak = async () => {
       try {
-        const r = await fetch(`/banners_media/quebra_por_linha.json?v=${Date.now()}`, { cache: "no-store" });
-        if (!r.ok) throw new Error();
-        const data: string[] = await r.json();
+        const response = await fetch(
+          `/banners_media/quebra_diaria.json?v=${Date.now()}`,
+          { cache: "no-store" }
+        );
 
-        const map = new Map<string, string>();
-        for (const n of data) map.set(norm(n), n);
-
-        const ordem = ["quebra por linha - atual.PNG", "quebra por linha - mês anterior.PNG"];
-        const ordered: string[] = [];
-        for (const want of ordem) {
-          const hit = map.get(norm(want));
-          if (hit) ordered.push(hit);
+        if (!response.ok) {
+          throw new Error();
         }
-        const extras = data.filter((n) => !ordered.includes(n));
-        const final = [...ordered, ...extras];
-        setQdlImgs(final);
-        setQdlIndex(0);
 
-        preloadImage(buildUrl(final[0], assetV));
-        preloadImage(buildUrl(final[1], assetV));
+        const data: string[] =
+          await response.json();
 
-        setAssetV(Date.now());
+        const fileMap =
+          new Map<string, string>();
+
+        for (const fileName of data) {
+          fileMap.set(
+            normalizeName(fileName),
+            fileName
+          );
+        }
+
+        const order = [
+          "quebra diaria - atual.png",
+          "quebra diaria - mês anterior.PNG",
+        ];
+
+        const ordered: string[] = [];
+
+        for (const expectedName of order) {
+          const found = fileMap.get(
+            normalizeName(expectedName)
+          );
+
+          if (found) {
+            ordered.push(found);
+          }
+        }
+
+        const extras = data.filter(
+          (fileName) =>
+            !ordered.includes(fileName)
+        );
+
+        const finalImages = [
+          ...ordered,
+          ...extras,
+        ];
+
+        setDailyBreakImages(finalImages);
+        setDailyBreakIndex(0);
+
+        preloadImage(
+          buildUrl(
+            finalImages[0],
+            assetVersion
+          )
+        );
+
+        preloadImage(
+          buildUrl(
+            finalImages[1],
+            assetVersion
+          )
+        );
+
+        setAssetVersion(Date.now());
       } catch {
-        setQdlImgs([]);
+        setDailyBreakImages([]);
       }
     };
-    loadQDL();
+
+    loadDailyBreak();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // quando muda o índice, pré-carrega prox e anterior (inclui assetV)
+  /* =======================================================
+     CARREGAR QUEBRA POR LINHA
+  ======================================================= */
+
+  useEffect(() => {
+    const loadLineBreak = async () => {
+      try {
+        const response = await fetch(
+          `/banners_media/quebra_por_linha.json?v=${Date.now()}`,
+          { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+          throw new Error();
+        }
+
+        const data: string[] =
+          await response.json();
+
+        const fileMap =
+          new Map<string, string>();
+
+        for (const fileName of data) {
+          fileMap.set(
+            normalizeName(fileName),
+            fileName
+          );
+        }
+
+        const order = [
+          "quebra por linha - atual.PNG",
+          "quebra por linha - mês anterior.PNG",
+        ];
+
+        const ordered: string[] = [];
+
+        for (const expectedName of order) {
+          const found = fileMap.get(
+            normalizeName(expectedName)
+          );
+
+          if (found) {
+            ordered.push(found);
+          }
+        }
+
+        const extras = data.filter(
+          (fileName) =>
+            !ordered.includes(fileName)
+        );
+
+        const finalImages = [
+          ...ordered,
+          ...extras,
+        ];
+
+        setLineBreakImages(finalImages);
+        setLineBreakIndex(0);
+
+        preloadImage(
+          buildUrl(
+            finalImages[0],
+            assetVersion
+          )
+        );
+
+        preloadImage(
+          buildUrl(
+            finalImages[1],
+            assetVersion
+          )
+        );
+
+        setAssetVersion(Date.now());
+      } catch {
+        setLineBreakImages([]);
+      }
+    };
+
+    loadLineBreak();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* =======================================================
+     PRELOAD ONE PAGER
+  ======================================================= */
+
   useEffect(() => {
     if (!onePagers.length) return;
-    preloadImage(buildUrl(onePagers[bannerIndex], assetV));
-    preloadImage(buildUrl(onePagers[(bannerIndex + 1) % onePagers.length], assetV));
-    preloadImage(buildUrl(onePagers[(bannerIndex - 1 + onePagers.length) % onePagers.length], assetV));
-    const cur = buildUrl(onePagers[bannerIndex], assetV)!;
-    setReadyOne(loadedImages.has(cur));
-  }, [bannerIndex, onePagers, assetV]);
+
+    preloadImage(
+      buildUrl(
+        onePagers[bannerIndex],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        onePagers[
+          (bannerIndex + 1) %
+            onePagers.length
+        ],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        onePagers[
+          (bannerIndex -
+            1 +
+            onePagers.length) %
+            onePagers.length
+        ],
+        assetVersion
+      )
+    );
+
+    const current = buildUrl(
+      onePagers[bannerIndex],
+      assetVersion
+    )!;
+
+    setReadyOnePager(
+      loadedImages.has(current)
+    );
+  }, [
+    bannerIndex,
+    onePagers,
+    assetVersion,
+  ]);
+
+  /* =======================================================
+     PRELOAD OKR
+  ======================================================= */
 
   useEffect(() => {
-    if (!qdImgs.length) return;
-    preloadImage(buildUrl(qdImgs[qdIndex], assetV));
-    preloadImage(buildUrl(qdImgs[(qdIndex + 1) % qdImgs.length], assetV));
-    preloadImage(buildUrl(qdImgs[(qdIndex - 1 + qdImgs.length) % qdImgs.length], assetV));
-    const cur = buildUrl(qdImgs[qdIndex], assetV)!;
-    setReadyQD(loadedImages.has(cur));
-  }, [qdIndex, qdImgs, assetV]);
+    if (!okrImages.length) return;
+
+    preloadImage(
+      buildUrl(
+        okrImages[okrIndex],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        okrImages[
+          (okrIndex + 1) %
+            okrImages.length
+        ],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        okrImages[
+          (okrIndex -
+            1 +
+            okrImages.length) %
+            okrImages.length
+        ],
+        assetVersion
+      )
+    );
+
+    const current = buildUrl(
+      okrImages[okrIndex],
+      assetVersion
+    )!;
+
+    setReadyOKR(
+      loadedImages.has(current)
+    );
+  }, [
+    okrIndex,
+    okrImages,
+    assetVersion,
+  ]);
+
+  /* =======================================================
+     PRELOAD QUEBRA DIÁRIA
+  ======================================================= */
 
   useEffect(() => {
-    if (!qdlImgs.length) return;
-    preloadImage(buildUrl(qdlImgs[qdlIndex], assetV));
-    preloadImage(buildUrl(qdlImgs[(qdlIndex + 1) % qdlImgs.length], assetV));
-    preloadImage(buildUrl(qdlImgs[(qdlIndex - 1 + qdlImgs.length) % qdlImgs.length], assetV));
-    const cur = buildUrl(qdlImgs[qdlIndex], assetV)!;
-    setReadyQDL(loadedImages.has(cur));
-  }, [qdlIndex, qdlImgs, assetV]);
+    if (!dailyBreakImages.length) return;
 
-  // sem automático
+    preloadImage(
+      buildUrl(
+        dailyBreakImages[dailyBreakIndex],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        dailyBreakImages[
+          (dailyBreakIndex + 1) %
+            dailyBreakImages.length
+        ],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        dailyBreakImages[
+          (dailyBreakIndex -
+            1 +
+            dailyBreakImages.length) %
+            dailyBreakImages.length
+        ],
+        assetVersion
+      )
+    );
+
+    const current = buildUrl(
+      dailyBreakImages[dailyBreakIndex],
+      assetVersion
+    )!;
+
+    setReadyDailyBreak(
+      loadedImages.has(current)
+    );
+  }, [
+    dailyBreakIndex,
+    dailyBreakImages,
+    assetVersion,
+  ]);
+
+  /* =======================================================
+     PRELOAD QUEBRA POR LINHA
+  ======================================================= */
+
   useEffect(() => {
-    if (onePagers.length > 0) setBannerIndex(0);
-  }, [onePagers]);
+    if (!lineBreakImages.length) return;
 
-  const nextSlide = () => {
-    if (onePagers.length > 0) setBannerIndex((p) => (p + 1) % onePagers.length);
+    preloadImage(
+      buildUrl(
+        lineBreakImages[lineBreakIndex],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        lineBreakImages[
+          (lineBreakIndex + 1) %
+            lineBreakImages.length
+        ],
+        assetVersion
+      )
+    );
+
+    preloadImage(
+      buildUrl(
+        lineBreakImages[
+          (lineBreakIndex -
+            1 +
+            lineBreakImages.length) %
+            lineBreakImages.length
+        ],
+        assetVersion
+      )
+    );
+
+    const current = buildUrl(
+      lineBreakImages[lineBreakIndex],
+      assetVersion
+    )!;
+
+    setReadyLineBreak(
+      loadedImages.has(current)
+    );
+  }, [
+    lineBreakIndex,
+    lineBreakImages,
+    assetVersion,
+  ]);
+
+  /* =======================================================
+     NAVEGAÇÃO ONE PAGER
+  ======================================================= */
+
+  const nextOnePager = () => {
+    if (!onePagers.length) return;
+
+    setBannerIndex(
+      (previous) =>
+        (previous + 1) %
+        onePagers.length
+    );
   };
-  const prevSlide = () => {
-    if (onePagers.length > 0) setBannerIndex((p) => (p - 1 + onePagers.length) % onePagers.length);
+
+  const previousOnePager = () => {
+    if (!onePagers.length) return;
+
+    setBannerIndex(
+      (previous) =>
+        (previous -
+          1 +
+          onePagers.length) %
+        onePagers.length
+    );
   };
 
-  /* ===== Swipe universal (OnePagers, QD, QDL) ===== */
-  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
-  const handleTouchMove = (e: React.TouchEvent) => { touchEndX.current = e.touches[0].clientX; };
-  const handleTouchEnd = (type: "onepager" | "qd" | "qdl") => {
-    if (touchStartX.current === null || touchEndX.current === null) return;
-    const diff = touchStartX.current - touchEndX.current;
-    const min = 40;
-    if (diff > min) {
-      if (type === "onepager" && onePagers.length > 0) nextSlide();
-      if (type === "qd" && qdImgs.length > 0) setQdIndex((p) => (p + 1) % qdImgs.length);
-      if (type === "qdl" && qdlImgs.length > 0) setQdlIndex((p) => (p + 1) % qdlImgs.length);
-    } else if (diff < -min) {
-      if (type === "onepager" && onePagers.length > 0) prevSlide();
-      if (type === "qd" && qdImgs.length > 0) setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length);
-      if (type === "qdl" && qdlImgs.length > 0) setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length);
+  /* =======================================================
+     MOVIMENTO DO DEDO NO CELULAR
+  ======================================================= */
+
+  const handleTouchStart = (
+    event: React.TouchEvent
+  ) => {
+    touchStartX.current =
+      event.touches[0].clientX;
+
+    touchEndX.current =
+      event.touches[0].clientX;
+  };
+
+  const handleTouchMove = (
+    event: React.TouchEvent
+  ) => {
+    touchEndX.current =
+      event.touches[0].clientX;
+  };
+
+  type CarouselType =
+    | "onepager"
+    | "okr"
+    | "daily"
+    | "line";
+
+  const handleTouchEnd = (
+    type: CarouselType
+  ) => {
+    if (
+      touchStartX.current === null ||
+      touchEndX.current === null
+    ) {
+      return;
     }
+
+    const difference =
+      touchStartX.current -
+      touchEndX.current;
+
+    const minimumDistance = 40;
+
+    if (difference > minimumDistance) {
+      if (
+        type === "onepager" &&
+        onePagers.length
+      ) {
+        nextOnePager();
+      }
+
+      if (
+        type === "okr" &&
+        okrImages.length
+      ) {
+        setOkrIndex(
+          (previous) =>
+            (previous + 1) %
+            okrImages.length
+        );
+      }
+
+      if (
+        type === "daily" &&
+        dailyBreakImages.length
+      ) {
+        setDailyBreakIndex(
+          (previous) =>
+            (previous + 1) %
+            dailyBreakImages.length
+        );
+      }
+
+      if (
+        type === "line" &&
+        lineBreakImages.length
+      ) {
+        setLineBreakIndex(
+          (previous) =>
+            (previous + 1) %
+            lineBreakImages.length
+        );
+      }
+    }
+
+    if (difference < -minimumDistance) {
+      if (
+        type === "onepager" &&
+        onePagers.length
+      ) {
+        previousOnePager();
+      }
+
+      if (
+        type === "okr" &&
+        okrImages.length
+      ) {
+        setOkrIndex(
+          (previous) =>
+            (previous -
+              1 +
+              okrImages.length) %
+            okrImages.length
+        );
+      }
+
+      if (
+        type === "daily" &&
+        dailyBreakImages.length
+      ) {
+        setDailyBreakIndex(
+          (previous) =>
+            (previous -
+              1 +
+              dailyBreakImages.length) %
+            dailyBreakImages.length
+        );
+      }
+
+      if (
+        type === "line" &&
+        lineBreakImages.length
+      ) {
+        setLineBreakIndex(
+          (previous) =>
+            (previous -
+              1 +
+              lineBreakImages.length) %
+            lineBreakImages.length
+        );
+      }
+    }
+
     touchStartX.current = null;
     touchEndX.current = null;
   };
 
-  const currentOnePager = onePagers.length ? buildUrl(onePagers[bannerIndex], assetV)! : null;
-  const qdCurrent = qdImgs.length ? buildUrl(qdImgs[qdIndex], assetV)! : null;
-  const qdlCurrent = qdlImgs.length ? buildUrl(qdlImgs[qdlIndex], assetV)! : null;
+  /* =======================================================
+     IMAGENS ATUAIS
+  ======================================================= */
+
+  const currentOnePager =
+    onePagers.length
+      ? buildUrl(
+          onePagers[bannerIndex],
+          assetVersion
+        )
+      : null;
+
+  const currentOKR =
+    okrImages.length
+      ? buildUrl(
+          okrImages[okrIndex],
+          assetVersion
+        )
+      : null;
+
+  const currentDailyBreak =
+    dailyBreakImages.length
+      ? buildUrl(
+          dailyBreakImages[
+            dailyBreakIndex
+          ],
+          assetVersion
+        )
+      : null;
+
+  const currentLineBreak =
+    lineBreakImages.length
+      ? buildUrl(
+          lineBreakImages[
+            lineBreakIndex
+          ],
+          assetVersion
+        )
+      : null;
+
+  /* =======================================================
+     TELA
+  ======================================================= */
 
   return (
     <div className="app">
       <style>{`
-        .topbar{ position: sticky; top: 0; z-index: 100; background:#cc0000; box-shadow:0 6px 18px rgba(0,0,0,.15); }
-        .topbar-inner{ max-width:1200px; margin:0 auto; padding:6px 6px; display:grid; gap:6px; align-items:center; grid-template-columns:auto 58px 1fr 92px; position:relative; }
-        .menu-btn{ width:44px;height:44px;border:none;border-radius:999px; background:#b80000;color:#fff; display:grid;place-items:center; box-shadow:0 4px 12px rgba(0,0,0,.25); cursor:pointer; }
-        .menu-btn .bar{width:22px;height:2px;background:#fff;margin:2.5px 0;border-radius:2px;}
-        .logo-comite{height:46px;}
-        .logo-femsa{height:44px;justify-self:end;}
-        .title-chip{ color:#fff;font-weight:900;text-align:center; background:rgba(255,255,255,.12); padding:8px 12px;border-radius:999px; white-space:nowrap;overflow:hidden;text-overflow:ellipsis; font-size:clamp(16px, 2.7vw, 28px); }
-        @media (max-width:600px){
-          .topbar-inner{ grid-template-columns:40px 1fr auto; grid-template-areas:"logo title femsa"; padding:6px 8px 18px; }
-          .ga-logo{ grid-area:logo; height:32px; }
-          .ga-title{ grid-area:title; }
-          .ga-femsa{ grid-area:femsa; height:28px; }
-          .menu-btn{ position:absolute; left:8px; bottom:-26px; width:40px;height:40px; border-radius:12px; background:#cc0000; box-shadow:0 6px 14px rgba(0,0,0,.22), 0 0 0 2px rgba(255,255,255,.85); z-index:101; }
+        .topbar {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          background: #cc0000;
+          box-shadow: 0 6px 18px rgba(0,0,0,.15);
         }
-        .notify-cta{ position:sticky; top:0; z-index:1100; background:#fff7f7; border:1px solid #ffd6d6; border-radius:12px; padding:10px 12px; margin:8px 12px; box-shadow:0 6px 18px rgba(0,0,0,.08); display:flex; align-items:center; gap:10px; }
-        .notify-title{ color:#b30000; font-weight:800; }
-        .notify-text{ font-size:13px; color:#333; }
-        .notify-btn{ background:#cc0000; color:#fff; border:none; border-radius:999px; padding:8px 12px; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(179,0,0,.25); }
-        .banners-container{ display:flex; flex-direction:column; gap:18px; padding:14px 12px 28px; align-items:center; }
-        .section-title{ width:100%; max-width:980px; font-weight:900; font-size:14px; color:#444; margin:6px 0 4px 2px; }
 
-        .banner-dinamico{ width:100%; max-width:980px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.12); background:#000; overflow:hidden; position:relative; aspect-ratio: 16 / 9; }
-        .banner-dinamico img{ width:100%; height:100%; object-fit:contain; display:block; touch-action:auto; user-select:none; pointer-events:none; }
+        .topbar-inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 6px;
+          display: grid;
+          gap: 6px;
+          align-items: center;
+          grid-template-columns: auto 58px 1fr 92px;
+          position: relative;
+        }
 
-        .loading-overlay{
-          position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-          background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.05) 100%);
+        .menu-btn {
+          width: 44px;
+          height: 44px;
+          border: none;
+          border-radius: 999px;
+          background: #b80000;
+          color: #fff;
+          display: grid;
+          place-items: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,.25);
+          cursor: pointer;
+        }
+
+        .menu-btn .bar {
+          width: 22px;
+          height: 2px;
+          background: #fff;
+          margin: 2.5px 0;
+          border-radius: 2px;
+        }
+
+        .logo-comite {
+          height: 46px;
+        }
+
+        .logo-femsa {
+          height: 44px;
+          justify-self: end;
+        }
+
+        .title-chip {
+          color: #fff;
+          font-weight: 900;
+          text-align: center;
+          background: rgba(255,255,255,.12);
+          padding: 8px 12px;
+          border-radius: 999px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: clamp(16px, 2.7vw, 28px);
+        }
+
+        @media (max-width: 600px) {
+          .topbar-inner {
+            grid-template-columns: 40px 1fr auto;
+            grid-template-areas: "logo title femsa";
+            padding: 6px 8px 18px;
+          }
+
+          .ga-logo {
+            grid-area: logo;
+            height: 32px;
+          }
+
+          .ga-title {
+            grid-area: title;
+          }
+
+          .ga-femsa {
+            grid-area: femsa;
+            height: 28px;
+          }
+
+          .menu-btn {
+            position: absolute;
+            left: 8px;
+            bottom: -26px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #cc0000;
+            box-shadow:
+              0 6px 14px rgba(0,0,0,.22),
+              0 0 0 2px rgba(255,255,255,.85);
+            z-index: 101;
+          }
+        }
+
+        .notify-cta {
+          position: sticky;
+          top: 0;
+          z-index: 1100;
+          background: #fff7f7;
+          border: 1px solid #ffd6d6;
+          border-radius: 12px;
+          padding: 10px 12px;
+          margin: 8px 12px;
+          box-shadow: 0 6px 18px rgba(0,0,0,.08);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .notify-title {
+          color: #b30000;
+          font-weight: 800;
+        }
+
+        .notify-text {
+          font-size: 13px;
+          color: #333;
+        }
+
+        .notify-btn {
+          background: #cc0000;
+          color: #fff;
+          border: none;
+          border-radius: 999px;
+          padding: 8px 12px;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(179,0,0,.25);
+        }
+
+        .banners-container {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          padding: 14px 12px 28px;
+          align-items: center;
+        }
+
+        .section-title {
+          width: 100%;
+          max-width: 980px;
+          font-weight: 900;
+          font-size: 14px;
+          color: #444;
+          margin: 6px 0 4px 2px;
+        }
+
+        .banner-dinamico {
+          width: 100%;
+          max-width: 980px;
+          border-radius: 16px;
+          box-shadow: 0 4px 12px rgba(0,0,0,.12);
+          background: #000;
+          overflow: hidden;
+          position: relative;
+          aspect-ratio: 16 / 9;
+        }
+
+        .banner-dinamico img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+          touch-action: auto;
+          user-select: none;
+          pointer-events: none;
+        }
+
+        .loading-overlay {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,.05) 0%,
+            rgba(255,255,255,.18) 50%,
+            rgba(255,255,255,.05) 100%
+          );
           background-size: 200% 100%;
           animation: shimmer 1.2s infinite linear;
-          color:#fff; font-weight:700; letter-spacing:.3px;
-          pointer-events: none; /* <— não bloqueia as setas */
-        }
-        @keyframes shimmer{ 0%{ background-position:200% 0 } 100%{ background-position:-200% 0 } }
-
-        .banner-dots{ display:flex; gap:6px; justify-content:center; }
-        .banner-dot{ width:9px;height:9px;border-radius:999px;background:#ddd;border:none; cursor:pointer; }
-        .banner-dot.active{ background:#cc0000;width:28px; }
-        .static-banner{ width:100%; max-width:980px; border-radius:14px; box-shadow:0 4px 10px rgba(0,0,0,.08); display:block; }
-        .ios-hint{ background:#fff7d9; border:1px solid rgba(204,0,0,.35); color:#492100; margin:0 auto; max-width:1200px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; font-size:14px; }
-        .ios-hint strong{ display:block; font-size:14px; }
-        .ios-hint button{ background:transparent; border:none; font-size:16px; cursor:pointer; margin-left:auto; }
-
-        /* Setas (fallback: mantemos as classes; mas o ArrowButton já aplica z-index alto) */
-        .banner-arrow{
-          position:absolute; top:50%; transform:translateY(-50%);
-          width:42px;height:42px; border:none;border-radius:999px;
-          background:rgba(0,0,0,.35); color:#fff; display:grid; place-items:center;
-          cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25);
-          transition:background .15s ease, transform .15s ease; user-select:none;
-          z-index:50; /* <— alto para ficar acima de overlays */
-        }
-        .banner-arrow:hover{ background:rgba(0,0,0,.5); transform:translateY(-50%) scale(1.04); }
-        .banner-arrow:active{ transform:translateY(-50%) scale(0.98); }
-        .banner-arrow.left{ left:10px; }
-        .banner-arrow.right{ right:10px; }
-        .banner-arrow svg{ width:20px;height:20px; pointer-events:none; }
-        @media (max-width:700px){
-          .banner-arrow{ width:36px; height:36px; background:rgba(0,0,0,.4); }
+          color: #fff;
+          font-weight: 700;
+          letter-spacing: .3px;
+          pointer-events: none;
         }
 
-        .drawer-overlay{ position:fixed;inset:0;background:rgba(0,0,0,.35); transition:opacity .2s ease;z-index:100; }
-        .drawer{ position:fixed;top:0;left:0;height:100dvh;width:320px;max-width:86vw; background:#fff;box-shadow:4px 0 24px rgba(0,0,0,.18); z-index:102;display:flex;flex-direction:column; transition:transform .22s ease-out; }
-        .drawer-header{ display:flex;align-items:center;justify-content:space-between; padding:14px 14px 10px 16px;border-bottom:1px solid #eee; }
-        .drawer-link{ display:grid;grid-template-columns:26px 1fr;gap:12px; align-items:center;padding:12px 10px;border-radius:10px; color:#222;text-decoration:none; }
-        .drawer-ico{color:#cc0000;display:grid;place-items:center;}
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+
+          100% {
+            background-position: -200% 0;
+          }
+        }
+
+        .banner-dots {
+          display: flex;
+          gap: 6px;
+          justify-content: center;
+        }
+
+        .banner-dot {
+          width: 9px;
+          height: 9px;
+          border-radius: 999px;
+          background: #ddd;
+          border: none;
+          cursor: pointer;
+        }
+
+        .banner-dot.active {
+          background: #cc0000;
+          width: 28px;
+        }
+
+        .static-banner {
+          width: 100%;
+          max-width: 980px;
+          border-radius: 14px;
+          box-shadow: 0 4px 10px rgba(0,0,0,.08);
+          display: block;
+        }
+
+        .ios-hint {
+          background: #fff7d9;
+          border: 1px solid rgba(204,0,0,.35);
+          color: #492100;
+          margin: 0 auto;
+          max-width: 1200px;
+          padding: 10px 14px;
+          display: flex;
+          gap: 10px;
+          align-items: flex-start;
+          font-size: 14px;
+        }
+
+        .ios-hint strong {
+          display: block;
+          font-size: 14px;
+        }
+
+        .ios-hint button {
+          background: transparent;
+          border: none;
+          font-size: 16px;
+          cursor: pointer;
+          margin-left: auto;
+        }
+
+        .drawer-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,.35);
+          transition: opacity .2s ease;
+          z-index: 100;
+        }
+
+        .drawer {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100dvh;
+          width: 320px;
+          max-width: 86vw;
+          background: #fff;
+          box-shadow: 4px 0 24px rgba(0,0,0,.18);
+          z-index: 102;
+          display: flex;
+          flex-direction: column;
+          transition: transform .22s ease-out;
+        }
+
+        .drawer-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 14px 14px 10px 16px;
+          border-bottom: 1px solid #eee;
+        }
+
+        .drawer-link {
+          display: grid;
+          grid-template-columns: 26px 1fr;
+          gap: 12px;
+          align-items: center;
+          padding: 12px 10px;
+          border-radius: 10px;
+          color: #222;
+          text-decoration: none;
+        }
+
+        .drawer-ico {
+          color: #cc0000;
+          display: grid;
+          place-items: center;
+        }
       `}</style>
 
-      {/* Topbar */}
+      {/* TOPO */}
+
       <header className="topbar">
         <div className="topbar-inner">
-          <button className="menu-btn" aria-label="Abrir menu" onClick={() => setOpen(true)}>
-            <span className="bar" /><span className="bar" /><span className="bar" />
+          <button
+            className="menu-btn"
+            aria-label="Abrir menu"
+            onClick={() => setOpen(true)}
+          >
+            <span className="bar" />
+            <span className="bar" />
+            <span className="bar" />
           </button>
-          <img className="logo-comite ga-logo" src="/logo-comite.png" alt="Comitê de Manutenção JDI" />
-          <div className="title-chip ga-title">COMITÊ DE MANUTENÇÃO • JDI</div>
-          <img className="logo-femsa ga-femsa" src="/logo-femsa.png" alt="Coca-Cola FEMSA" />
+
+          <img
+            className="logo-comite ga-logo"
+            src="/logo-comite.png"
+            alt="Comitê de Manutenção JDI"
+          />
+
+          <div className="title-chip ga-title">
+            COMITÊ DE MANUTENÇÃO • JDI
+          </div>
+
+          <img
+            className="logo-femsa ga-femsa"
+            src="/logo-femsa.png"
+            alt="Coca-Cola FEMSA"
+          />
         </div>
       </header>
 
-      {/* CTA Notificações */}
       <NotifyCTA />
 
-      {/* Aviso iPhone */}
+      {/* AVISO IPHONE */}
+
       {showIosBanner && (
         <div className="ios-hint">
           <div>
-            <strong>iPhone detectado 📱</strong>
-            Para instalar: no Safari → **compartilhar** → **Adicionar à Tela de Início**.
+            <strong>
+              iPhone detectado 📱
+            </strong>
+
+            Para instalar: no Safari → compartilhar →
+            Adicionar à Tela de Início.
           </div>
-          <button onClick={() => setShowIosBanner(false)} aria-label="Fechar aviso">×</button>
+
+          <button
+            onClick={() =>
+              setShowIosBanner(false)
+            }
+            aria-label="Fechar aviso"
+          >
+            ×
+          </button>
         </div>
       )}
 
-      {/* Drawer */}
-      <div className="drawer-overlay" style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }} onClick={() => setOpen(false)} />
-      <aside className="drawer" style={{ transform: open ? "translateX(0)" : "translateX(-102%)" }} role="dialog" aria-modal="true">
+      {/* MENU LATERAL */}
+
+      <div
+        className="drawer-overlay"
+        style={{
+          opacity: open ? 1 : 0,
+          pointerEvents: open
+            ? "auto"
+            : "none",
+        }}
+        onClick={() => setOpen(false)}
+      />
+
+      <aside
+        className="drawer"
+        style={{
+          transform: open
+            ? "translateX(0)"
+            : "translateX(-102%)",
+        }}
+        role="dialog"
+        aria-modal="true"
+      >
         <div className="drawer-header">
-          <strong style={{ fontSize: 18 }}>Categorias</strong>
-          <button onClick={() => setOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer" }} aria-label="Fechar menu">×</button>
+          <strong style={{ fontSize: 18 }}>
+            Categorias
+          </strong>
+
+          <button
+            onClick={() => setOpen(false)}
+            style={{
+              background: "transparent",
+              border: "none",
+              fontSize: 22,
+              cursor: "pointer",
+            }}
+            aria-label="Fechar menu"
+          >
+            ×
+          </button>
         </div>
-        <nav style={{ padding: "8px 6px 16px 6px", overflow: "auto" }}>
-          {MENU.map(({ id, title, url, Icon }) => (
-            <a key={id} href={url} target="_blank" rel="noopener noreferrer" className="drawer-link" onClick={() => setOpen(false)}>
-              <span className="drawer-ico"><Icon /></span>
-              <span>{title}</span>
-            </a>
-          ))}
+
+        <nav
+          style={{
+            padding: "8px 6px 16px 6px",
+            overflow: "auto",
+          }}
+        >
+          {MENU.map(
+            ({
+              id,
+              title,
+              url,
+              Icon,
+            }) => (
+              <a
+                key={id}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="drawer-link"
+                onClick={() =>
+                  setOpen(false)
+                }
+              >
+                <span className="drawer-ico">
+                  <Icon />
+                </span>
+
+                <span>{title}</span>
+              </a>
+            )
+          )}
         </nav>
       </aside>
 
-      {/* Conteúdo */}
-      <main className="banners-container" style={{ paddingTop: isNarrow ? 33 : 28 }}>
+      {/* CONTEÚDO */}
+
+      <main
+        className="banners-container"
+        style={{
+          paddingTop: isNarrow
+            ? 33
+            : 28,
+        }}
+      >
         {/* ONE PAGER */}
-        <div className="section-title">ONE PAGER</div>
-        {bannerErro ? (
-          <div style={{ width: "100%", maxWidth: 980, background: "#fee", color: "#900", padding: 12, borderRadius: 12 }}>
-            {bannerErro}
+
+        <div className="section-title">
+          ONE PAGER
+        </div>
+
+        {bannerError ? (
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 980,
+              background: "#fee",
+              color: "#900",
+              padding: 12,
+              borderRadius: 12,
+            }}
+          >
+            {bannerError}
           </div>
         ) : !currentOnePager ? (
-          <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 980,
+              background: "#eee",
+              color: "#777",
+              padding: 12,
+              borderRadius: 12,
+            }}
+          >
             Carregando One Pagers...
           </div>
         ) : (
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
-              onTouchMove={(e) => { touchEndX.current = e.touches[0].clientX; }}
-              onTouchEnd={() => {
-                const diff = (touchStartX.current ?? 0) - (touchEndX.current ?? 0);
-                const min = 40;
-                if (diff > min) nextSlide();
-                else if (diff < -min) prevSlide();
-                touchStartX.current = null; touchEndX.current = null;
-              }}
+              onTouchStart={
+                handleTouchStart
+              }
+              onTouchMove={
+                handleTouchMove
+              }
+              onTouchEnd={() =>
+                handleTouchEnd(
+                  "onepager"
+                )
+              }
             >
               {onePagers.length > 1 && (
                 <>
-                  <ArrowButton side="left" title="Anterior" onClick={prevSlide} />
-                  <ArrowButton side="right" title="Próximo" onClick={() => setBannerIndex((p) => (p + 1) % onePagers.length)} />
+                  <ArrowButton
+                    side="left"
+                    title="Anterior"
+                    onClick={
+                      previousOnePager
+                    }
+                  />
+
+                  <ArrowButton
+                    side="right"
+                    title="Próximo"
+                    onClick={
+                      nextOnePager
+                    }
+                  />
                 </>
               )}
 
-              {!readyOne && <div className="loading-overlay">Carregando…</div>}
+              {!readyOnePager && (
+                <div className="loading-overlay">
+                  Carregando…
+                </div>
+              )}
+
               <SmartImg
                 src={currentOnePager}
-                alt={onePagers[bannerIndex]}
-                className=""
+                alt={
+                  onePagers[
+                    bannerIndex
+                  ]
+                }
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
-                onLoad={() => setReadyOne(true)}
+                onLoad={() =>
+                  setReadyOnePager(true)
+                }
               />
             </div>
+
             {onePagers.length > 1 && (
               <div className="banner-dots">
-                {onePagers.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`banner-dot ${i === bannerIndex ? "active" : ""}`}
-                    onClick={() => setBannerIndex(i)}
-                    aria-label={`Ver banner ${i + 1}`}
-                    type="button"
+                {onePagers.map(
+                  (fileName, index) => (
+                    <button
+                      key={fileName}
+                      className={`banner-dot ${
+                        index ===
+                        bannerIndex
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setBannerIndex(
+                          index
+                        )
+                      }
+                      aria-label={`Ver banner ${
+                        index + 1
+                      }`}
+                      type="button"
+                    />
+                  )
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* OKR DE MANUTENÇÃO */}
+
+        <div className="section-title">
+          OKR DE MANUTENÇÃO
+        </div>
+
+        {!currentOKR ? (
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 980,
+              background: "#eee",
+              color: "#777",
+              padding: 12,
+              borderRadius: 12,
+            }}
+          >
+            Carregando OKR de Manutenção...
+          </div>
+        ) : (
+          <>
+            <div
+              className="banner-dinamico"
+              onTouchStart={
+                handleTouchStart
+              }
+              onTouchMove={
+                handleTouchMove
+              }
+              onTouchEnd={() =>
+                handleTouchEnd("okr")
+              }
+            >
+              {okrImages.length > 1 && (
+                <>
+                  <ArrowButton
+                    side="left"
+                    title="Anterior"
+                    onClick={() =>
+                      setOkrIndex(
+                        (previous) =>
+                          (previous -
+                            1 +
+                            okrImages.length) %
+                          okrImages.length
+                      )
+                    }
                   />
-                ))}
+
+                  <ArrowButton
+                    side="right"
+                    title="Próximo"
+                    onClick={() =>
+                      setOkrIndex(
+                        (previous) =>
+                          (previous +
+                            1) %
+                          okrImages.length
+                      )
+                    }
+                  />
+                </>
+              )}
+
+              {!readyOKR && (
+                <div className="loading-overlay">
+                  Carregando…
+                </div>
+              )}
+
+              <SmartImg
+                src={currentOKR}
+                alt={
+                  okrImages[okrIndex]
+                }
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                onLoad={() =>
+                  setReadyOKR(true)
+                }
+              />
+            </div>
+
+            {okrImages.length > 1 && (
+              <div className="banner-dots">
+                {okrImages.map(
+                  (fileName, index) => (
+                    <button
+                      key={fileName}
+                      className={`banner-dot ${
+                        index === okrIndex
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setOkrIndex(index)
+                      }
+                      aria-label={`Ver OKR ${
+                        index + 1
+                      }`}
+                      title={fileName.replace(
+                        /\.(png|jpg|jpeg)$/i,
+                        ""
+                      )}
+                      type="button"
+                    />
+                  )
+                )}
               </div>
             )}
           </>
         )}
 
         {/* QUEBRA DIÁRIA */}
-        <div className="section-title">QUEBRA DIÁRIA</div>
-        {!qdCurrent ? (
-          <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
+
+        <div className="section-title">
+          QUEBRA DIÁRIA
+        </div>
+
+        {!currentDailyBreak ? (
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 980,
+              background: "#eee",
+              color: "#777",
+              padding: 12,
+              borderRadius: 12,
+            }}
+          >
             Carregando Quebra Diária...
           </div>
         ) : (
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
-              onTouchMove={(e) => { touchEndX.current = e.touches[0].clientX; }}
-              onTouchEnd={() => handleTouchEnd("qd")}
+              onTouchStart={
+                handleTouchStart
+              }
+              onTouchMove={
+                handleTouchMove
+              }
+              onTouchEnd={() =>
+                handleTouchEnd(
+                  "daily"
+                )
+              }
             >
-              {qdImgs.length > 1 && (
+              {dailyBreakImages.length >
+                1 && (
                 <>
-                  <ArrowButton side="left" title="Anterior" onClick={() => setQdIndex((p) => (p - 1 + qdImgs.length) % qdImgs.length)} />
-                  <ArrowButton side="right" title="Próximo" onClick={() => setQdIndex((p) => (p + 1) % qdImgs.length)} />
+                  <ArrowButton
+                    side="left"
+                    title="Anterior"
+                    onClick={() =>
+                      setDailyBreakIndex(
+                        (previous) =>
+                          (previous -
+                            1 +
+                            dailyBreakImages.length) %
+                          dailyBreakImages.length
+                      )
+                    }
+                  />
+
+                  <ArrowButton
+                    side="right"
+                    title="Próximo"
+                    onClick={() =>
+                      setDailyBreakIndex(
+                        (previous) =>
+                          (previous +
+                            1) %
+                          dailyBreakImages.length
+                      )
+                    }
+                  />
                 </>
               )}
-              {!readyQD && <div className="loading-overlay">Carregando…</div>}
+
+              {!readyDailyBreak && (
+                <div className="loading-overlay">
+                  Carregando…
+                </div>
+              )}
+
               <SmartImg
-                src={qdCurrent}
-                alt={qdImgs[qdIndex]}
+                src={currentDailyBreak}
+                alt={
+                  dailyBreakImages[
+                    dailyBreakIndex
+                  ]
+                }
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
-                onLoad={() => setReadyQD(true)}
+                onLoad={() =>
+                  setReadyDailyBreak(
+                    true
+                  )
+                }
               />
             </div>
-            {qdImgs.length > 1 && (
+
+            {dailyBreakImages.length >
+              1 && (
               <div className="banner-dots">
-                {qdImgs.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`banner-dot ${i === qdIndex ? "active" : ""}`}
-                    onClick={() => setQdIndex(i)}
-                    aria-label={`Ver quadro ${i + 1}`}
-                    type="button"
-                  />
-                ))}
+                {dailyBreakImages.map(
+                  (fileName, index) => (
+                    <button
+                      key={fileName}
+                      className={`banner-dot ${
+                        index ===
+                        dailyBreakIndex
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setDailyBreakIndex(
+                          index
+                        )
+                      }
+                      aria-label={`Ver quadro ${
+                        index + 1
+                      }`}
+                      type="button"
+                    />
+                  )
+                )}
               </div>
             )}
           </>
         )}
 
         {/* QUEBRA POR LINHA */}
-        <div className="section-title">QUEBRA POR LINHA</div>
-        {!qdlCurrent ? (
-          <div style={{ width: "100%", maxWidth: 980, background: "#eee", color: "#777", padding: 12, borderRadius: 12 }}>
+
+        <div className="section-title">
+          QUEBRA POR LINHA
+        </div>
+
+        {!currentLineBreak ? (
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 980,
+              background: "#eee",
+              color: "#777",
+              padding: 12,
+              borderRadius: 12,
+            }}
+          >
             Carregando Quebra por Linha...
           </div>
         ) : (
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
-              onTouchMove={(e) => { touchEndX.current = e.touches[0].clientX; }}
-              onTouchEnd={() => handleTouchEnd("qdl")}
+              onTouchStart={
+                handleTouchStart
+              }
+              onTouchMove={
+                handleTouchMove
+              }
+              onTouchEnd={() =>
+                handleTouchEnd("line")
+              }
             >
-              {qdlImgs.length > 1 && (
+              {lineBreakImages.length >
+                1 && (
                 <>
-                  <ArrowButton side="left" title="Anterior" onClick={() => setQdlIndex((p) => (p - 1 + qdlImgs.length) % qdlImgs.length)} />
-                  <ArrowButton side="right" title="Próximo" onClick={() => setQdlIndex((p) => (p + 1) % qdlImgs.length)} />
+                  <ArrowButton
+                    side="left"
+                    title="Anterior"
+                    onClick={() =>
+                      setLineBreakIndex(
+                        (previous) =>
+                          (previous -
+                            1 +
+                            lineBreakImages.length) %
+                          lineBreakImages.length
+                      )
+                    }
+                  />
+
+                  <ArrowButton
+                    side="right"
+                    title="Próximo"
+                    onClick={() =>
+                      setLineBreakIndex(
+                        (previous) =>
+                          (previous +
+                            1) %
+                          lineBreakImages.length
+                      )
+                    }
+                  />
                 </>
               )}
-              {!readyQDL && <div className="loading-overlay">Carregando…</div>}
+
+              {!readyLineBreak && (
+                <div className="loading-overlay">
+                  Carregando…
+                </div>
+              )}
+
               <SmartImg
-                src={qdlCurrent}
-                alt={qdlImgs[qdlIndex]}
+                src={currentLineBreak}
+                alt={
+                  lineBreakImages[
+                    lineBreakIndex
+                  ]
+                }
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
-                onLoad={() => setReadyQDL(true)}
+                onLoad={() =>
+                  setReadyLineBreak(
+                    true
+                  )
+                }
               />
             </div>
-            {qdlImgs.length > 1 && (
+
+            {lineBreakImages.length >
+              1 && (
               <div className="banner-dots">
-                {qdlImgs.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`banner-dot ${i === qdlIndex ? "active" : ""}`}
-                    onClick={() => setQdlIndex(i)}
-                    aria-label={`Ver quadro ${i + 1}`}
-                    type="button"
-                  />
-                ))}
+                {lineBreakImages.map(
+                  (fileName, index) => (
+                    <button
+                      key={fileName}
+                      className={`banner-dot ${
+                        index ===
+                        lineBreakIndex
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        setLineBreakIndex(
+                          index
+                        )
+                      }
+                      aria-label={`Ver quadro ${
+                        index + 1
+                      }`}
+                      type="button"
+                    />
+                  )
+                )}
               </div>
             )}
           </>
         )}
 
-        {/* Banners estáticos fixos */}
-        {STATIC_FROM_FOLDER.map((b, i) => (
-          <React.Fragment key={i}>
-            {b.title && <div className="section-title">{b.title}</div>}
-            <SmartImg
-              src={b.img}
-              alt={b.title ?? ""}
-              className="static-banner"
-              loading="lazy"
-              decoding="async"
-              onErrorHide
-            />
-          </React.Fragment>
-        ))}
+        {/* BANNERS ESTÁTICOS */}
+
+        {STATIC_FROM_FOLDER.map(
+          (banner, index) => (
+            <React.Fragment key={index}>
+              {banner.title && (
+                <div className="section-title">
+                  {banner.title}
+                </div>
+              )}
+
+              <SmartImg
+                src={banner.img}
+                alt={banner.title ?? ""}
+                className="static-banner"
+                loading="lazy"
+                decoding="async"
+                onErrorHide
+              />
+            </React.Fragment>
+          )
+        )}
       </main>
     </div>
   );
