@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { readDiagnostics, activatePush } from "./push";
 
 import {
@@ -11,123 +11,34 @@ import {
   IconChecklist,
   IconRegistroPCM,
   IconReconhecimentos,
-  IconEscola,
+  IconEscola, // precisa existir em ./icons
 } from "./icons";
 
-/* =========================================================
-   ÍCONES LOCAIS
-========================================================= */
-
+/* Ícones locais extras */
 const IconHelp: React.FC = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    aria-hidden="true"
-  >
-    <circle
-      cx="12"
-      cy="12"
-      r="9"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-
-    <path
-      d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-
-    <circle
-      cx="12"
-      cy="18"
-      r="1.25"
-      fill="currentColor"
-    />
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+    <path d="M9.7 9.5a2.8 2.8 0 0 1 5.1 1.6c0 2-2.6 2.3-2.6 3.9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="12" cy="18" r="1.25" fill="currentColor" />
   </svg>
 );
 
 const IconDoc: React.FC = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    aria-hidden="true"
-  >
-    <path
-      d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-
-    <path
-      d="M14 3v5h5"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-
-    <path
-      d="M9.5 12h5M9.5 15.5h5"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="2" />
+    <path d="M14 3v5h5" stroke="currentColor" strokeWidth="2" />
+    <path d="M9.5 12h5M9.5 15.5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
 const IconCost: React.FC = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    aria-hidden="true"
-  >
-    <circle
-      cx="8"
-      cy="14"
-      r="4.5"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="8" cy="14" r="4.5" stroke="currentColor" strokeWidth="2" />
+    <line x1="6.2" y1="13.2" x2="9.8" y2="13.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <line x1="6.2" y1="15.6" x2="9.8" y2="15.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="17" cy="7" r="2" stroke="currentColor" strokeWidth="2" />
 
-    <line
-      x1="6.2"
-      y1="13.2"
-      x2="9.8"
-      y2="13.2"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-
-    <line
-      x1="6.2"
-      y1="15.6"
-      x2="9.8"
-      y2="15.6"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-
-    <circle
-      cx="17"
-      cy="7"
-      r="2"
-      stroke="currentColor"
-      strokeWidth="2"
-    />
-
-    <g
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    >
+    <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <line x1="17" y1="2.6" x2="17" y2="1.6" />
       <line x1="17" y1="12.4" x2="17" y2="13.4" />
       <line x1="12.6" y1="7" x2="11.6" y2="7" />
@@ -140,37 +51,17 @@ const IconCost: React.FC = () => (
   </svg>
 );
 
-/* =========================================================
-   LINKS
-========================================================= */
-
+/* Links */
 const LINKS = {
-  okr:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
-
-  ddm:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/DDM%C2%B4S?csf=1&web=1&e=bi46ug",
-
-  onepager:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1",
-
-  treinamentos:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/TREINAMENTOS?csf=1&web=1&e=saAQe5",
-
-  papeis:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=96jRRw",
-
-  informativos:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y",
-
-  checklist:
-    "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
-
-  registro:
-    "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UMFE4RVhON1daSklPQ0s2QVIxMTk1RDFGTS4u",
-
-  reconhecimentos:
-    "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=ujB2BW",
+  okr: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/FECHAMENTOS?csf=1&web=1&e=e0QIRb",
+  ddm: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/DDM%C2%B4S?csf=1&web=1&e=bi46ug",
+  onepager: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/ONE%20PAGER?csf=1&web=1&e=mTBbo1",
+  treinamentos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/TREINAMENTOS?csf=1&web=1&e=saAQe5",
+  papeis: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/PAP%C3%89IS%20E%20RESPONSABILIDADES?csf=1&web=1&e=96jRRw",
+  informativos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/INFORMATIVOS?csf=1&web=1&e=dy3e4Y",
+  checklist: "https://forms.office.com/r/XM1hQ5YCrp?origin=lprLink",
+  registro: "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89IvsP_YVPjJJhA-rzC2o4A5UMFE4RVhON1daSklPQ0s2QVIxMTk1RDFGTS4u",
+  reconhecimentos: "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com_mx/Documents/RECONHECIMENTOS?csf=1&web=1&e=ujB2BW",
 
   programacao:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/PROGRAMA%C3%87%C3%83O%20PRE%20PCM?csf=1&web=1&e=abSPHT",
@@ -184,25 +75,23 @@ const LINKS = {
   custo:
     "https://cocacolafemsa-my.sharepoint.com/:f:/r/personal/roberta_dossantos_kof_com/Documents/CUSTO%20DE%20MANUTEN%C3%87%C3%83O?csf=1&web=1&e=hb8HSo",
 
+  /* Novos */
   backlog:
     "https://cocacolafemsa.sharepoint.com/sites/PROGRAMAOPREPCMJUNDIAIOSASCO/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPROGRAMAOPREPCMJUNDIAIOSASCO%2FDocumentos%20Compartilhados%2FBACKLOG%20PLANOS%5FCORRETIVAS&viewid=308aff45%2D8d06%2D4097%2D93e5%2Dabd3af4e0bf4",
 
   controleAprov:
     "https://cocacolafemsa.sharepoint.com/:f:/r/sites/Aprovaodematerial/Documentos%20Compartilhados/Bases%20-%20Semana%2045?csf=1&web=1&e=1BIDKL",
 
+  /* Escola Técnica */
   escolaDiagnostico:
     "https://forms.office.com/Pages/ResponsePage.aspx?id=QtWUcBU4gkyx1WkX0EQ89NQvr1f1E89KpsqePqDJsJ9UNzlGS0JOWkVPQjdGUEE4NTRMN1YxUDhaNC4u&origin=Invitation&channel=0",
 } as const;
 
-/* =========================================================
-   MENU
-========================================================= */
-
+/* Menu */
 const MENU = [
   {
     id: "registro",
-    title:
-      "Registro de reuniões Abertura de PCM e Prestação de Contas",
+    title: "Registro de reuniões Abertura de PCM e Prestação de Contas",
     url: LINKS.registro,
     Icon: IconRegistroPCM,
   },
@@ -268,8 +157,7 @@ const MENU = [
   },
   {
     id: "escola-tecnica",
-    title:
-      "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento",
+    title: "Escola Técnica KOF - Diagnóstico Necessidade de Treinamento",
     url: LINKS.escolaDiagnostico,
     Icon: IconEscola,
   },
@@ -299,64 +187,30 @@ const MENU = [
   },
 ];
 
-/* =========================================================
-   BANNERS ESTÁTICOS
-
-   O banner estático antigo de OKR foi retirado daqui,
-   porque o OKR agora será exibido no novo carrossel.
-========================================================= */
-
-const STATIC_FROM_FOLDER: {
-  img: string;
-  title?: string;
-}[] = [
-  {
-    img: "/banners_media/ASSERTIVIDADE.png",
-    title: "ASSERTIVIDADE",
-  },
-  {
-    img: "/banners_media/ÁREAS.jpeg",
-    title: "RECONHECIMENTO",
-  },
+/* ===== banners estáticos — fixos importantes ===== */
+const STATIC_FROM_FOLDER: { img: string; title?: string }[] = [
+  { img: "/banners_media/ASSERTIVIDADE.png", title: "ASSERTIVIDADE" },
+  { img: "/banners_media/ÁREAS.jpeg", title: "RECONHECIMENTO" },
 ];
 
-/* =========================================================
-   FUNÇÕES DE IMAGEM
-========================================================= */
-
+/* ====== PRELOAD util ====== */
 const loadedImages = new Set<string>();
 
 function preloadImage(url: string | null) {
   if (!url || loadedImages.has(url)) return;
 
   const img = new Image();
-
   img.src = url;
-
-  img.onload = () => {
-    loadedImages.add(url);
-  };
+  img.onload = () => loadedImages.add(url);
 }
 
-function buildUrl(file?: string, version?: number) {
-  if (!file) return null;
-
-  return `/banners_media/${file}?v=${version ?? ""}`;
+/** Monta a URL da imagem com cache-busting (?v=assetV) */
+function buildUrl(file?: string, v?: number) {
+  return file ? `/banners_media/${file}?v=${v ?? ""}` : null;
 }
 
-function normalizeName(value: string) {
-  return value
-    .normalize("NFC")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-/* =========================================================
-   SMART IMAGE
-========================================================= */
-
-type SmartImgProps = {
+/** Componente que tenta variações de extensão (png/PNG/jpg/JPG/jpeg/JPEG) caso a primeira falhe */
+const SmartImg: React.FC<{
   src: string;
   alt: string;
   className?: string;
@@ -365,9 +219,7 @@ type SmartImgProps = {
   decoding?: "auto" | "sync" | "async";
   fetchPriority?: "high" | "low" | "auto";
   onErrorHide?: boolean;
-};
-
-const SmartImg: React.FC<SmartImgProps> = ({
+}> = ({
   src,
   alt,
   className,
@@ -378,58 +230,50 @@ const SmartImg: React.FC<SmartImgProps> = ({
   onErrorHide,
 }) => {
   const [current, setCurrent] = useState(src);
-  const [index, setIndex] = useState(0);
+  const [idx, setIdx] = useState(0);
 
   useEffect(() => {
     setCurrent(src);
-    setIndex(0);
+    setIdx(0);
   }, [src]);
 
-  const createVariants = (url: string) => {
-    const [base, query = ""] = url.split("?");
-    const queryString = query ? `?${query}` : "";
+  const makeVariants = (u: string) => {
+    const [base, query = ""] = u.split("?");
+    const q = query ? "?" + query : "";
+    const dot = base.lastIndexOf(".");
 
-    const dotPosition = base.lastIndexOf(".");
+    if (dot < 0) return [u];
 
-    if (dotPosition < 0) {
-      return [url];
-    }
-
-    const fileName = base.substring(0, dotPosition);
-    const extension = base.substring(dotPosition + 1);
-    const extensionLower = extension.toLowerCase();
+    const name = base.substring(0, dot);
+    const ext = base.substring(dot + 1);
+    const extLower = ext.toLowerCase();
 
     const variants = new Set<string>();
 
-    variants.add(`${fileName}.${extension}${queryString}`);
+    variants.add(`${name}.${ext}${q}`);
 
-    if (extensionLower === "png") {
-      variants.add(`${fileName}.PNG${queryString}`);
-      variants.add(`${fileName}.png${queryString}`);
-    } else if (extensionLower === "jpg") {
-      variants.add(`${fileName}.JPG${queryString}`);
-      variants.add(`${fileName}.jpg${queryString}`);
-      variants.add(`${fileName}.jpeg${queryString}`);
-      variants.add(`${fileName}.JPEG${queryString}`);
-    } else if (extensionLower === "jpeg") {
-      variants.add(`${fileName}.JPEG${queryString}`);
-      variants.add(`${fileName}.jpeg${queryString}`);
-      variants.add(`${fileName}.jpg${queryString}`);
-      variants.add(`${fileName}.JPG${queryString}`);
+    if (extLower === "png") {
+      variants.add(`${name}.PNG${q}`);
+      variants.add(`${name}.png${q}`);
+    } else if (extLower === "jpg") {
+      variants.add(`${name}.JPG${q}`);
+      variants.add(`${name}.jpg${q}`);
+      variants.add(`${name}.jpeg${q}`);
+      variants.add(`${name}.JPEG${q}`);
+    } else if (extLower === "jpeg") {
+      variants.add(`${name}.JPEG${q}`);
+      variants.add(`${name}.jpeg${q}`);
+      variants.add(`${name}.jpg${q}`);
+      variants.add(`${name}.JPG${q}`);
     } else {
-      variants.add(
-        `${fileName}.${extension.toUpperCase()}${queryString}`
-      );
-
-      variants.add(
-        `${fileName}.${extension.toLowerCase()}${queryString}`
-      );
+      variants.add(`${name}.${ext.toUpperCase()}${q}`);
+      variants.add(`${name}.${ext.toLowerCase()}${q}`);
     }
 
     return Array.from(variants);
   };
 
-  const variants = createVariants(src);
+  const variants = makeVariants(src);
 
   return (
     <img
@@ -443,39 +287,33 @@ const SmartImg: React.FC<SmartImgProps> = ({
         loadedImages.add(current);
         onLoad?.();
       }}
-      onError={(event) => {
-        const nextIndex = index + 1;
+      onError={(e) => {
+        const next = idx + 1;
 
-        if (nextIndex < variants.length) {
-          setIndex(nextIndex);
-          setCurrent(variants[nextIndex]);
-          return;
-        }
-
-        if (onErrorHide) {
-          event.currentTarget.style.display = "none";
+        if (next < variants.length) {
+          setIdx(next);
+          setCurrent(variants[next]);
+        } else if (onErrorHide) {
+          (e.currentTarget as HTMLImageElement).style.display = "none";
         }
       }}
     />
   );
 };
 
-/* =========================================================
-   BOTÃO DAS SETAS
-========================================================= */
-
-type ArrowButtonProps = {
+/* ===== Botão de navegação com toque garantido no mobile ===== */
+type ArrowBtnProps = {
   side: "left" | "right";
   title: string;
   onClick: () => void;
 };
 
-const ArrowButton: React.FC<ArrowButtonProps> = ({
+const ArrowButton: React.FC<ArrowBtnProps> = ({
   side,
   title,
   onClick,
 }) => {
-  const buttonStyle: React.CSSProperties = {
+  const styleBtn: React.CSSProperties = {
     position: "absolute",
     top: "50%",
     transform: "translateY(-50%)",
@@ -497,10 +335,8 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({
     WebkitTapHighlightColor: "transparent",
   };
 
-  const stopEvent = (
-    event: React.SyntheticEvent
-  ) => {
-    event.stopPropagation();
+  const stop = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -508,10 +344,10 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({
       type="button"
       aria-label={title}
       title={title}
-      style={buttonStyle}
+      style={styleBtn}
       onClick={onClick}
-      onTouchStart={stopEvent}
-      onPointerDown={stopEvent}
+      onTouchStart={stop}
+      onPointerDown={stop}
     >
       <svg
         viewBox="0 0 24 24"
@@ -542,83 +378,64 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({
   );
 };
 
-/* =========================================================
-   CTA DE NOTIFICAÇÕES
-========================================================= */
-
+/* ===== CTA de Notificações com diagnóstico ===== */
 const NotifyCTA: React.FC = () => {
   const [show, setShow] = useState(false);
-
-  const [permission, setPermission] = useState<
+  const [perm, setPerm] = useState<
     NotificationPermission | "loading"
   >("loading");
-
   const [enabled, setEnabled] = useState(false);
-  const [supported, setSupported] = useState(true);
-  const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
+  const [isSupported, setIsSupported] = useState(true);
+  const [subId, setSubId] = useState<string | null>(null);
   const [lastError, setLastError] = useState<string | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
 
   const DISMISS_KEY = "pushCTA:dismissed";
 
-  const shouldShow = (options: {
+  const computeShouldShow = (opts: {
     enabled: boolean;
-    permission: NotificationPermission | "loading";
-    supported: boolean;
-    subscriptionId?: string | null;
+    perm: NotificationPermission | "loading";
+    isSupported: boolean;
+    subId?: string | null;
   }) => {
-    const dismissed =
-      localStorage.getItem(DISMISS_KEY) === "1";
+    const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
 
     if (dismissed) return false;
-    if (!options.supported) return false;
-    if (options.enabled) return false;
-    if (options.permission === "granted") return false;
-    if (options.subscriptionId) return false;
+    if (!opts.isSupported) return false;
+    if (opts.enabled) return false;
+    if (opts.perm === "granted") return false;
+    if (opts.subId) return false;
 
-    const isiOS =
-      /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     const isStandalone =
       (window.matchMedia &&
-        window.matchMedia("(display-mode: standalone)")
-          .matches) ||
+        window.matchMedia("(display-mode: standalone)").matches) ||
       (window.navigator as any)?.standalone === true;
 
     return isiOS ? isStandalone : true;
   };
 
-  const refreshDiagnostics = async () => {
+  const refreshDiag = async () => {
     try {
-      const diagnostics = await readDiagnostics();
+      const d = await readDiagnostics();
 
-      setPermission(
-        diagnostics.permission as NotificationPermission
-      );
+      setPerm(d.permission as NotificationPermission);
+      setEnabled(!!d.enabled);
+      setIsSupported(!!d.isSupported);
+      setSubId(d.subscriptionId ?? null);
+      setLastError(d.lastError ?? null);
 
-      setEnabled(Boolean(diagnostics.enabled));
-      setSupported(Boolean(diagnostics.isSupported));
+      const should = computeShouldShow({
+        enabled: !!d.enabled,
+        perm: d.permission as NotificationPermission,
+        isSupported: !!d.isSupported,
+        subId: d.subscriptionId ?? null,
+      });
 
-      setSubscriptionId(
-        diagnostics.subscriptionId ?? null
-      );
-
-      setLastError(
-        diagnostics.lastError ?? null
-      );
-
-      setShow(
-        shouldShow({
-          enabled: Boolean(diagnostics.enabled),
-          permission:
-            diagnostics.permission as NotificationPermission,
-          supported: Boolean(diagnostics.isSupported),
-          subscriptionId:
-            diagnostics.subscriptionId ?? null,
-        })
-      );
+      setShow(should);
     } catch {
-      setSupported(true);
+      setIsSupported(true);
       setShow(true);
     }
   };
@@ -626,116 +443,90 @@ const NotifyCTA: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
-    const initialize = async () => {
-      await refreshDiagnostics();
+    const init = async () => {
+      await refreshDiag();
 
       (window as any).OneSignalDeferred =
         (window as any).OneSignalDeferred || [];
 
-      (window as any).OneSignalDeferred.push(
-        (OneSignal: any) => {
-          OneSignal.on?.(
-            "subscriptionChange",
-            async (subscribed: boolean) => {
-              if (!mounted) return;
+      (window as any).OneSignalDeferred.push((OneSignal: any) => {
+        OneSignal.on?.(
+          "subscriptionChange",
+          async (sub: boolean) => {
+            if (!mounted) return;
 
-              setEnabled(subscribed);
+            setEnabled(sub);
 
-              if (subscribed) {
-                localStorage.setItem(
-                  DISMISS_KEY,
-                  "1"
-                );
-
-                setShow(false);
-              }
-
-              await refreshDiagnostics();
+            if (sub) {
+              localStorage.setItem(DISMISS_KEY, "1");
+              setShow(false);
             }
-          );
 
-          OneSignal.on?.(
-            "notificationPermissionChange",
-            async () => {
-              if (!mounted) return;
-
-              await refreshDiagnostics();
-            }
-          );
-        }
-      );
-
-      document.addEventListener(
-        "visibilitychange",
-        () => {
-          if (
-            document.visibilityState === "visible"
-          ) {
-            refreshDiagnostics();
+            await refreshDiag();
           }
+        );
+
+        OneSignal.on?.(
+          "notificationPermissionChange",
+          async () => {
+            if (!mounted) return;
+
+            await refreshDiag();
+          }
+        );
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          refreshDiag();
         }
-      );
+      });
 
       try {
-        const url = new URL(window.location.href);
+        const u = new URL(window.location.href);
 
-        if (
-          url.searchParams.get("debugPush") === "1"
-        ) {
+        if (u.searchParams.get("debugPush") === "1") {
           setDebugOpen(true);
         }
-      } catch {
-        // Sem ação
-      }
+      } catch {}
     };
 
-    initialize();
+    init();
 
     return () => {
       mounted = false;
     };
   }, []);
 
-  const activateNotifications = async () => {
-    const diagnostics = await activatePush();
+  const onActivate = async () => {
+    const d = await activatePush();
 
-    setPermission(
-      diagnostics.permission as NotificationPermission
-    );
-
-    setEnabled(Boolean(diagnostics.enabled));
-    setSupported(Boolean(diagnostics.isSupported));
-
-    setSubscriptionId(
-      diagnostics.subscriptionId ?? null
-    );
-
-    setLastError(
-      diagnostics.lastError ?? null
-    );
+    setPerm(d.permission as NotificationPermission);
+    setEnabled(!!d.enabled);
+    setIsSupported(!!d.isSupported);
+    setSubId(d.subscriptionId ?? null);
+    setLastError(d.lastError ?? null);
 
     if (
-      diagnostics.enabled ||
-      diagnostics.permission === "granted" ||
-      diagnostics.subscriptionId
+      d.enabled ||
+      d.permission === "granted" ||
+      d.subscriptionId
     ) {
       localStorage.setItem(DISMISS_KEY, "1");
       setShow(false);
     } else {
-      setShow(
-        shouldShow({
-          enabled: Boolean(diagnostics.enabled),
-          permission:
-            diagnostics.permission as NotificationPermission,
-          supported: Boolean(diagnostics.isSupported),
-          subscriptionId:
-            diagnostics.subscriptionId ?? null,
-        })
-      );
+      const should = computeShouldShow({
+        enabled: !!d.enabled,
+        perm: d.permission as NotificationPermission,
+        isSupported: !!d.isSupported,
+        subId: d.subscriptionId ?? null,
+      });
+
+      setShow(should);
     }
   };
 
-  const dismissNotifications = () => {
+  const dismiss = () => {
     localStorage.setItem(DISMISS_KEY, "1");
     setShow(false);
   };
@@ -754,37 +545,27 @@ const NotifyCTA: React.FC = () => {
               background: "#fafafa",
             }}
           >
-            <b>Debug Push</b>
+            <b>Debug Push</b> | permissão: <code>{perm}</code> |
+            inscrito: <code>{String(enabled)}</code> | suportado:{" "}
+            <code>{String(isSupported)}</code>
 
-            {" | "}
-
-            permissão: <code>{permission}</code>
-
-            {" | "}
-
-            inscrito: <code>{String(enabled)}</code>
-
-            {" | "}
-
-            suportado: <code>{String(supported)}</code>
-
-            {subscriptionId ? (
+            {subId ? (
               <>
-                {" | "}
-                subId: <code>{subscriptionId}</code>
+                {" "}
+                | subId: <code>{subId}</code>
               </>
             ) : null}
 
             {lastError ? (
               <>
-                {" | "}
-                erro: <code>{lastError}</code>
+                {" "}
+                | erro: <code>{lastError}</code>
               </>
             ) : null}
 
             <button
               style={{ marginLeft: 8 }}
-              onClick={activateNotifications}
+              onClick={onActivate}
             >
               Forçar Prompt
             </button>
@@ -794,7 +575,7 @@ const NotifyCTA: React.FC = () => {
     );
   }
 
-  const denied = permission === "denied";
+  const denied = perm === "denied";
 
   return (
     <>
@@ -803,19 +584,17 @@ const NotifyCTA: React.FC = () => {
         role="region"
         aria-label="Ativar notificações"
       >
-        <span className="notify-title">
-          🔔 Notificações
-        </span>
+        <span className="notify-title">🔔 Notificações</span>
 
-        {!supported ? (
+        {!isSupported ? (
           <span className="notify-text">
             Este navegador não suporta notificações push.
           </span>
         ) : denied ? (
           <span className="notify-text">
-            Notificações estão <b>bloqueadas</b>.
-            Clique no cadeado da barra de endereço →
-            Permissões → <b>Notificações: Permitir</b>.
+            Notificações estão <b>bloqueadas</b>. Clique no cadeado
+            da barra de endereço → Permissões →{" "}
+            <b>Notificações: Permitir</b>.
           </span>
         ) : (
           <span className="notify-text">
@@ -832,7 +611,7 @@ const NotifyCTA: React.FC = () => {
         >
           <button
             className="notify-btn"
-            onClick={activateNotifications}
+            onClick={onActivate}
           >
             {denied ? "Como liberar" : "Ativar"}
           </button>
@@ -840,7 +619,7 @@ const NotifyCTA: React.FC = () => {
           <button
             className="notify-btn"
             style={{ background: "#777" }}
-            onClick={dismissNotifications}
+            onClick={dismiss}
             aria-label="Não mostrar de novo"
           >
             Não mostrar
@@ -858,37 +637,27 @@ const NotifyCTA: React.FC = () => {
           background: "#fafafa",
         }}
       >
-        <b>Debug Push</b>
+        <b>Debug Push</b> | permissão: <code>{perm}</code> |
+        inscrito: <code>{String(enabled)}</code> | suportado:{" "}
+        <code>{String(isSupported)}</code>
 
-        {" | "}
-
-        permissão: <code>{permission}</code>
-
-        {" | "}
-
-        inscrito: <code>{String(enabled)}</code>
-
-        {" | "}
-
-        suportado: <code>{String(supported)}</code>
-
-        {subscriptionId ? (
+        {subId ? (
           <>
-            {" | "}
-            subId: <code>{subscriptionId}</code>
+            {" "}
+            | subId: <code>{subId}</code>
           </>
         ) : null}
 
         {lastError ? (
           <>
-            {" | "}
-            erro: <code>{lastError}</code>
+            {" "}
+            | erro: <code>{lastError}</code>
           </>
         ) : null}
 
         <button
           style={{ marginLeft: 8 }}
-          onClick={activateNotifications}
+          onClick={onActivate}
         >
           Forçar Prompt
         </button>
@@ -897,204 +666,113 @@ const NotifyCTA: React.FC = () => {
   );
 };
 
-/* =========================================================
-   COMPONENTE PRINCIPAL
-========================================================= */
-
 export default function App() {
   const [open, setOpen] = useState(false);
 
-  /* One Pager */
+  // One Pagers
+  const [onePagers, setOnePagers] = useState<string[]>([]);
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const [bannerErro, setBannerErro] = useState<string | null>(null);
 
-  const [onePagers, setOnePagers] =
-    useState<string[]>([]);
+  // Novos carrosséis
+  const [qdImgs, setQdImgs] = useState<string[]>([]);
+  const [qdIndex, setQdIndex] = useState(0);
 
-  const [bannerIndex, setBannerIndex] =
-    useState(0);
+  const [qdlImgs, setQdlImgs] = useState<string[]>([]);
+  const [qdlIndex, setQdlIndex] = useState(0);
 
-  const [bannerError, setBannerError] =
-    useState<string | null>(null);
+  // Novo carrossel de OKR
+  const [okrImgs, setOkrImgs] = useState<string[]>([]);
+  const [okrIndex, setOkrIndex] = useState(0);
 
-  /* OKR de Manutenção */
+  const [isNarrow, setIsNarrow] = useState(true);
+  const [showIosBanner, setShowIosBanner] = useState(false);
 
-  const [okrImages, setOkrImages] =
-    useState<string[]>([]);
+  // Estados de "imagem atual carregou?" para skeleton
+  const [readyOne, setReadyOne] = useState(false);
+  const [readyQD, setReadyQD] = useState(false);
+  const [readyQDL, setReadyQDL] = useState(false);
+  const [readyOKR, setReadyOKR] = useState(false);
 
-  const [okrIndex, setOkrIndex] =
-    useState(0);
+  // Versão dos assets para cache-busting
+  const [assetV, setAssetV] = useState<number>(Date.now());
 
-  /* Quebra Diária */
+  // util de normalização
+  const norm = (s: string) =>
+    s
+      .normalize("NFC")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
 
-  const [dailyBreakImages, setDailyBreakImages] =
-    useState<string[]>([]);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
-  const [dailyBreakIndex, setDailyBreakIndex] =
-    useState(0);
-
-  /* Quebra por Linha */
-
-  const [lineBreakImages, setLineBreakImages] =
-    useState<string[]>([]);
-
-  const [lineBreakIndex, setLineBreakIndex] =
-    useState(0);
-
-  /* Layout */
-
-  const [isNarrow, setIsNarrow] =
-    useState(true);
-
-  const [showIosBanner, setShowIosBanner] =
-    useState(false);
-
-  /* Controle do carregamento das imagens */
-
-  const [readyOnePager, setReadyOnePager] =
-    useState(false);
-
-  const [readyOKR, setReadyOKR] =
-    useState(false);
-
-  const [readyDailyBreak, setReadyDailyBreak] =
-    useState(false);
-
-  const [readyLineBreak, setReadyLineBreak] =
-    useState(false);
-
-  /* Versão para impedir cache antigo */
-
-  const [assetVersion, setAssetVersion] =
-    useState(Date.now());
-
-  /* Controle do movimento no celular */
-
-  const touchStartX =
-    useRef<number | null>(null);
-
-  const touchEndX =
-    useRef<number | null>(null);
-
-  /* =======================================================
-     AVISO DE INSTALAÇÃO NO IPHONE
-  ======================================================= */
-
+  // Aviso iPhone só quando NÃO estiver instalado
   useEffect(() => {
-    const userAgent =
-      window.navigator.userAgent;
+    if (typeof window !== "undefined") {
+      const ua = window.navigator.userAgent;
+      const isiOS = /iPhone|iPad|iPod/i.test(ua);
 
-    const isiOS =
-      /iPhone|iPad|iPod/i.test(userAgent);
+      let isStandalone = false;
 
-    let isStandalone = false;
+      try {
+        isStandalone =
+          (window.matchMedia &&
+            window.matchMedia("(display-mode: standalone)").matches) ||
+          (window.navigator &&
+            (window.navigator as any).standalone === true);
+      } catch {}
 
-    try {
-      isStandalone =
-        (window.matchMedia &&
-          window.matchMedia(
-            "(display-mode: standalone)"
-          ).matches) ||
-        (window.navigator as any)
-          .standalone === true;
-    } catch {
-      isStandalone = false;
+      setShowIosBanner(isiOS && !isStandalone);
     }
-
-    setShowIosBanner(
-      isiOS && !isStandalone
-    );
   }, []);
 
-  /* =======================================================
-     IDENTIFICAR TELA PEQUENA
-  ======================================================= */
-
   useEffect(() => {
-    const checkWidth = () => {
-      setIsNarrow(
-        window.innerWidth <= 650
-      );
-    };
+    if (typeof window !== "undefined") {
+      const check = () => setIsNarrow(window.innerWidth <= 650);
 
-    checkWidth();
+      check();
 
-    window.addEventListener(
-      "resize",
-      checkWidth
-    );
+      window.addEventListener("resize", check);
 
-    return () => {
-      window.removeEventListener(
-        "resize",
-        checkWidth
-      );
-    };
+      return () => window.removeEventListener("resize", check);
+    }
   }, []);
 
-  /* =======================================================
-     BLOQUEAR ROLAGEM COM MENU ABERTO
-  ======================================================= */
-
   useEffect(() => {
-    document.body.style.overflow =
-      open ? "hidden" : "";
+    document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-  /* =======================================================
-     FECHAR MENU COM ESC
-  ======================================================= */
-
   useEffect(() => {
-    const closeWithEscape = (
-      event: KeyboardEvent
-    ) => {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
-    };
+    const onKey = (e: KeyboardEvent) =>
+      e.key === "Escape" && setOpen(false);
 
-    window.addEventListener(
-      "keydown",
-      closeWithEscape
-    );
+    window.addEventListener("keydown", onKey);
 
-    return () => {
-      window.removeEventListener(
-        "keydown",
-        closeWithEscape
-      );
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  /* =======================================================
-     CARREGAR ONE PAGERS
-  ======================================================= */
-
+  /* ===== Carregar ONE PAGERS (ordem fixa) ===== */
   useEffect(() => {
-    const loadOnePagers = async () => {
+    const load = async () => {
       try {
-        const response = await fetch(
+        const res = await fetch(
           `/banners_media/onepagers.json?v=${Date.now()}`,
           { cache: "no-store" }
         );
 
-        if (!response.ok) {
-          throw new Error();
+        if (!res.ok) throw new Error();
+
+        const dataRaw: string[] = await res.json();
+
+        const mapOrig = new Map<string, string>();
+
+        for (const n of dataRaw) {
+          mapOrig.set(norm(n), n);
         }
 
-        const data: string[] =
-          await response.json();
-
-        const fileMap =
-          new Map<string, string>();
-
-        for (const fileName of data) {
-          fileMap.set(
-            normalizeName(fileName),
-            fileName
-          );
-        }
-
-        const order = [
+        const ordem = [
           "one pager fabrica.PNG",
           "one pager G1.PNG",
           "one pager G2.PNG",
@@ -1103,100 +781,173 @@ export default function App() {
 
         const ordered: string[] = [];
 
-        for (const expectedName of order) {
-          const found = fileMap.get(
-            normalizeName(expectedName)
-          );
+        for (const wanted of ordem) {
+          const hit = mapOrig.get(norm(wanted));
 
-          if (found) {
-            ordered.push(found);
+          if (hit) {
+            ordered.push(hit);
           }
         }
 
-        const extras = data.filter(
-          (fileName) =>
-            !ordered.includes(fileName)
+        const extras = dataRaw.filter(
+          (n) => !ordered.includes(n)
         );
 
-        const finalImages = [
-          ...ordered,
-          ...extras,
-        ];
+        const final = [...ordered, ...extras];
 
-        setOnePagers(finalImages);
+        setOnePagers(final);
         setBannerIndex(0);
-        setBannerError(null);
+        setBannerErro(null);
 
-        preloadImage(
-          buildUrl(
-            finalImages[0],
-            assetVersion
-          )
-        );
+        preloadImage(buildUrl(final[0], assetV));
+        preloadImage(buildUrl(final[1], assetV));
+        preloadImage(buildUrl(final[final.length - 1], assetV));
 
-        preloadImage(
-          buildUrl(
-            finalImages[1],
-            assetVersion
-          )
-        );
-
-        preloadImage(
-          buildUrl(
-            finalImages[
-              finalImages.length - 1
-            ],
-            assetVersion
-          )
-        );
-
-        setAssetVersion(Date.now());
+        setAssetV(Date.now());
       } catch {
-        setBannerError(
-          "Não foi possível carregar o carrossel."
-        );
+        setBannerErro("Não foi possível carregar o carrossel.");
       }
     };
 
-    loadOnePagers();
+    load();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* =======================================================
-     CARREGAR OKR DE MANUTENÇÃO
+  /* ===== Carregar Quebra diária ===== */
+  useEffect(() => {
+    const loadQD = async () => {
+      try {
+        const r = await fetch(
+          `/banners_media/quebra_diaria.json?v=${Date.now()}`,
+          { cache: "no-store" }
+        );
 
-     ORDEM:
-     JULHO, JUNHO, MAIO, ABRIL, MARÇO,
-     FEVEREIRO E JANEIRO DE 2026.
-  ======================================================= */
+        if (!r.ok) throw new Error();
 
+        const data: string[] = await r.json();
+
+        const map = new Map<string, string>();
+
+        for (const n of data) {
+          map.set(norm(n), n);
+        }
+
+        const ordem = [
+          "quebra diaria - atual.png",
+          "quebra diaria - mês anterior.PNG",
+        ];
+
+        const ordered: string[] = [];
+
+        for (const want of ordem) {
+          const hit = map.get(norm(want));
+
+          if (hit) {
+            ordered.push(hit);
+          }
+        }
+
+        const extras = data.filter(
+          (n) => !ordered.includes(n)
+        );
+
+        const final = [...ordered, ...extras];
+
+        setQdImgs(final);
+        setQdIndex(0);
+
+        preloadImage(buildUrl(final[0], assetV));
+        preloadImage(buildUrl(final[1], assetV));
+
+        setAssetV(Date.now());
+      } catch {
+        setQdImgs([]);
+      }
+    };
+
+    loadQD();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ===== Carregar Quebra por linha ===== */
+  useEffect(() => {
+    const loadQDL = async () => {
+      try {
+        const r = await fetch(
+          `/banners_media/quebra_por_linha.json?v=${Date.now()}`,
+          { cache: "no-store" }
+        );
+
+        if (!r.ok) throw new Error();
+
+        const data: string[] = await r.json();
+
+        const map = new Map<string, string>();
+
+        for (const n of data) {
+          map.set(norm(n), n);
+        }
+
+        const ordem = [
+          "quebra por linha - atual.PNG",
+          "quebra por linha - mês anterior.PNG",
+        ];
+
+        const ordered: string[] = [];
+
+        for (const want of ordem) {
+          const hit = map.get(norm(want));
+
+          if (hit) {
+            ordered.push(hit);
+          }
+        }
+
+        const extras = data.filter(
+          (n) => !ordered.includes(n)
+        );
+
+        const final = [...ordered, ...extras];
+
+        setQdlImgs(final);
+        setQdlIndex(0);
+
+        preloadImage(buildUrl(final[0], assetV));
+        preloadImage(buildUrl(final[1], assetV));
+
+        setAssetV(Date.now());
+      } catch {
+        setQdlImgs([]);
+      }
+    };
+
+    loadQDL();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ===== Carregar OKR de manutenção ===== */
   useEffect(() => {
     const loadOKR = async () => {
       try {
-        const response = await fetch(
+        const r = await fetch(
           `/banners_media/okr_manutencao.json?v=${Date.now()}`,
           { cache: "no-store" }
         );
 
-        if (!response.ok) {
-          throw new Error();
+        if (!r.ok) throw new Error();
+
+        const data: string[] = await r.json();
+
+        const map = new Map<string, string>();
+
+        for (const n of data) {
+          map.set(norm(n), n);
         }
 
-        const data: string[] =
-          await response.json();
-
-        const fileMap =
-          new Map<string, string>();
-
-        for (const fileName of data) {
-          fileMap.set(
-            normalizeName(fileName),
-            fileName
-          );
-        }
-
-        const order = [
+        const ordem = [
           "OKR DE MANUTENÇÃO JULHO DE 2026.png",
           "OKR DE MANUTENÇÃO JUNHO DE 2026.png",
           "OKR DE MANUTENÇÃO MAIO DE 2026.png",
@@ -1208,46 +959,29 @@ export default function App() {
 
         const ordered: string[] = [];
 
-        for (const expectedName of order) {
-          const found = fileMap.get(
-            normalizeName(expectedName)
-          );
+        for (const want of ordem) {
+          const hit = map.get(norm(want));
 
-          if (found) {
-            ordered.push(found);
+          if (hit) {
+            ordered.push(hit);
           }
         }
 
         const extras = data.filter(
-          (fileName) =>
-            !ordered.includes(fileName)
+          (n) => !ordered.includes(n)
         );
 
-        const finalImages = [
-          ...ordered,
-          ...extras,
-        ];
+        const final = [...ordered, ...extras];
 
-        setOkrImages(finalImages);
+        setOkrImgs(final);
         setOkrIndex(0);
 
-        preloadImage(
-          buildUrl(
-            finalImages[0],
-            assetVersion
-          )
-        );
+        preloadImage(buildUrl(final[0], assetV));
+        preloadImage(buildUrl(final[1], assetV));
 
-        preloadImage(
-          buildUrl(
-            finalImages[1],
-            assetVersion
-          )
-        );
-
-        setAssetVersion(Date.now());
+        setAssetV(Date.now());
       } catch {
-        setOkrImages([]);
+        setOkrImgs([]);
       }
     };
 
@@ -1256,429 +990,163 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* =======================================================
-     CARREGAR QUEBRA DIÁRIA
-  ======================================================= */
-
-  useEffect(() => {
-    const loadDailyBreak = async () => {
-      try {
-        const response = await fetch(
-          `/banners_media/quebra_diaria.json?v=${Date.now()}`,
-          { cache: "no-store" }
-        );
-
-        if (!response.ok) {
-          throw new Error();
-        }
-
-        const data: string[] =
-          await response.json();
-
-        const fileMap =
-          new Map<string, string>();
-
-        for (const fileName of data) {
-          fileMap.set(
-            normalizeName(fileName),
-            fileName
-          );
-        }
-
-        const order = [
-          "quebra diaria - atual.png",
-          "quebra diaria - mês anterior.PNG",
-        ];
-
-        const ordered: string[] = [];
-
-        for (const expectedName of order) {
-          const found = fileMap.get(
-            normalizeName(expectedName)
-          );
-
-          if (found) {
-            ordered.push(found);
-          }
-        }
-
-        const extras = data.filter(
-          (fileName) =>
-            !ordered.includes(fileName)
-        );
-
-        const finalImages = [
-          ...ordered,
-          ...extras,
-        ];
-
-        setDailyBreakImages(finalImages);
-        setDailyBreakIndex(0);
-
-        preloadImage(
-          buildUrl(
-            finalImages[0],
-            assetVersion
-          )
-        );
-
-        preloadImage(
-          buildUrl(
-            finalImages[1],
-            assetVersion
-          )
-        );
-
-        setAssetVersion(Date.now());
-      } catch {
-        setDailyBreakImages([]);
-      }
-    };
-
-    loadDailyBreak();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* =======================================================
-     CARREGAR QUEBRA POR LINHA
-  ======================================================= */
-
-  useEffect(() => {
-    const loadLineBreak = async () => {
-      try {
-        const response = await fetch(
-          `/banners_media/quebra_por_linha.json?v=${Date.now()}`,
-          { cache: "no-store" }
-        );
-
-        if (!response.ok) {
-          throw new Error();
-        }
-
-        const data: string[] =
-          await response.json();
-
-        const fileMap =
-          new Map<string, string>();
-
-        for (const fileName of data) {
-          fileMap.set(
-            normalizeName(fileName),
-            fileName
-          );
-        }
-
-        const order = [
-          "quebra por linha - atual.PNG",
-          "quebra por linha - mês anterior.PNG",
-        ];
-
-        const ordered: string[] = [];
-
-        for (const expectedName of order) {
-          const found = fileMap.get(
-            normalizeName(expectedName)
-          );
-
-          if (found) {
-            ordered.push(found);
-          }
-        }
-
-        const extras = data.filter(
-          (fileName) =>
-            !ordered.includes(fileName)
-        );
-
-        const finalImages = [
-          ...ordered,
-          ...extras,
-        ];
-
-        setLineBreakImages(finalImages);
-        setLineBreakIndex(0);
-
-        preloadImage(
-          buildUrl(
-            finalImages[0],
-            assetVersion
-          )
-        );
-
-        preloadImage(
-          buildUrl(
-            finalImages[1],
-            assetVersion
-          )
-        );
-
-        setAssetVersion(Date.now());
-      } catch {
-        setLineBreakImages([]);
-      }
-    };
-
-    loadLineBreak();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* =======================================================
-     PRELOAD ONE PAGER
-  ======================================================= */
-
+  // quando muda o índice, pré-carrega prox e anterior
   useEffect(() => {
     if (!onePagers.length) return;
 
+    preloadImage(buildUrl(onePagers[bannerIndex], assetV));
+
     preloadImage(
       buildUrl(
-        onePagers[bannerIndex],
-        assetVersion
+        onePagers[(bannerIndex + 1) % onePagers.length],
+        assetV
       )
     );
 
     preloadImage(
       buildUrl(
         onePagers[
-          (bannerIndex + 1) %
+          (bannerIndex - 1 + onePagers.length) %
             onePagers.length
         ],
-        assetVersion
+        assetV
       )
     );
 
-    preloadImage(
-      buildUrl(
-        onePagers[
-          (bannerIndex -
-            1 +
-            onePagers.length) %
-            onePagers.length
-        ],
-        assetVersion
-      )
-    );
-
-    const current = buildUrl(
+    const cur = buildUrl(
       onePagers[bannerIndex],
-      assetVersion
+      assetV
     )!;
 
-    setReadyOnePager(
-      loadedImages.has(current)
-    );
-  }, [
-    bannerIndex,
-    onePagers,
-    assetVersion,
-  ]);
-
-  /* =======================================================
-     PRELOAD OKR
-  ======================================================= */
+    setReadyOne(loadedImages.has(cur));
+  }, [bannerIndex, onePagers, assetV]);
 
   useEffect(() => {
-    if (!okrImages.length) return;
+    if (!qdImgs.length) return;
+
+    preloadImage(buildUrl(qdImgs[qdIndex], assetV));
 
     preloadImage(
       buildUrl(
-        okrImages[okrIndex],
-        assetVersion
+        qdImgs[(qdIndex + 1) % qdImgs.length],
+        assetV
       )
     );
 
     preloadImage(
       buildUrl(
-        okrImages[
-          (okrIndex + 1) %
-            okrImages.length
+        qdImgs[
+          (qdIndex - 1 + qdImgs.length) %
+            qdImgs.length
         ],
-        assetVersion
+        assetV
       )
     );
 
-    preloadImage(
-      buildUrl(
-        okrImages[
-          (okrIndex -
-            1 +
-            okrImages.length) %
-            okrImages.length
-        ],
-        assetVersion
-      )
-    );
-
-    const current = buildUrl(
-      okrImages[okrIndex],
-      assetVersion
+    const cur = buildUrl(
+      qdImgs[qdIndex],
+      assetV
     )!;
 
-    setReadyOKR(
-      loadedImages.has(current)
-    );
-  }, [
-    okrIndex,
-    okrImages,
-    assetVersion,
-  ]);
-
-  /* =======================================================
-     PRELOAD QUEBRA DIÁRIA
-  ======================================================= */
+    setReadyQD(loadedImages.has(cur));
+  }, [qdIndex, qdImgs, assetV]);
 
   useEffect(() => {
-    if (!dailyBreakImages.length) return;
+    if (!qdlImgs.length) return;
+
+    preloadImage(buildUrl(qdlImgs[qdlIndex], assetV));
 
     preloadImage(
       buildUrl(
-        dailyBreakImages[dailyBreakIndex],
-        assetVersion
+        qdlImgs[(qdlIndex + 1) % qdlImgs.length],
+        assetV
       )
     );
 
     preloadImage(
       buildUrl(
-        dailyBreakImages[
-          (dailyBreakIndex + 1) %
-            dailyBreakImages.length
+        qdlImgs[
+          (qdlIndex - 1 + qdlImgs.length) %
+            qdlImgs.length
         ],
-        assetVersion
+        assetV
       )
     );
 
-    preloadImage(
-      buildUrl(
-        dailyBreakImages[
-          (dailyBreakIndex -
-            1 +
-            dailyBreakImages.length) %
-            dailyBreakImages.length
-        ],
-        assetVersion
-      )
-    );
-
-    const current = buildUrl(
-      dailyBreakImages[dailyBreakIndex],
-      assetVersion
+    const cur = buildUrl(
+      qdlImgs[qdlIndex],
+      assetV
     )!;
 
-    setReadyDailyBreak(
-      loadedImages.has(current)
-    );
-  }, [
-    dailyBreakIndex,
-    dailyBreakImages,
-    assetVersion,
-  ]);
-
-  /* =======================================================
-     PRELOAD QUEBRA POR LINHA
-  ======================================================= */
+    setReadyQDL(loadedImages.has(cur));
+  }, [qdlIndex, qdlImgs, assetV]);
 
   useEffect(() => {
-    if (!lineBreakImages.length) return;
+    if (!okrImgs.length) return;
+
+    preloadImage(buildUrl(okrImgs[okrIndex], assetV));
 
     preloadImage(
       buildUrl(
-        lineBreakImages[lineBreakIndex],
-        assetVersion
+        okrImgs[(okrIndex + 1) % okrImgs.length],
+        assetV
       )
     );
 
     preloadImage(
       buildUrl(
-        lineBreakImages[
-          (lineBreakIndex + 1) %
-            lineBreakImages.length
+        okrImgs[
+          (okrIndex - 1 + okrImgs.length) %
+            okrImgs.length
         ],
-        assetVersion
+        assetV
       )
     );
 
-    preloadImage(
-      buildUrl(
-        lineBreakImages[
-          (lineBreakIndex -
-            1 +
-            lineBreakImages.length) %
-            lineBreakImages.length
-        ],
-        assetVersion
-      )
-    );
-
-    const current = buildUrl(
-      lineBreakImages[lineBreakIndex],
-      assetVersion
+    const cur = buildUrl(
+      okrImgs[okrIndex],
+      assetV
     )!;
 
-    setReadyLineBreak(
-      loadedImages.has(current)
-    );
-  }, [
-    lineBreakIndex,
-    lineBreakImages,
-    assetVersion,
-  ]);
+    setReadyOKR(loadedImages.has(cur));
+  }, [okrIndex, okrImgs, assetV]);
 
-  /* =======================================================
-     NAVEGAÇÃO ONE PAGER
-  ======================================================= */
+  // sem automático
+  useEffect(() => {
+    if (onePagers.length > 0) {
+      setBannerIndex(0);
+    }
+  }, [onePagers]);
 
-  const nextOnePager = () => {
-    if (!onePagers.length) return;
-
-    setBannerIndex(
-      (previous) =>
-        (previous + 1) %
-        onePagers.length
-    );
+  const nextSlide = () => {
+    if (onePagers.length > 0) {
+      setBannerIndex(
+        (p) => (p + 1) % onePagers.length
+      );
+    }
   };
 
-  const previousOnePager = () => {
-    if (!onePagers.length) return;
-
-    setBannerIndex(
-      (previous) =>
-        (previous -
-          1 +
-          onePagers.length) %
-        onePagers.length
-    );
+  const prevSlide = () => {
+    if (onePagers.length > 0) {
+      setBannerIndex(
+        (p) =>
+          (p - 1 + onePagers.length) %
+          onePagers.length
+      );
+    }
   };
 
-  /* =======================================================
-     MOVIMENTO DO DEDO NO CELULAR
-  ======================================================= */
-
-  const handleTouchStart = (
-    event: React.TouchEvent
-  ) => {
-    touchStartX.current =
-      event.touches[0].clientX;
-
-    touchEndX.current =
-      event.touches[0].clientX;
+  /* ===== Swipe universal ===== */
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
   };
 
-  const handleTouchMove = (
-    event: React.TouchEvent
-  ) => {
-    touchEndX.current =
-      event.touches[0].clientX;
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
   };
-
-  type CarouselType =
-    | "onepager"
-    | "okr"
-    | "daily"
-    | "line";
 
   const handleTouchEnd = (
-    type: CarouselType
+    type: "onepager" | "qd" | "qdl" | "okr"
   ) => {
     if (
       touchStartX.current === null ||
@@ -1687,98 +1155,84 @@ export default function App() {
       return;
     }
 
-    const difference =
+    const diff =
       touchStartX.current -
       touchEndX.current;
 
-    const minimumDistance = 40;
+    const min = 40;
 
-    if (difference > minimumDistance) {
+    if (diff > min) {
       if (
         type === "onepager" &&
-        onePagers.length
+        onePagers.length > 0
       ) {
-        nextOnePager();
+        nextSlide();
+      }
+
+      if (
+        type === "qd" &&
+        qdImgs.length > 0
+      ) {
+        setQdIndex(
+          (p) => (p + 1) % qdImgs.length
+        );
+      }
+
+      if (
+        type === "qdl" &&
+        qdlImgs.length > 0
+      ) {
+        setQdlIndex(
+          (p) => (p + 1) % qdlImgs.length
+        );
       }
 
       if (
         type === "okr" &&
-        okrImages.length
+        okrImgs.length > 0
       ) {
         setOkrIndex(
-          (previous) =>
-            (previous + 1) %
-            okrImages.length
+          (p) => (p + 1) % okrImgs.length
         );
       }
-
-      if (
-        type === "daily" &&
-        dailyBreakImages.length
-      ) {
-        setDailyBreakIndex(
-          (previous) =>
-            (previous + 1) %
-            dailyBreakImages.length
-        );
-      }
-
-      if (
-        type === "line" &&
-        lineBreakImages.length
-      ) {
-        setLineBreakIndex(
-          (previous) =>
-            (previous + 1) %
-            lineBreakImages.length
-        );
-      }
-    }
-
-    if (difference < -minimumDistance) {
+    } else if (diff < -min) {
       if (
         type === "onepager" &&
-        onePagers.length
+        onePagers.length > 0
       ) {
-        previousOnePager();
+        prevSlide();
+      }
+
+      if (
+        type === "qd" &&
+        qdImgs.length > 0
+      ) {
+        setQdIndex(
+          (p) =>
+            (p - 1 + qdImgs.length) %
+            qdImgs.length
+        );
+      }
+
+      if (
+        type === "qdl" &&
+        qdlImgs.length > 0
+      ) {
+        setQdlIndex(
+          (p) =>
+            (p - 1 + qdlImgs.length) %
+            qdlImgs.length
+        );
       }
 
       if (
         type === "okr" &&
-        okrImages.length
+        okrImgs.length > 0
       ) {
         setOkrIndex(
-          (previous) =>
-            (previous -
-              1 +
-              okrImages.length) %
-            okrImages.length
-        );
-      }
-
-      if (
-        type === "daily" &&
-        dailyBreakImages.length
-      ) {
-        setDailyBreakIndex(
-          (previous) =>
-            (previous -
-              1 +
-              dailyBreakImages.length) %
-            dailyBreakImages.length
-        );
-      }
-
-      if (
-        type === "line" &&
-        lineBreakImages.length
-      ) {
-        setLineBreakIndex(
-          (previous) =>
-            (previous -
-              1 +
-              lineBreakImages.length) %
-            lineBreakImages.length
+          (p) =>
+            (p - 1 + okrImgs.length) %
+            okrImgs.length
         );
       }
     }
@@ -1787,49 +1241,21 @@ export default function App() {
     touchEndX.current = null;
   };
 
-  /* =======================================================
-     IMAGENS ATUAIS
-  ======================================================= */
+  const currentOnePager = onePagers.length
+    ? buildUrl(onePagers[bannerIndex], assetV)!
+    : null;
 
-  const currentOnePager =
-    onePagers.length
-      ? buildUrl(
-          onePagers[bannerIndex],
-          assetVersion
-        )
-      : null;
+  const qdCurrent = qdImgs.length
+    ? buildUrl(qdImgs[qdIndex], assetV)!
+    : null;
 
-  const currentOKR =
-    okrImages.length
-      ? buildUrl(
-          okrImages[okrIndex],
-          assetVersion
-        )
-      : null;
+  const qdlCurrent = qdlImgs.length
+    ? buildUrl(qdlImgs[qdlIndex], assetV)!
+    : null;
 
-  const currentDailyBreak =
-    dailyBreakImages.length
-      ? buildUrl(
-          dailyBreakImages[
-            dailyBreakIndex
-          ],
-          assetVersion
-        )
-      : null;
-
-  const currentLineBreak =
-    lineBreakImages.length
-      ? buildUrl(
-          lineBreakImages[
-            lineBreakIndex
-          ],
-          assetVersion
-        )
-      : null;
-
-  /* =======================================================
-     TELA
-  ======================================================= */
+  const okrCurrent = okrImgs.length
+    ? buildUrl(okrImgs[okrIndex], assetV)!
+    : null;
 
   return (
     <div className="app">
@@ -1845,7 +1271,7 @@ export default function App() {
         .topbar-inner {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 6px;
+          padding: 6px 6px;
           display: grid;
           gap: 6px;
           align-items: center;
@@ -1896,7 +1322,7 @@ export default function App() {
           font-size: clamp(16px, 2.7vw, 28px);
         }
 
-        @media (max-width: 600px) {
+        @media (max-width:600px) {
           .topbar-inner {
             grid-template-columns: 40px 1fr auto;
             grid-template-areas: "logo title femsa";
@@ -2014,9 +1440,9 @@ export default function App() {
           justify-content: center;
           background: linear-gradient(
             90deg,
-            rgba(255,255,255,.05) 0%,
-            rgba(255,255,255,.18) 50%,
-            rgba(255,255,255,.05) 100%
+            rgba(255,255,255,0.05) 0%,
+            rgba(255,255,255,0.18) 50%,
+            rgba(255,255,255,0.05) 100%
           );
           background-size: 200% 100%;
           animation: shimmer 1.2s infinite linear;
@@ -2090,6 +1516,56 @@ export default function App() {
           margin-left: auto;
         }
 
+        .banner-arrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 42px;
+          height: 42px;
+          border: none;
+          border-radius: 999px;
+          background: rgba(0,0,0,.35);
+          color: #fff;
+          display: grid;
+          place-items: center;
+          cursor: pointer;
+          box-shadow: 0 4px 10px rgba(0,0,0,.25);
+          transition: background .15s ease, transform .15s ease;
+          user-select: none;
+          z-index: 50;
+        }
+
+        .banner-arrow:hover {
+          background: rgba(0,0,0,.5);
+          transform: translateY(-50%) scale(1.04);
+        }
+
+        .banner-arrow:active {
+          transform: translateY(-50%) scale(0.98);
+        }
+
+        .banner-arrow.left {
+          left: 10px;
+        }
+
+        .banner-arrow.right {
+          right: 10px;
+        }
+
+        .banner-arrow svg {
+          width: 20px;
+          height: 20px;
+          pointer-events: none;
+        }
+
+        @media (max-width:700px) {
+          .banner-arrow {
+            width: 36px;
+            height: 36px;
+            background: rgba(0,0,0,.4);
+          }
+        }
+
         .drawer-overlay {
           position: fixed;
           inset: 0;
@@ -2139,8 +1615,7 @@ export default function App() {
         }
       `}</style>
 
-      {/* TOPO */}
-
+      {/* Topbar */}
       <header className="topbar">
         <div className="topbar-inner">
           <button
@@ -2171,25 +1646,20 @@ export default function App() {
         </div>
       </header>
 
+      {/* CTA Notificações */}
       <NotifyCTA />
 
-      {/* AVISO IPHONE */}
-
+      {/* Aviso iPhone */}
       {showIosBanner && (
         <div className="ios-hint">
           <div>
-            <strong>
-              iPhone detectado 📱
-            </strong>
-
-            Para instalar: no Safari → compartilhar →
-            Adicionar à Tela de Início.
+            <strong>iPhone detectado 📱</strong>
+            Para instalar: no Safari → **compartilhar** → **Adicionar
+            à Tela de Início**.
           </div>
 
           <button
-            onClick={() =>
-              setShowIosBanner(false)
-            }
+            onClick={() => setShowIosBanner(false)}
             aria-label="Fechar aviso"
           >
             ×
@@ -2197,15 +1667,12 @@ export default function App() {
         </div>
       )}
 
-      {/* MENU LATERAL */}
-
+      {/* Drawer */}
       <div
         className="drawer-overlay"
         style={{
           opacity: open ? 1 : 0,
-          pointerEvents: open
-            ? "auto"
-            : "none",
+          pointerEvents: open ? "auto" : "none",
         }}
         onClick={() => setOpen(false)}
       />
@@ -2258,9 +1725,7 @@ export default function App() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="drawer-link"
-                onClick={() =>
-                  setOpen(false)
-                }
+                onClick={() => setOpen(false)}
               >
                 <span className="drawer-ico">
                   <Icon />
@@ -2273,23 +1738,19 @@ export default function App() {
         </nav>
       </aside>
 
-      {/* CONTEÚDO */}
-
+      {/* Conteúdo */}
       <main
         className="banners-container"
         style={{
-          paddingTop: isNarrow
-            ? 33
-            : 28,
+          paddingTop: isNarrow ? 33 : 28,
         }}
       >
         {/* ONE PAGER */}
-
         <div className="section-title">
           ONE PAGER
         </div>
 
-        {bannerError ? (
+        {bannerErro ? (
           <div
             style={{
               width: "100%",
@@ -2300,7 +1761,7 @@ export default function App() {
               borderRadius: 12,
             }}
           >
-            {bannerError}
+            {bannerErro}
           </div>
         ) : !currentOnePager ? (
           <div
@@ -2319,39 +1780,54 @@ export default function App() {
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={
-                handleTouchStart
-              }
-              onTouchMove={
-                handleTouchMove
-              }
-              onTouchEnd={() =>
-                handleTouchEnd(
-                  "onepager"
-                )
-              }
+              onTouchStart={(e) => {
+                touchStartX.current =
+                  e.touches[0].clientX;
+              }}
+              onTouchMove={(e) => {
+                touchEndX.current =
+                  e.touches[0].clientX;
+              }}
+              onTouchEnd={() => {
+                const diff =
+                  (touchStartX.current ?? 0) -
+                  (touchEndX.current ?? 0);
+
+                const min = 40;
+
+                if (diff > min) {
+                  nextSlide();
+                } else if (diff < -min) {
+                  prevSlide();
+                }
+
+                touchStartX.current = null;
+                touchEndX.current = null;
+              }}
             >
               {onePagers.length > 1 && (
                 <>
                   <ArrowButton
                     side="left"
                     title="Anterior"
-                    onClick={
-                      previousOnePager
-                    }
+                    onClick={prevSlide}
                   />
 
                   <ArrowButton
                     side="right"
                     title="Próximo"
-                    onClick={
-                      nextOnePager
+                    onClick={() =>
+                      setBannerIndex(
+                        (p) =>
+                          (p + 1) %
+                          onePagers.length
+                      )
                     }
                   />
                 </>
               )}
 
-              {!readyOnePager && (
+              {!readyOne && (
                 <div className="loading-overlay">
                   Carregando…
                 </div>
@@ -2359,56 +1835,47 @@ export default function App() {
 
               <SmartImg
                 src={currentOnePager}
-                alt={
-                  onePagers[
-                    bannerIndex
-                  ]
-                }
+                alt={onePagers[bannerIndex]}
+                className=""
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 onLoad={() =>
-                  setReadyOnePager(true)
+                  setReadyOne(true)
                 }
               />
             </div>
 
             {onePagers.length > 1 && (
               <div className="banner-dots">
-                {onePagers.map(
-                  (fileName, index) => (
-                    <button
-                      key={fileName}
-                      className={`banner-dot ${
-                        index ===
-                        bannerIndex
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setBannerIndex(
-                          index
-                        )
-                      }
-                      aria-label={`Ver banner ${
-                        index + 1
-                      }`}
-                      type="button"
-                    />
-                  )
-                )}
+                {onePagers.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`banner-dot ${
+                      i === bannerIndex
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      setBannerIndex(i)
+                    }
+                    aria-label={`Ver banner ${
+                      i + 1
+                    }`}
+                    type="button"
+                  />
+                ))}
               </div>
             )}
           </>
         )}
 
         {/* OKR DE MANUTENÇÃO */}
-
         <div className="section-title">
           OKR DE MANUTENÇÃO
         </div>
 
-        {!currentOKR ? (
+        {!okrCurrent ? (
           <div
             style={{
               width: "100%",
@@ -2425,28 +1892,24 @@ export default function App() {
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={
-                handleTouchStart
-              }
-              onTouchMove={
-                handleTouchMove
-              }
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
               onTouchEnd={() =>
                 handleTouchEnd("okr")
               }
             >
-              {okrImages.length > 1 && (
+              {okrImgs.length > 1 && (
                 <>
                   <ArrowButton
                     side="left"
                     title="Anterior"
                     onClick={() =>
                       setOkrIndex(
-                        (previous) =>
-                          (previous -
+                        (p) =>
+                          (p -
                             1 +
-                            okrImages.length) %
-                          okrImages.length
+                            okrImgs.length) %
+                          okrImgs.length
                       )
                     }
                   />
@@ -2456,10 +1919,9 @@ export default function App() {
                     title="Próximo"
                     onClick={() =>
                       setOkrIndex(
-                        (previous) =>
-                          (previous +
-                            1) %
-                          okrImages.length
+                        (p) =>
+                          (p + 1) %
+                          okrImgs.length
                       )
                     }
                   />
@@ -2473,10 +1935,8 @@ export default function App() {
               )}
 
               <SmartImg
-                src={currentOKR}
-                alt={
-                  okrImages[okrIndex]
-                }
+                src={okrCurrent}
+                alt={okrImgs[okrIndex]}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -2486,43 +1946,36 @@ export default function App() {
               />
             </div>
 
-            {okrImages.length > 1 && (
+            {okrImgs.length > 1 && (
               <div className="banner-dots">
-                {okrImages.map(
-                  (fileName, index) => (
-                    <button
-                      key={fileName}
-                      className={`banner-dot ${
-                        index === okrIndex
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setOkrIndex(index)
-                      }
-                      aria-label={`Ver OKR ${
-                        index + 1
-                      }`}
-                      title={fileName.replace(
-                        /\.(png|jpg|jpeg)$/i,
-                        ""
-                      )}
-                      type="button"
-                    />
-                  )
-                )}
+                {okrImgs.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`banner-dot ${
+                      i === okrIndex
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      setOkrIndex(i)
+                    }
+                    aria-label={`Ver OKR ${
+                      i + 1
+                    }`}
+                    type="button"
+                  />
+                ))}
               </div>
             )}
           </>
         )}
 
         {/* QUEBRA DIÁRIA */}
-
         <div className="section-title">
           QUEBRA DIÁRIA
         </div>
 
-        {!currentDailyBreak ? (
+        {!qdCurrent ? (
           <div
             style={{
               width: "100%",
@@ -2539,31 +1992,30 @@ export default function App() {
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={
-                handleTouchStart
-              }
-              onTouchMove={
-                handleTouchMove
-              }
+              onTouchStart={(e) => {
+                touchStartX.current =
+                  e.touches[0].clientX;
+              }}
+              onTouchMove={(e) => {
+                touchEndX.current =
+                  e.touches[0].clientX;
+              }}
               onTouchEnd={() =>
-                handleTouchEnd(
-                  "daily"
-                )
+                handleTouchEnd("qd")
               }
             >
-              {dailyBreakImages.length >
-                1 && (
+              {qdImgs.length > 1 && (
                 <>
                   <ArrowButton
                     side="left"
                     title="Anterior"
                     onClick={() =>
-                      setDailyBreakIndex(
-                        (previous) =>
-                          (previous -
+                      setQdIndex(
+                        (p) =>
+                          (p -
                             1 +
-                            dailyBreakImages.length) %
-                          dailyBreakImages.length
+                            qdImgs.length) %
+                          qdImgs.length
                       )
                     }
                   />
@@ -2572,78 +2024,64 @@ export default function App() {
                     side="right"
                     title="Próximo"
                     onClick={() =>
-                      setDailyBreakIndex(
-                        (previous) =>
-                          (previous +
-                            1) %
-                          dailyBreakImages.length
+                      setQdIndex(
+                        (p) =>
+                          (p + 1) %
+                          qdImgs.length
                       )
                     }
                   />
                 </>
               )}
 
-              {!readyDailyBreak && (
+              {!readyQD && (
                 <div className="loading-overlay">
                   Carregando…
                 </div>
               )}
 
               <SmartImg
-                src={currentDailyBreak}
-                alt={
-                  dailyBreakImages[
-                    dailyBreakIndex
-                  ]
-                }
+                src={qdCurrent}
+                alt={qdImgs[qdIndex]}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 onLoad={() =>
-                  setReadyDailyBreak(
-                    true
-                  )
+                  setReadyQD(true)
                 }
               />
             </div>
 
-            {dailyBreakImages.length >
-              1 && (
+            {qdImgs.length > 1 && (
               <div className="banner-dots">
-                {dailyBreakImages.map(
-                  (fileName, index) => (
-                    <button
-                      key={fileName}
-                      className={`banner-dot ${
-                        index ===
-                        dailyBreakIndex
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setDailyBreakIndex(
-                          index
-                        )
-                      }
-                      aria-label={`Ver quadro ${
-                        index + 1
-                      }`}
-                      type="button"
-                    />
-                  )
-                )}
+                {qdImgs.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`banner-dot ${
+                      i === qdIndex
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      setQdIndex(i)
+                    }
+                    aria-label={`Ver quadro ${
+                      i + 1
+                    }`}
+                    type="button"
+                  />
+                ))}
               </div>
             )}
           </>
         )}
 
         {/* QUEBRA POR LINHA */}
-
         <div className="section-title">
           QUEBRA POR LINHA
         </div>
 
-        {!currentLineBreak ? (
+        {!qdlCurrent ? (
           <div
             style={{
               width: "100%",
@@ -2660,29 +2098,30 @@ export default function App() {
           <>
             <div
               className="banner-dinamico"
-              onTouchStart={
-                handleTouchStart
-              }
-              onTouchMove={
-                handleTouchMove
-              }
+              onTouchStart={(e) => {
+                touchStartX.current =
+                  e.touches[0].clientX;
+              }}
+              onTouchMove={(e) => {
+                touchEndX.current =
+                  e.touches[0].clientX;
+              }}
               onTouchEnd={() =>
-                handleTouchEnd("line")
+                handleTouchEnd("qdl")
               }
             >
-              {lineBreakImages.length >
-                1 && (
+              {qdlImgs.length > 1 && (
                 <>
                   <ArrowButton
                     side="left"
                     title="Anterior"
                     onClick={() =>
-                      setLineBreakIndex(
-                        (previous) =>
-                          (previous -
+                      setQdlIndex(
+                        (p) =>
+                          (p -
                             1 +
-                            lineBreakImages.length) %
-                          lineBreakImages.length
+                            qdlImgs.length) %
+                          qdlImgs.length
                       )
                     }
                   />
@@ -2691,93 +2130,77 @@ export default function App() {
                     side="right"
                     title="Próximo"
                     onClick={() =>
-                      setLineBreakIndex(
-                        (previous) =>
-                          (previous +
-                            1) %
-                          lineBreakImages.length
+                      setQdlIndex(
+                        (p) =>
+                          (p + 1) %
+                          qdlImgs.length
                       )
                     }
                   />
                 </>
               )}
 
-              {!readyLineBreak && (
+              {!readyQDL && (
                 <div className="loading-overlay">
                   Carregando…
                 </div>
               )}
 
               <SmartImg
-                src={currentLineBreak}
-                alt={
-                  lineBreakImages[
-                    lineBreakIndex
-                  ]
-                }
+                src={qdlCurrent}
+                alt={qdlImgs[qdlIndex]}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 onLoad={() =>
-                  setReadyLineBreak(
-                    true
-                  )
+                  setReadyQDL(true)
                 }
               />
             </div>
 
-            {lineBreakImages.length >
-              1 && (
+            {qdlImgs.length > 1 && (
               <div className="banner-dots">
-                {lineBreakImages.map(
-                  (fileName, index) => (
-                    <button
-                      key={fileName}
-                      className={`banner-dot ${
-                        index ===
-                        lineBreakIndex
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setLineBreakIndex(
-                          index
-                        )
-                      }
-                      aria-label={`Ver quadro ${
-                        index + 1
-                      }`}
-                      type="button"
-                    />
-                  )
-                )}
+                {qdlImgs.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`banner-dot ${
+                      i === qdlIndex
+                        ? "active"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      setQdlIndex(i)
+                    }
+                    aria-label={`Ver quadro ${
+                      i + 1
+                    }`}
+                    type="button"
+                  />
+                ))}
               </div>
             )}
           </>
         )}
 
-        {/* BANNERS ESTÁTICOS */}
+        {/* Banners estáticos fixos */}
+        {STATIC_FROM_FOLDER.map((b, i) => (
+          <React.Fragment key={i}>
+            {b.title && (
+              <div className="section-title">
+                {b.title}
+              </div>
+            )}
 
-        {STATIC_FROM_FOLDER.map(
-          (banner, index) => (
-            <React.Fragment key={index}>
-              {banner.title && (
-                <div className="section-title">
-                  {banner.title}
-                </div>
-              )}
-
-              <SmartImg
-                src={banner.img}
-                alt={banner.title ?? ""}
-                className="static-banner"
-                loading="lazy"
-                decoding="async"
-                onErrorHide
-              />
-            </React.Fragment>
-          )
-        )}
+            <SmartImg
+              src={b.img}
+              alt={b.title ?? ""}
+              className="static-banner"
+              loading="lazy"
+              decoding="async"
+              onErrorHide
+            />
+          </React.Fragment>
+        ))}
       </main>
     </div>
   );
